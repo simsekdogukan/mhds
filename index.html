@@ -5,216 +5,211 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mayatech Hızlı Form Sistemi</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
-        body {
-            font-family: 'Inter', sans-serif;
-            margin: 0;
-            background-color: #f3f4f6;
-            color: #111827;
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap');
+        :root {
+            --background: #1a1b26;
+            --foreground: #c0caf5;
+            --green: #9ece6a;
+            --red: #f7768e;
         }
-        .login-container {
+        body {
+            font-family: 'Fira Code', monospace;
+            margin: 0;
+            background-color: var(--background);
+            color: var(--foreground);
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
+            padding: 15px;
+            box-sizing: border-box;
         }
-        .login-box {
-            background: white;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        .terminal-window {
             width: 100%;
-            max-width: 360px;
-            text-align: center;
-        }
-        .login-box h2 {
-            margin-top: 0;
-            font-size: 1.5em;
-        }
-        .login-box p {
-            color: #6b7280;
-            margin-bottom: 24px;
-        }
-        input[type="password"] {
-            width: 90%;
-            padding: 12px;
-            border: 1px solid #d1d5db;
+            height: 100%;
+            max-width: 900px;
+            max-height: 600px;
+            background: var(--background);
+            border: 1px solid #414868;
             border-radius: 8px;
-            font-size: 1em;
-        }
-        button {
-            background-color: #4f46e5;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-size: 1em;
-            font-weight: 500;
-            cursor: pointer;
-            margin-top: 20px;
-            transition: background-color 0.2s;
-            width: 100%;
-        }
-        button:hover { background-color: #4338ca; }
-        #error-message { color: #ef4444; display: none; margin-top: 15px; }
-
-        .dashboard-layout {
-            display: flex;
-            height: 100vh;
-        }
-        .sidebar {
-            width: 260px;
-            background: #111827;
-            color: white;
-            padding: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             display: flex;
             flex-direction: column;
+            overflow: hidden;
         }
-        .sidebar-header {
-            font-size: 1.2em;
-            font-weight: 600;
-            margin-bottom: 30px;
-        }
-        .sidebar-nav a {
-            display: block;
-            color: #d1d5db;
-            text-decoration: none;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 8px;
-            background-color: #374151; /* Aktif menü öğesi */
-        }
-        .main-content {
+        .terminal-output {
             flex-grow: 1;
-            padding: 40px;
+            padding: 20px;
             overflow-y: auto;
+            line-height: 1.5;
         }
-        .content-header h1 {
-            margin-top: 0;
-            font-size: 2em;
+        .terminal-output div {
+            white-space: pre-wrap;
+            word-break: break-all;
         }
-        .file-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        .file-table th, .file-table td {
-            text-align: left;
-            padding: 16px;
-            border-bottom: 1px solid #e5e7eb;
-        }
-        .file-table th {
-            color: #6b7280;
-            font-weight: 500;
-        }
-        .file-table .file-name {
+        .prompt-line {
             display: flex;
             align-items: center;
+            padding: 0 20px 20px;
+        }
+        .prompt-label {
+            color: var(--green);
             font-weight: 500;
         }
-        .file-table .file-icon {
-            margin-right: 12px;
-            font-size: 1.2em;
+        .terminal-input {
+            flex-grow: 1;
+            background: transparent;
+            border: none;
+            color: var(--foreground);
+            font-family: inherit;
+            font-size: 1em;
+            outline: none;
+            padding-left: 10px;
         }
-        .edit-button {
-            background: #f3f4f6;
-            color: #1f2937;
-            border: 1px solid #d1d5db;
-            padding: 8px 16px;
-            font-weight: 500;
-            width: auto;
-            margin: 0;
+        .cursor {
+            display: inline-block;
+            background-color: var(--foreground);
+            width: 10px;
+            height: 1.2em;
+            animation: blink 1s step-end infinite;
         }
-        .edit-button:hover { background-color: #e5e7eb; }
+        @keyframes blink {
+            from, to { background-color: transparent; }
+            50% { background-color: var(--foreground); }
+        }
+        .file-list-item { margin-left: 20px; }
+        .success { color: var(--green); }
+        .error { color: var(--red); }
     </style>
 </head>
 <body>
-    <div id="app-container">
-        <div class="login-container" id="login-screen">
-            <div class="login-box">
-                <h2>Mayatech Hızlı Form Sistemi</h2>
-                <p>Devam etmek için lütfen parolanızı girin.</p>
-                <input type="password" id="password" placeholder="Parola">
-                <button id="login-button">Giriş Yap</button>
-                <p id="error-message">Hatalı veya eksik parola girdiniz.</p>
-            </div>
-        </div>
-
-        <div class="dashboard-layout" id="main-screen" style="display: none;">
-            <aside class="sidebar">
-                <div class="sidebar-header">Mayatech Sistem</div>
-                <nav class="sidebar-nav">
-                    <a href="#">Tüm Dosyalar</a>
-                </nav>
-            </aside>
-            <main class="main-content">
-                <div class="content-header">
-                    <h1>Tüm Dosyalar</h1>
-                </div>
-                <table class="file-table">
-                    <thead>
-                        <tr>
-                            <th>İsim</th>
-                            <th>İşlem</th>
-                        </tr>
-                    </thead>
-                    <tbody id="file-list"></tbody>
-                </table>
-            </main>
+    <div class="terminal-window" id="terminal-window">
+        <div class="terminal-output" id="terminal-output"></div>
+        <div class="prompt-line">
+            <span class="prompt-label" id="prompt-label">password:</span>
+            <input type="password" class="terminal-input" id="terminal-input" autocomplete="off" autofocus>
+            <span class="cursor"></span>
         </div>
     </div>
+
     <script>
-        const loginScreen = document.getElementById('login-screen');
-        const mainScreen = document.getElementById('main-screen');
-        const passwordInput = document.getElementById('password');
-        const loginButton = document.getElementById('login-button');
-        const errorMessage = document.getElementById('error-message');
-        const fileList = document.getElementById('file-list');
+        const output = document.getElementById('terminal-output');
+        const input = document.getElementById('terminal-input');
+        const promptLabel = document.getElementById('prompt-label');
+        const terminalWindow = document.getElementById('terminal-window');
 
-        async function handleLogin() { /* ... Bu script bölümü diğer versiyonla aynı ... */ }
-        function displayFiles(files) {
-            fileList.innerHTML = '';
-            files.forEach(file => {
-                const fileType = file.name.includes('.xls') ? '📊' : '📄';
-                const tableRow = document.createElement('tr');
-                tableRow.innerHTML = `
-                    <td>
-                        <div class="file-name">
-                            <span class="file-icon">${fileType}</span>
-                            <span>${file.name}</span>
-                        </div>
-                    </td>
-                    <td><a href="${file.url}" target="_blank"><button class="edit-button">Düzenle</button></a></td>
-                `;
-                fileList.appendChild(tableRow);
-            });
-        }
+        let isLoggedIn = false;
+        let fileCache = [];
+        const commandHistory = [];
+        let historyIndex = -1;
+
+        const print = (text, className = '') => {
+            const line = document.createElement('div');
+            line.className = className;
+            line.innerHTML = text; // innerHTML for color tags
+            output.appendChild(line);
+            terminalWindow.scrollTop = terminalWindow.scrollHeight;
+            output.scrollTop = output.scrollHeight;
+        };
         
-        loginButton.addEventListener('click', handleLogin);
-        passwordInput.addEventListener('keyup', (event) => { if (event.key === 'Enter') { handleLogin(); } });
+        const printWelcome = () => {
+            print('Mayatech Hızlı Form Sistemi [Versiyon 2.0]');
+            print('(c) Mayatech. Tüm hakları saklıdır.');
+            print('<br>');
+            print('Giriş yapmak için parolanızı girin.');
+        };
 
-        // --- ÖNCEKİ KODDAN KOPYALANAN İLETİŞİM FONKSİYONU ---
-        async function handleLogin() {
-            const password = passwordInput.value;
-            if (!password) { errorMessage.style.display = 'block'; return; }
-            loginButton.disabled = true;
-            loginButton.textContent = 'Doğrulanıyor...';
-            try {
-                const response = await fetch('/api/getFiles', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: password }) });
-                if (response.ok) {
-                    const files = await response.json();
-                    displayFiles(files);
-                    loginScreen.style.display = 'none';
-                    mainScreen.style.display = 'flex';
-                } else {
-                    errorMessage.style.display = 'block'; passwordInput.value = '';
+        const handleCommand = async (command) => {
+            print(`<span style="color: var(--green);">${promptLabel.textContent}</span> ${command}`);
+            if (!isLoggedIn) {
+                try {
+                    const response = await fetch('/api/getFiles', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: command }) });
+                    if (response.ok) {
+                        isLoggedIn = true;
+                        fileCache = await response.json();
+                        input.type = 'text';
+                        promptLabel.textContent = 'mayatech@sistem:~$';
+                        print('<br><span class="success">Erişim Onaylandı. Sisteme hoş geldiniz.</span>');
+                        print('Kullanılabilir komutları görmek için `help` yazın.');
+                    } else {
+                        print('<span class="error">Erişim Reddedildi.</span>');
+                    }
+                } catch (error) {
+                    print('<span class="error">Sunucuya bağlanılamadı.</span>');
                 }
-            } catch (error) {
-                errorMessage.textContent = 'Bir ağ hatası oluştu. Lütfen tekrar deneyin.'; errorMessage.style.display = 'block';
-            } finally {
-                loginButton.disabled = false; loginButton.textContent = 'Giriş Yap';
+                return;
             }
-        }
+
+            const [cmd, ...args] = command.trim().split(' ');
+            switch (cmd.toLowerCase()) {
+                case 'help':
+                    print(`
+<b>Kullanılabilir Komutlar:</b>
+  <b>ls</b>             - Tüm dosyaları listeler.
+  <b>edit [numara]</b>  - Belirtilen numaradaki dosyayı düzenlemek için açar.
+  <b>clear</b>          - Ekranı temizler.
+  <b>help</b>           - Bu yardım menüsünü gösterir.
+                    `);
+                    break;
+                case 'ls':
+                    if (fileCache.length > 0) {
+                        let fileListHtml = '<b>Dosyalar:</b><br>';
+                        fileCache.forEach((file, index) => {
+                            fileListHtml += `<div class="file-list-item">[${index + 1}] ${file.name}</div>`;
+                        });
+                        print(fileListHtml);
+                    } else {
+                        print('Listelenecek dosya bulunamadı.');
+                    }
+                    break;
+                case 'edit':
+                    const fileNumber = parseInt(args[0], 10);
+                    if (isNaN(fileNumber) || fileNumber < 1 || fileNumber > fileCache.length) {
+                        print(`<span class="error">Hata: Geçersiz dosya numarası. 'ls' komutu ile listeyi kontrol edin.</span>`);
+                    } else {
+                        const file = fileCache[fileNumber - 1];
+                        print(`'${file.name}' dosyası yeni sekmede açılıyor...`);
+                        window.open(file.url, '_blank');
+                    }
+                    break;
+                case 'clear':
+                    output.innerHTML = '';
+                    break;
+                case '':
+                    break;
+                default:
+                    print(`<span class="error">Komut bulunamadı: ${command}</span>`);
+            }
+        };
+
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const command = input.value;
+                handleCommand(command);
+                if (command) {
+                    commandHistory.unshift(command);
+                    historyIndex = -1;
+                }
+                input.value = '';
+            } else if (e.key === 'ArrowUp') {
+                if (historyIndex < commandHistory.length - 1) {
+                    historyIndex++;
+                    input.value = commandHistory[historyIndex];
+                }
+            } else if (e.key === 'ArrowDown') {
+                if (historyIndex > 0) {
+                    historyIndex--;
+                    input.value = commandHistory[historyIndex];
+                } else {
+                    historyIndex = -1;
+                    input.value = '';
+                }
+            }
+        });
+
+        terminalWindow.addEventListener('click', () => input.focus());
+        printWelcome();
+
     </script>
 </body>
 </html>
