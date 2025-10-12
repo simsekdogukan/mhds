@@ -4,110 +4,165 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mayatech Hızlı Form Sistemi</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
         :root {
-            --glass-bg: rgba(255, 255, 255, 0.6);
-            --glass-border: rgba(255, 255, 255, 0.8);
-            --text-primary: #1d1d1f;
-            --text-secondary: #6e6e73;
-            --accent-color: #007aff;
+            --primary-purple: #725bff; /* Görseldeki ana mor renk */
+            --light-purple: #c0b3ff;
+            --dark-text: #1a1a2e;
+            --medium-text: #6e6e73;
+            --light-bg: #f5f6fa;
+            --white: #ffffff;
+            --card-shadow: 0 8px 24px rgba(114, 91, 255, 0.1);
         }
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Poppins', sans-serif;
             margin: 0;
-            height: 100vh;
-            overflow: hidden;
-            background: linear-gradient(135deg, #667eea, #764ba2, #2c3e50, #00d2ff);
-            background-size: 400% 400%;
-            animation: liquidGradient 15s ease infinite;
-        }
-        @keyframes liquidGradient {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        /* --- Login Ekranı --- */
-        .login-overlay {
-            position: fixed;
-            inset: 0;
+            background-color: var(--light-bg);
             display: flex;
             justify-content: center;
             align-items: center;
-            backdrop-filter: blur(10px);
-            z-index: 100;
-            transition: opacity 0.5s ease;
+            min-height: 100vh;
+            color: var(--dark-text);
+            overflow: hidden; /* Animasyonlar için */
         }
-        .login-box {
-            text-align: center;
-        }
-        .login-box h2 {
-            color: var(--text-primary);
-            font-weight: 600;
-        }
-        input[type="password"] {
-            display: block;
-            width: 280px;
-            padding: 14px;
-            border: none;
-            border-radius: 12px;
-            font-size: 1em;
-            background: rgba(255,255,255,0.8);
-            text-align: center;
-            margin-top: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            outline-color: var(--accent-color);
-        }
-        button {
-            background-color: var(--accent-color);
-            color: white;
-            border: none;
-            padding: 14px 28px;
-            border-radius: 12px;
-            font-size: 1em;
-            font-weight: 500;
-            cursor: pointer;
-            margin-top: 20px;
-            transition: transform 0.2s;
-        }
-        button:hover { transform: scale(1.05); }
-        #error-message { color: #d93025; display: none; margin-top: 15px; font-weight:500; }
 
-        /* --- Ana Uygulama Arayüzü --- */
+        /* --- Global App Container --- */
         .app-container {
             width: 100%;
-            height: 100%;
-            display: none;
-            justify-content: center;
-            align-items: center;
-        }
-        .files-app-window {
-            width: 95%;
-            height: 90%;
-            max-width: 800px;
-            background: var(--glass-bg);
-            backdrop-filter: blur(25px);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            max-width: 400px; /* Mobil cihaz genişliği */
+            background-color: var(--white);
+            border-radius: 30px;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
+            min-height: 100vh; /* Mobil uyum */
+            position: relative;
+            transition: transform 0.5s ease-in-out;
         }
-        .app-header {
-            padding: 20px;
-            border-bottom: 1px solid var(--glass-border);
+
+        /* --- Login Screen --- */
+        #login-screen {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--light-purple) 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 40px;
+            color: var(--white);
+            z-index: 10;
+            opacity: 1;
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+            border-radius: 30px; /* App container ile uyumlu */
         }
-        .app-header h1 {
-            margin: 0;
-            font-size: 1.5em;
-            color: var(--text-primary);
+        #login-screen.hidden {
+            opacity: 0;
+            transform: translateY(-100%);
+            pointer-events: none;
         }
-        .app-content {
+        #login-screen .cloud-icon {
+            font-size: 8em; /* Büyük bulut ikonu */
+            margin-bottom: 20px;
+            line-height: 1;
+        }
+        #login-screen h2 {
+            font-size: 2.2em;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+        #login-screen p {
+            font-size: 1.1em;
+            opacity: 0.8;
+            max-width: 300px;
+            margin-bottom: 30px;
+        }
+        #login-screen input {
+            width: 80%;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 12px;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: var(--white);
+            font-size: 1em;
+            text-align: center;
+            margin-bottom: 20px;
+            outline: none;
+        }
+        #login-screen input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        #login-screen button {
+            background-color: var(--white);
+            color: var(--primary-purple);
+            border: none;
+            border-radius: 12px;
+            padding: 14px 30px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s ease;
+        }
+        #login-screen button:hover {
+            transform: translateY(-3px);
+        }
+        #login-screen .error-message {
+            color: #ffdddd;
+            font-size: 0.9em;
+            margin-top: 15px;
+            display: none;
+        }
+
+        /* --- Main Screen --- */
+        #main-screen {
             flex-grow: 1;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
             overflow-y: auto;
-            padding: 10px;
+            display: none; /* Varsayılan olarak gizli */
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        #main-screen.visible {
+            opacity: 1;
+            display: flex;
+        }
+        .main-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .main-header h1 {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: var(--dark-text);
+        }
+        .main-header .profile-icon {
+            width: 45px;
+            height: 45px;
+            background-color: var(--primary-purple);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--white);
+            font-weight: 600;
+            font-size: 1.2em;
+        }
+
+        .recent-section h2 {
+            font-size: 1.4em;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--dark-text);
         }
         .file-list {
             list-style: none;
@@ -115,45 +170,126 @@
             margin: 0;
         }
         .file-item {
+            background-color: var(--white);
+            border-radius: 15px;
+            padding: 15px 20px;
+            margin-bottom: 15px;
             display: flex;
             align-items: center;
-            padding: 12px 20px;
-            border-bottom: 1px solid rgba(0,0,0,0.05);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease;
         }
-        .file-item:last-child { border-bottom: none; }
-        .file-icon { font-size: 1.8em; margin-right: 20px; }
-        .file-info { flex-grow: 1; }
-        .file-name { font-weight: 500; color: var(--text-primary); }
-        .edit-button {
-            background-color: rgba(0,0,0,0.05);
-            color: var(--accent-color);
-            border-radius: 99px; /* Pill shape */
-            padding: 8px 16px;
-            border: none;
-            font-weight: 500;
+        .file-item:hover {
+            transform: translateY(-5px);
+        }
+        .file-icon {
+            font-size: 2em;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        .file-details {
+            flex-grow: 1;
+        }
+        .file-name {
+            font-weight: 600;
+            color: var(--dark-text);
+            margin-bottom: 3px;
+        }
+        .file-size {
             font-size: 0.9em;
-            cursor: pointer;
-            transition: background-color 0.2s;
+            color: var(--medium-text);
         }
-        .edit-button:hover { background-color: rgba(0,0,0,0.1); }
+        .edit-button {
+            background-color: var(--primary-purple);
+            color: var(--white);
+            border: none;
+            border-radius: 10px;
+            padding: 10px 18px;
+            font-size: 0.9em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        .edit-button:hover {
+            background-color: #5c47d6;
+        }
+
+        /* --- Bottom Navigation (Opsiyonel olarak eklendi) --- */
+        .bottom-nav {
+            display: flex;
+            justify-content: space-around;
+            padding: 15px 0;
+            background-color: var(--white);
+            border-top: 1px solid #f0f0f0;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.03);
+        }
+        .nav-item {
+            text-align: center;
+            color: var(--medium-text);
+            font-size: 0.85em;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+        }
+        .nav-item .icon {
+            font-size: 1.4em;
+            margin-bottom: 5px;
+        }
+        .nav-item.active {
+            color: var(--primary-purple);
+            font-weight: 600;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 480px) {
+            .app-container {
+                min-height: 100vh;
+                border-radius: 0;
+            }
+            #login-screen {
+                border-radius: 0;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="login-overlay" id="login-screen">
-        <div class="login-box">
+    <div class="app-container">
+        <div id="login-screen">
+            <span class="cloud-icon">☁️</span>
             <h2>Mayatech Hızlı Form Sistemi</h2>
-            <input type="password" id="password" placeholder="••••••••">
+            <p>Devam etmek için lütfen parolanızı girin.</p>
+            <input type="password" id="password" placeholder="Parola">
             <button id="login-button">Giriş Yap</button>
-            <p id="error-message">Parola hatalı.</p>
+            <p id="login-error-message" class="error-message">Hatalı parola.</p>
         </div>
-    </div>
 
-    <div class="app-container" id="main-screen">
-        <div class="files-app-window">
-            <header class="app-header"><h1>Tüm Dosyalar</h1></header>
-            <main class="app-content">
-                <ul class="file-list" id="file-list"></ul>
-            </main>
+        <div id="main-screen">
+            <header class="main-header">
+                <h1>Merhaba, Yönetici</h1>
+                <div class="profile-icon">M</div>
+            </header>
+
+            <section class="recent-section">
+                <h2>Tüm Formlar</h2>
+                <ul class="file-list" id="file-list">
+                    </ul>
+            </section>
+
+            <nav class="bottom-nav">
+                <div class="nav-item active">
+                    <span class="icon">🏠</span>
+                    <span>Anasayfa</span>
+                </div>
+                <div class="nav-item">
+                    <span class="icon">📁</span>
+                    <span>Dosyalar</span>
+                </div>
+                <div class="nav-item">
+                    <span class="icon">⚙️</span>
+                    <span>Ayarlar</span>
+                </div>
+            </nav>
         </div>
     </div>
 
@@ -162,20 +298,21 @@
         const mainScreen = document.getElementById('main-screen');
         const passwordInput = document.getElementById('password');
         const loginButton = document.getElementById('login-button');
-        const errorMessage = document.getElementById('error-message');
+        const loginErrorMessage = document.getElementById('login-error-message');
         const fileList = document.getElementById('file-list');
 
         function displayFiles(files) {
             fileList.innerHTML = '';
             files.forEach(file => {
                 const isSheet = file.name.includes('.xls') || file.name.includes('Listesi');
-                const fileTypeIcon = isSheet ? '📊' : '📄';
+                const fileTypeIcon = isSheet ? '📊' : '📄'; // Görseldeki gibi farklı ikonlar
                 const listItem = document.createElement('li');
                 listItem.className = 'file-item';
                 listItem.innerHTML = `
                     <div class="file-icon">${fileTypeIcon}</div>
-                    <div class="file-info">
+                    <div class="file-details">
                         <div class="file-name">${file.name}</div>
+                        <div class="file-size">Google Drive Dosyası</div>
                     </div>
                     <a href="${file.url}" target="_blank"><button class="edit-button">Düzenle</button></a>
                 `;
@@ -183,34 +320,53 @@
             });
         }
         
-        // --- GÜVENLİ İLETİŞİM FONKSİYONU (DEĞİŞTİRİLMEDİ) ---
         async function handleLogin() {
             const password = passwordInput.value;
-            if (!password) { errorMessage.style.display = 'block'; return; }
+            if (!password) {
+                loginErrorMessage.style.display = 'block';
+                return;
+            }
             loginButton.disabled = true;
             loginButton.textContent = 'Doğrulanıyor...';
+            loginErrorMessage.style.display = 'none';
+
             try {
-                const response = await fetch('/api/getFiles', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: password }) });
+                const response = await fetch('/api/getFiles', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password: password })
+                });
+
                 if (response.ok) {
                     const files = await response.json();
                     displayFiles(files);
-                    loginScreen.style.opacity = '0';
+                    
+                    // Animasyonlu geçiş
+                    loginScreen.classList.add('hidden');
                     setTimeout(() => {
-                        loginScreen.style.display = 'none';
                         mainScreen.style.display = 'flex';
-                    }, 500); // Wait for fade-out animation
+                        mainScreen.classList.add('visible');
+                    }, 500); // loginScreen'ın gizlenmesi için geçiş süresi kadar bekle
+                    
                 } else {
-                    errorMessage.style.display = 'block'; passwordInput.value = '';
+                    loginErrorMessage.style.display = 'block';
+                    passwordInput.value = '';
                 }
             } catch (error) {
-                errorMessage.textContent = 'Bir ağ hatası oluştu.'; errorMessage.style.display = 'block';
+                loginErrorMessage.textContent = 'Bir ağ hatası oluştu. Lütfen tekrar deneyin.';
+                loginErrorMessage.style.display = 'block';
             } finally {
                 loginButton.disabled = false;
                 loginButton.textContent = 'Giriş Yap';
             }
         }
+
         loginButton.addEventListener('click', handleLogin);
-        passwordInput.addEventListener('keyup', (event) => { if (event.key === 'Enter') { handleLogin(); } });
+        passwordInput.addEventListener('keyup', (event) => {
+            if (event.key === 'Enter') {
+                handleLogin();
+            }
+        });
     </script>
 </body>
 </html>
