@@ -7,173 +7,187 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
         :root {
-            --bg-blur: rgba(255, 255, 255, 0.3);
-            --border-color: rgba(255, 255, 255, 0.5);
+            --glass-bg: rgba(255, 255, 255, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.8);
+            --text-primary: #1d1d1f;
+            --text-secondary: #6e6e73;
+            --accent-color: #007aff;
         }
         body {
             font-family: 'Inter', sans-serif;
             margin: 0;
-            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNjAwIDkwMCI+PHJlY3QgZmlsbD0iIzAwMDAwMCIgd2lkdGg9IjE2MDAiIGhlaWdodD0iOTAwIi8+PGcgZmlsbC1vcGFjaXR5PSIuNCI+PGNpcmNsZSBmaWxsPSIjMDcwMDJCIiBjeD0iNjE2IiBjeT0iNDQyIiByPSIxMjAiLz48Y2lyY2xlIGZpbGw9IiMwRTAwMzEiIGN4PSIxMzg5IiBjeT0iNjQzIiByPSIxMjAiLz48Y2lyY2xlIGZpbGw9IiMxNjAwMzUiIGN4PSIxMTk2IiBjeT0iODUiIHI9IjEyMCIvPjxjaXJjbGUgZmlsbD0iIzE3MDAyZiIgY3g9IjE1MDMiIGN5PSI0MzciIHI9IjEyMCIvPjxjaXJjbGUgZmlsbD0iIzE1MDAyMiIgY3g9IjkiIGN5PSI4MzciIHI9IjEyMCIvPjxjaXJjbGUgZmlsbD0iIzEwMDAxMyIgY3g9IjM0OCIgY3k9IjEzOCIgcj0iMTIwIi8+PC9nPjwvc3ZnPg==');
-            background-size: cover;
-            background-position: center;
-            overflow: hidden;
             height: 100vh;
+            overflow: hidden;
+            background: linear-gradient(135deg, #667eea, #764ba2, #2c3e50, #00d2ff);
+            background-size: 400% 400%;
+            animation: liquidGradient 15s ease infinite;
         }
-        /* Login Screen */
+        @keyframes liquidGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* --- Login Ekranı --- */
         .login-overlay {
             position: fixed;
             inset: 0;
-            background-color: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(10px);
             display: flex;
             justify-content: center;
             align-items: center;
+            backdrop-filter: blur(10px);
             z-index: 100;
-            transition: opacity 0.3s ease;
+            transition: opacity 0.5s ease;
         }
         .login-box {
-            background: rgba(0, 0, 0, 0.4);
-            padding: 40px;
-            border-radius: 16px;
-            border: 1px solid rgba(255,255,255,0.2);
             text-align: center;
-            color: white;
         }
-        .login-box h2 { margin-top: 0; }
-        input[type="password"] { width: 250px; padding: 12px; border: 1px solid #555; border-radius: 8px; font-size: 1em; background: rgba(0,0,0,0.5); color: white; }
-        button { background-color: #007aff; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 1em; cursor: pointer; margin-top: 20px; transition: background-color 0.2s; }
-        button:hover { background-color: #005ecb; }
-        #error-message { color: #ff4d4d; display: none; margin-top: 15px; }
-
-        /* Desktop UI */
-        #desktop-container { display: none; }
-        .top-bar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 30px;
-            background: var(--bg-blur);
-            backdrop-filter: blur(15px);
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            padding: 0 20px;
-            color: black;
-            font-weight: 500;
-            z-index: 50;
+        .login-box h2 {
+            color: var(--text-primary);
+            font-weight: 600;
         }
-        .dock {
-            position: fixed;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 10px;
-            padding: 8px;
-            background: var(--bg-blur);
-            backdrop-filter: blur(15px);
-            border-radius: 16px;
-            border: 1px solid var(--border-color);
-            z-index: 50;
-        }
-        .dock-item {
-            width: 60px;
-            height: 60px;
-            background-color: #f0f0f0;
+        input[type="password"] {
+            display: block;
+            width: 280px;
+            padding: 14px;
+            border: none;
             border-radius: 12px;
+            font-size: 1em;
+            background: rgba(255,255,255,0.8);
+            text-align: center;
+            margin-top: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            outline-color: var(--accent-color);
+        }
+        button {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-size: 1em;
+            font-weight: 500;
             cursor: pointer;
-            transition: transform 0.15s ease-out, margin 0.15s ease-out;
-            display: flex;
+            margin-top: 20px;
+            transition: transform 0.2s;
+        }
+        button:hover { transform: scale(1.05); }
+        #error-message { color: #d93025; display: none; margin-top: 15px; font-weight:500; }
+
+        /* --- Ana Uygulama Arayüzü --- */
+        .app-container {
+            width: 100%;
+            height: 100%;
+            display: none;
             justify-content: center;
             align-items: center;
-            font-size: 2em;
         }
-        .dock:hover .dock-item:hover { transform: scale(1.5) translateY(-10px); }
-        .dock:hover .dock-item:hover + .dock-item,
-        .dock:hover .dock-item:has(+ .dock-item:hover) { transform: scale(1.2) translateY(-5px); }
-        
-        .window {
-            position: absolute;
-            top: 100px;
-            left: 100px;
-            width: 700px;
-            height: 500px;
-            background: rgba(240, 240, 240, 0.8);
-            backdrop-filter: blur(20px);
-            border-radius: 12px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-            border: 1px solid rgba(200,200,200,0.5);
-            display: none;
+        .files-app-window {
+            width: 95%;
+            height: 90%;
+            max-width: 800px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(25px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            display: flex;
             flex-direction: column;
-            resize: both;
-            overflow: auto;
+            overflow: hidden;
         }
-        .title-bar {
-            height: 35px;
-            background: rgba(200, 200, 200, 0.5);
-            cursor: move;
+        .app-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        .app-header h1 {
+            margin: 0;
+            font-size: 1.5em;
+            color: var(--text-primary);
+        }
+        .app-content {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 10px;
+        }
+        .file-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .file-item {
             display: flex;
             align-items: center;
-            padding: 0 10px;
+            padding: 12px 20px;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
         }
-        .title-bar-controls { display: flex; gap: 8px; }
-        .control { width: 12px; height: 12px; border-radius: 50%; }
-        .close { background: #ff5f57; }
-        .window-body { padding: 20px; flex-grow: 1; overflow-y: auto; }
-        .file-list-item { display: flex; align-items: center; padding: 10px; border-radius: 6px; cursor: default; }
-        .file-list-item:hover { background-color: rgba(0,0,0,0.1); }
-        .file-icon { margin-right: 15px; font-size: 1.5em; }
-        .file-name { flex-grow: 1; }
-        .edit-button { background-color: #007aff; color: white; border-radius: 6px; padding: 6px 12px; border: none; }
-        
-        @media (max-width: 768px) {
-            .window { top: 40px; left: 10px; right: 10px; bottom: 80px; width: auto; height: auto; resize: none; }
-            .dock { padding: 6px; gap: 8px; }
-            .dock-item { width: 45px; height: 45px; font-size: 1.5em; }
+        .file-item:last-child { border-bottom: none; }
+        .file-icon { font-size: 1.8em; margin-right: 20px; }
+        .file-info { flex-grow: 1; }
+        .file-name { font-weight: 500; color: var(--text-primary); }
+        .edit-button {
+            background-color: rgba(0,0,0,0.05);
+            color: var(--accent-color);
+            border-radius: 99px; /* Pill shape */
+            padding: 8px 16px;
+            border: none;
+            font-weight: 500;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: background-color 0.2s;
         }
+        .edit-button:hover { background-color: rgba(0,0,0,0.1); }
     </style>
 </head>
 <body>
-
     <div class="login-overlay" id="login-screen">
         <div class="login-box">
             <h2>Mayatech Hızlı Form Sistemi</h2>
-            <input type="password" id="password" placeholder="Parola Girin">
-            <button id="login-button">Giriş</button>
-            <p id="error-message">Hatalı parola.</p>
+            <input type="password" id="password" placeholder="••••••••">
+            <button id="login-button">Giriş Yap</button>
+            <p id="error-message">Parola hatalı.</p>
         </div>
     </div>
 
-    <div id="desktop-container">
-        <div class="top-bar"><b>Mayatech Form Sistemi</b></div>
-        
-        <div class="window" id="form-window">
-            <div class="title-bar">
-                <div class="title-bar-controls">
-                    <div class="control close" id="close-window-button"></div>
-                </div>
-            </div>
-            <div class="window-body" id="file-list"></div>
-        </div>
-
-        <div class="dock">
-            <div class="dock-item" id="open-forms-button">📁</div>
+    <div class="app-container" id="main-screen">
+        <div class="files-app-window">
+            <header class="app-header"><h1>Tüm Dosyalar</h1></header>
+            <main class="app-content">
+                <ul class="file-list" id="file-list"></ul>
+            </main>
         </div>
     </div>
 
     <script>
-        // --- API & Login Logic (Unaltered) ---
         const loginScreen = document.getElementById('login-screen');
-        const desktopContainer = document.getElementById('desktop-container');
+        const mainScreen = document.getElementById('main-screen');
         const passwordInput = document.getElementById('password');
         const loginButton = document.getElementById('login-button');
         const errorMessage = document.getElementById('error-message');
         const fileList = document.getElementById('file-list');
 
+        function displayFiles(files) {
+            fileList.innerHTML = '';
+            files.forEach(file => {
+                const isSheet = file.name.includes('.xls') || file.name.includes('Listesi');
+                const fileTypeIcon = isSheet ? '📊' : '📄';
+                const listItem = document.createElement('li');
+                listItem.className = 'file-item';
+                listItem.innerHTML = `
+                    <div class="file-icon">${fileTypeIcon}</div>
+                    <div class="file-info">
+                        <div class="file-name">${file.name}</div>
+                    </div>
+                    <a href="${file.url}" target="_blank"><button class="edit-button">Düzenle</button></a>
+                `;
+                fileList.appendChild(listItem);
+            });
+        }
+        
+        // --- GÜVENLİ İLETİŞİM FONKSİYONU (DEĞİŞTİRİLMEDİ) ---
         async function handleLogin() {
             const password = passwordInput.value;
             if (!password) { errorMessage.style.display = 'block'; return; }
+            loginButton.disabled = true;
             loginButton.textContent = 'Doğrulanıyor...';
             try {
                 const response = await fetch('/api/getFiles', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: password }) });
@@ -181,62 +195,22 @@
                     const files = await response.json();
                     displayFiles(files);
                     loginScreen.style.opacity = '0';
-                    setTimeout(() => loginScreen.style.display = 'none', 300);
-                    desktopContainer.style.display = 'block';
+                    setTimeout(() => {
+                        loginScreen.style.display = 'none';
+                        mainScreen.style.display = 'flex';
+                    }, 500); // Wait for fade-out animation
                 } else {
                     errorMessage.style.display = 'block'; passwordInput.value = '';
                 }
             } catch (error) {
                 errorMessage.textContent = 'Bir ağ hatası oluştu.'; errorMessage.style.display = 'block';
             } finally {
-                loginButton.textContent = 'Giriş';
+                loginButton.disabled = false;
+                loginButton.textContent = 'Giriş Yap';
             }
-        }
-        function displayFiles(files) {
-            fileList.innerHTML = '';
-            files.forEach(file => {
-                const fileType = file.name.includes('.xls') ? '📊' : '📄';
-                const fileDiv = document.createElement('div');
-                fileDiv.className = 'file-list-item';
-                fileDiv.innerHTML = `<span class="file-icon">${fileType}</span><span class="file-name">${file.name}</span><a href="${file.url}" target="_blank"><button class="edit-button">Düzenle</button></a>`;
-                fileList.appendChild(fileDiv);
-            });
         }
         loginButton.addEventListener('click', handleLogin);
         passwordInput.addEventListener('keyup', (event) => { if (event.key === 'Enter') { handleLogin(); } });
-
-        // --- Desktop Interaction Logic ---
-        const formWindow = document.getElementById('form-window');
-        const openFormsButton = document.getElementById('open-forms-button');
-        const closeWindowButton = document.getElementById('close-window-button');
-        const titleBar = formWindow.querySelector('.title-bar');
-
-        openFormsButton.addEventListener('click', () => formWindow.style.display = 'flex');
-        closeWindowButton.addEventListener('click', () => formWindow.style.display = 'none');
-
-        // Draggable Window Logic
-        let isDragging = false;
-        let offsetX, offsetY;
-
-        titleBar.addEventListener('mousedown', (e) => {
-            if (window.innerWidth <= 768) return; // Disable dragging on mobile
-            isDragging = true;
-            offsetX = e.clientX - formWindow.offsetLeft;
-            offsetY = e.clientY - formWindow.offsetTop;
-            document.body.style.userSelect = 'none';
-        });
-
-        document.addEventListener('mousemove', (e) => {
-            if (isDragging) {
-                formWindow.style.left = `${e.clientX - offsetX}px`;
-                formWindow.style.top = `${e.clientY - offsetY}px`;
-            }
-        });
-
-        document.addEventListener('mouseup', () => {
-            isDragging = false;
-            document.body.style.userSelect = '';
-        });
     </script>
 </body>
 </html>
