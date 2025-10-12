@@ -6,32 +6,126 @@
     <title>Mayatech Hızlı Form Sistemi</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
-        body { font-family: 'Inter', sans-serif; margin: 0; background-color: #f9fafb; color: #1f2937; }
-        .login-container { display: flex; justify-content: center; align-items: center; height: 100vh; }
-        .login-box { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 360px; text-align: center; }
-        .login-box h2 { margin-top: 0; font-size: 1.5em; }
-        .login-box p { color: #6b7280; margin-bottom: 24px; }
-        input[type="password"] { width: 90%; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 1em; }
-        button { background-color: #0d9488; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 1em; font-weight: 500; cursor: pointer; margin-top: 20px; transition: background-color 0.2s; width: 100%; }
-        button:hover { background-color: #0f766e; }
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            background-color: #f3f4f6;
+            color: #111827;
+        }
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .login-box {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 360px;
+            text-align: center;
+        }
+        .login-box h2 {
+            margin-top: 0;
+            font-size: 1.5em;
+        }
+        .login-box p {
+            color: #6b7280;
+            margin-bottom: 24px;
+        }
+        input[type="password"] {
+            width: 90%;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+        button {
+            background-color: #4f46e5;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.2s;
+            width: 100%;
+        }
+        button:hover { background-color: #4338ca; }
         #error-message { color: #ef4444; display: none; margin-top: 15px; }
 
-        .explorer-layout { display: flex; height: 100vh; background-color: white; }
-        .nav-pane { width: 280px; background: #f9fafb; border-right: 1px solid #e5e7eb; padding: 20px; }
-        .nav-header { font-size: 0.9em; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
-        .nav-list a { display: flex; align-items: center; padding: 10px; border-radius: 6px; text-decoration: none; color: #1f2937; font-weight: 500; }
-        .nav-list a.active { background-color: #e5e7eb; }
-        .nav-list .icon { margin-right: 12px; font-size: 1.2em; }
-        
-        .main-pane { flex-grow: 1; display: flex; flex-direction: column; }
-        .main-header { padding: 16px 24px; border-bottom: 1px solid #e5e7eb; font-weight: 600; font-size: 1.2em; }
-        .file-browser { flex-grow: 1; padding: 24px; overflow-y: auto; }
-        .file-item { display: flex; align-items: center; padding: 12px; border-bottom: 1px solid #f3f4f6; }
-        .file-item:hover { background-color: #f3f4f6; border-radius: 8px; }
-        .file-item .icon { margin-right: 16px; font-size: 1.5em; }
-        .file-item .name { flex-grow: 1; font-weight: 500; }
-        .edit-button { background: #e0f2fe; color: #0ea5e9; border: none; padding: 8px 16px; font-weight: 500; width: auto; margin: 0; }
-        .edit-button:hover { background-color: #bae6fd; }
+        .dashboard-layout {
+            display: flex;
+            height: 100vh;
+        }
+        .sidebar {
+            width: 260px;
+            background: #111827;
+            color: white;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+        }
+        .sidebar-header {
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 30px;
+        }
+        .sidebar-nav a {
+            display: block;
+            color: #d1d5db;
+            text-decoration: none;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            background-color: #374151; /* Aktif menü öğesi */
+        }
+        .main-content {
+            flex-grow: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
+        .content-header h1 {
+            margin-top: 0;
+            font-size: 2em;
+        }
+        .file-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .file-table th, .file-table td {
+            text-align: left;
+            padding: 16px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .file-table th {
+            color: #6b7280;
+            font-weight: 500;
+        }
+        .file-table .file-name {
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+        }
+        .file-table .file-icon {
+            margin-right: 12px;
+            font-size: 1.2em;
+        }
+        .edit-button {
+            background: #f3f4f6;
+            color: #1f2937;
+            border: 1px solid #d1d5db;
+            padding: 8px 16px;
+            font-weight: 500;
+            width: auto;
+            margin: 0;
+        }
+        .edit-button:hover { background-color: #e5e7eb; }
     </style>
 </head>
 <body>
@@ -46,16 +140,26 @@
             </div>
         </div>
 
-        <div class="explorer-layout" id="main-screen" style="display: none;">
-            <aside class="nav-pane">
-                <div class="nav-header">Formlar</div>
-                <div class="nav-list">
-                    <a href="#" class="active"><span class="icon">📁</span> Tüm Dosyalar</a>
-                </div>
+        <div class="dashboard-layout" id="main-screen" style="display: none;">
+            <aside class="sidebar">
+                <div class="sidebar-header">Mayatech Sistem</div>
+                <nav class="sidebar-nav">
+                    <a href="#">Tüm Dosyalar</a>
+                </nav>
             </aside>
-            <main class="main-pane">
-                <header class="main-header">Tüm Dosyalar</header>
-                <div class="file-browser" id="file-list"></div>
+            <main class="main-content">
+                <div class="content-header">
+                    <h1>Tüm Dosyalar</h1>
+                </div>
+                <table class="file-table">
+                    <thead>
+                        <tr>
+                            <th>İsim</th>
+                            <th>İşlem</th>
+                        </tr>
+                    </thead>
+                    <tbody id="file-list"></tbody>
+                </table>
             </main>
         </div>
     </div>
@@ -67,21 +171,28 @@
         const errorMessage = document.getElementById('error-message');
         const fileList = document.getElementById('file-list');
 
+        async function handleLogin() { /* ... Bu script bölümü diğer versiyonla aynı ... */ }
         function displayFiles(files) {
             fileList.innerHTML = '';
             files.forEach(file => {
                 const fileType = file.name.includes('.xls') ? '📊' : '📄';
-                const fileDiv = document.createElement('div');
-                fileDiv.className = 'file-item';
-                fileDiv.innerHTML = `
-                    <span class="icon">${fileType}</span>
-                    <span class="name">${file.name}</span>
-                    <a href="${file.url}" target="_blank"><button class="edit-button">Düzenle</button></a>
+                const tableRow = document.createElement('tr');
+                tableRow.innerHTML = `
+                    <td>
+                        <div class="file-name">
+                            <span class="file-icon">${fileType}</span>
+                            <span>${file.name}</span>
+                        </div>
+                    </td>
+                    <td><a href="${file.url}" target="_blank"><button class="edit-button">Düzenle</button></a></td>
                 `;
-                fileList.appendChild(fileDiv);
+                fileList.appendChild(tableRow);
             });
         }
         
+        loginButton.addEventListener('click', handleLogin);
+        passwordInput.addEventListener('keyup', (event) => { if (event.key === 'Enter') { handleLogin(); } });
+
         // --- ÖNCEKİ KODDAN KOPYALANAN İLETİŞİM FONKSİYONU ---
         async function handleLogin() {
             const password = passwordInput.value;
@@ -104,8 +215,6 @@
                 loginButton.disabled = false; loginButton.textContent = 'Giriş Yap';
             }
         }
-        loginButton.addEventListener('click', handleLogin);
-        passwordInput.addEventListener('keyup', (event) => { if (event.key === 'Enter') { handleLogin(); } });
     </script>
 </body>
 </html>
