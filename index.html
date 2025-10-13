@@ -225,35 +225,35 @@
             function closeSidebar() { document.body.classList.remove('sidebar-open'); }
             hamburgerButton.addEventListener('click', openSidebar);
             sidebarOverlay.addEventListener('click', closeSidebar);
+
+            // --- AKILLI DOKUNMA/TIKLAMA YÖNETİCİSİ ---
+            const addSmartEventListener = (element, callback) => {
+                const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+                const eventType = isTouchDevice ? 'touchend' : 'click';
+                element.addEventListener(eventType, (event) => {
+                    event.preventDefault();
+                    callback();
+                });
+            };
             
             // --- SAYFA NAVİGASYONU ---
-            const goHome = (event) => {
-                event.preventDefault();
+            function goHome() {
                 welcomeView.style.display = 'flex';
                 fileView.style.display = 'none';
                 closeSidebar();
-            };
+            }
             
-            const handleShowFiles = (event) => {
-                event.preventDefault(); 
+            function handleShowFiles() {
                 welcomeView.style.display = 'none';
                 fileView.style.display = 'block';
                 closeSidebar();
             };
-            
-            // DÜZELTME: Hem 'click' hem de 'touchstart' olayını dinle
-            showFilesButton.addEventListener('click', handleShowFiles);
-            showFilesButton.addEventListener('touchstart', handleShowFiles, { passive: false });
-            
-            homeLogoSidebar.addEventListener('click', goHome);
-            homeLogoSidebar.addEventListener('touchstart', goHome, { passive: false });
-            homeLogoMain.addEventListener('click', goHome);
-            
-            // --- VERSİYON BİLGİSİ ---
-            versionInfo.addEventListener('click', () => {
-                versionInfo.classList.toggle('expanded');
-            });
 
+            addSmartEventListener(showFilesButton, handleShowFiles);
+            addSmartEventListener(homeLogoSidebar, goHome);
+            addSmartEventListener(homeLogoMain, goHome);
+            addSmartEventListener(versionInfo, () => versionInfo.classList.toggle('expanded'));
+            
             // --- DOSYA LİSTELEME ---
             function displayFiles(files) {
                 fileList.innerHTML = '';
