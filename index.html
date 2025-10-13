@@ -42,10 +42,10 @@
         
         .sidebar {
             width: var(--sidebar-width); height: 100%; background-color: var(--background); border-right: 1px solid var(--border-color); padding: 1.5rem; display: flex; flex-direction: column; position: fixed; top: 0; left: 0; 
-            transition: transform 0.4s ease, background-color 0.3s ease; z-index: 201;
-            /* DÜZELTME: Kapalıyken transform yerine visibility kullan */
             transform: translateX(-100%);
             visibility: hidden;
+            transition: transform 0.4s ease, visibility 0s 0.4s, background-color 0.3s ease; 
+            z-index: 201;
         }
         .sidebar-header { margin-bottom: 2rem; font-size: 1.8rem; font-weight: 700; color: var(--text-dark); }
         .nav-list { list-style: none; padding: 0; margin: 0; flex-grow: 1; }
@@ -103,7 +103,7 @@
             .hamburger-button, #menu-overlay { display: none; }
         }
         @media (max-width: 799px) {
-            body.sidebar-open .sidebar { transform: translateX(0); visibility: visible; box-shadow: 10px 0 30px rgba(0,0,0,0.1); }
+            body.sidebar-open .sidebar { transform: translateX(0); visibility: visible; transition: transform 0.4s ease, visibility 0s 0s, background-color 0.3s ease; box-shadow: 10px 0 30px rgba(0,0,0,0.1); }
             body.sidebar-open #menu-overlay { opacity: 1; pointer-events: auto; }
         }
     </style>
@@ -139,8 +139,8 @@
                 </div>
                 <footer class="sidebar-footer">
                     <div class="version-info" id="version-info">
-                        <span class="short-version">v.9.1</span>
-                        <span class="long-version">v.9.1 - Mobil Stacking Context hatası giderildi</span>
+                        <span class="short-version">v.10.0</span>
+                        <span class="long-version">v.10.0 - Mobil etkileşim motoru temelden yeniden yazıldı</span>
                     </div>
                 </footer>
             </nav>
