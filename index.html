@@ -45,13 +45,12 @@
         }
         .sidebar-header { margin-bottom: 2rem; font-size: 1.8rem; font-weight: 700; color: var(--text-dark); }
         .nav-list { list-style: none; padding: 0; margin: 0; }
-        /* DÜZELTME: 'a' etiketi yerine 'button' etiketi için stil ayarlandı */
         .nav-item button { 
             display: flex; align-items: center; padding: 0.9rem 1rem; border-radius: 0.5rem; text-decoration: none; color: var(--text-light); font-weight: 500; transition: background-color 0.2s, color 0.2s;
             width: 100%; background: none; border: none; font-family: 'Inter', sans-serif; font-size: 1rem; cursor: pointer; text-align: left;
         }
         .nav-item button:hover { background-color: var(--light-accent); color: var(--primary-accent); }
-        .nav-item svg { width: 20px; height: 20px; margin-right: 1rem; color: var(--text-light); transition: color 0.2s; }
+        .nav-item svg { width: 20px; height: 20px; margin-right: 1rem; color: var(--text-light); transition: color 0.2s; pointer-events: none; /* SVG'nin tıklamayı çalmasını engelle */ }
         .nav-item button:hover svg { color: var(--primary-accent); }
 
         .main-content { width: 100%; height: 100%; display: flex; flex-direction: column; }
@@ -155,8 +154,8 @@
     </div>
 
     <div class="version-info" id="version-info">
-        <span class="short-version">v.7.1</span>
-        <span class="long-version">v.7.1 - Hatalar düzeltildi güvenlik iyileştirilmeleri yapıldı</span>
+        <span class="short-version">v.7.2</span>
+        <span class="long-version">v.7.2 - Kritik mobil menü hatası giderildi</span>
     </div>
 
     <svg width="0" height="0" style="position:absolute;">
@@ -218,11 +217,11 @@
         menuOverlay.addEventListener('click', closeSidebar);
         
         // --- SAYFA NAVİGASYONU ---
-        showFilesButton.addEventListener('click', (e) => {
+        showFilesButton.addEventListener('click', () => {
             welcomeView.style.display = 'none';
             fileView.style.display = 'block';
             mainTitle.textContent = 'Formlar';
-            closeSidebar();
+            closeSidebar(); // Tıklama sonrası menüyü kapat
         });
         
         // --- VERSİYON BİLGİSİ ---
