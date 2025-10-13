@@ -40,7 +40,6 @@
         }
         #app-container.visible { opacity: 1; transform: translateY(0); }
         
-        /* DÜZELTME: OVERLAY VE SIDEBAR MIMARISI YENIDEN YAZILDI */
         .sidebar {
             width: var(--sidebar-width); height: 100%; background-color: var(--background); border-right: 1px solid var(--border-color); padding: 1.5rem; display: flex; flex-direction: column; 
             transition: transform 0.4s ease, background-color 0.3s ease; 
@@ -96,14 +95,12 @@
             position: fixed; inset: 0; background-color: rgba(0,0,0,0.4); z-index: 200; opacity: 0; transition: opacity 0.4s ease; pointer-events: none;
         }
         
-        /* MASAÜSTÜ GÖRÜNÜMÜ */
         @media (min-width: 800px) {
             #app-container { flex-direction: row; }
             .sidebar { position: static; transform: translateX(0); }
             .main-content { flex-grow: 1; }
             .hamburger-button, #sidebar-overlay { display: none; }
         }
-        /* MOBİL GÖRÜNÜMÜ */
         @media (max-width: 799px) {
             .sidebar { position: fixed; transform: translateX(-100%); }
             body.sidebar-open .sidebar { transform: translateX(0); box-shadow: 10px 0 30px rgba(0,0,0,0.1); }
@@ -144,8 +141,8 @@
                 </div>
                 <footer class="sidebar-footer">
                     <div class="version-info" id="version-info">
-                        <span class="short-version">v.14.0</span>
-                        <span class="long-version">v.14.0 - Responsive mimarisi temelden yeniden yazıldı</span>
+                        <span class="short-version">v.15.0</span>
+                        <span class="long-version">v.15.0 - Mobil dokunma gecikmesi (300ms) hatası giderildi</span>
                     </div>
                 </footer>
             </nav>
@@ -234,11 +231,17 @@
                 fileView.style.display = 'none';
                 closeSidebar();
             }
-            showFilesButton.addEventListener('click', () => {
+            
+            // DÜZELTME: Hem 'click' hem de 'touchstart' olayını dinle
+            const handleShowFiles = (event) => {
+                event.preventDefault(); // Varsayılan davranışı engelle
                 welcomeView.style.display = 'none';
                 fileView.style.display = 'block';
                 closeSidebar();
-            });
+            };
+            showFilesButton.addEventListener('click', handleShowFiles);
+            showFilesButton.addEventListener('touchstart', handleShowFiles);
+            
             homeLogoSidebar.addEventListener('click', goHome);
             homeLogoMain.addEventListener('click', goHome);
             
