@@ -41,7 +41,8 @@
         #app-container.visible { opacity: 1; transform: translateY(0); }
         
         .sidebar {
-            width: var(--sidebar-width); height: 100%; background-color: var(--background); border-right: 1px solid var(--border-color); padding: 1.5rem; display: flex; flex-direction: column; position: fixed; top: 0; left: 0; transform: translateX(-100%); transition: transform 0.4s ease, background-color 0.3s ease; z-index: 200;
+            width: var(--sidebar-width); height: 100%; background-color: var(--background); border-right: 1px solid var(--border-color); padding: 1.5rem; display: flex; flex-direction: column; position: fixed; top: 0; left: 0; transform: translateX(-100%); transition: transform 0.4s ease, background-color 0.3s ease;
+            z-index: 201; /* DÜZELTME: Katmanı overlay'in üstüne çıkarıldı */
         }
         .sidebar-header { margin-bottom: 2rem; font-size: 1.8rem; font-weight: 700; color: var(--text-dark); }
         .nav-list { list-style: none; padding: 0; margin: 0; }
@@ -50,7 +51,7 @@
             width: 100%; background: none; border: none; font-family: 'Inter', sans-serif; font-size: 1rem; cursor: pointer; text-align: left;
         }
         .nav-item button:hover { background-color: var(--light-accent); color: var(--primary-accent); }
-        .nav-item svg { width: 20px; height: 20px; margin-right: 1rem; color: var(--text-light); transition: color 0.2s; pointer-events: none; /* SVG'nin tıklamayı çalmasını engelle */ }
+        .nav-item svg { width: 20px; height: 20px; margin-right: 1rem; color: var(--text-light); transition: color 0.2s; pointer-events: none; }
         .nav-item button:hover svg { color: var(--primary-accent); }
 
         .main-content { width: 100%; height: 100%; display: flex; flex-direction: column; }
@@ -88,7 +89,9 @@
         .theme-toggle-button { background: none; border: 1px solid var(--border-color); color: var(--text-light); width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease; }
         #login-screen .theme-toggle-button { position: absolute; top: 1.5rem; right: 1.5rem; z-index: 100; }
         
-        #menu-overlay { position: fixed; inset: 0; background-color: rgba(0,0,0,0.4); z-index: 199; opacity: 0; transition: opacity 0.4s ease; pointer-events: none; }
+        #menu-overlay { 
+            position: fixed; inset: 0; background-color: rgba(0,0,0,0.4); z-index: 200; /* DÜZELTME: Katmanı sidebar'ın altına alındı */ opacity: 0; transition: opacity 0.4s ease; pointer-events: none;
+        }
         
         @media (min-width: 800px) {
             #app-container { flex-direction: row; }
@@ -217,11 +220,11 @@
         menuOverlay.addEventListener('click', closeSidebar);
         
         // --- SAYFA NAVİGASYONU ---
-        showFilesButton.addEventListener('click', () => {
+        showFilesButton.addEventListener('click', (e) => {
             welcomeView.style.display = 'none';
             fileView.style.display = 'block';
             mainTitle.textContent = 'Formlar';
-            closeSidebar(); // Tıklama sonrası menüyü kapat
+            closeSidebar();
         });
         
         // --- VERSİYON BİLGİSİ ---
