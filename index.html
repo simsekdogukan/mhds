@@ -9,17 +9,17 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-accent: #f37f21; --light-accent: #fed7aa; --background: #f9fafb; --card-bg: #ffffff; --text-dark: #231f20; --text-light: #6b7280; --border-color: #e5e7eb;
+            --primary-accent: #f37f21; --light-accent: #fed7aa; --background: #f9fafb; --card-bg: #ffffff; --text-dark: #231f20; --text-light: #6b7280; --border-color: #e5e7eb; --sidebar-width: 260px;
         }
         body.dark-theme {
-            --primary-accent: #f37f21; --light-accent: #523013; --background: #111827; --card-bg: #1f2937; --text-dark: #f9fafb; --text-light: #9ca3af; --border-color: #374151;
+            --light-accent: #523013; --background: #111827; --card-bg: #1f2937; --text-dark: #f9fafb; --text-light: #9ca3af; --border-color: #374151;
         }
         *, *::before, *::after { box-sizing: border-box; }
         body {
             font-family: 'Inter', sans-serif; margin: 0; background-color: var(--background); color: var(--text-dark); height: 100vh; overflow: hidden; transition: background-color 0.3s ease, color 0.3s ease;
         }
         .app-wrapper {
-            width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; padding: 1rem; background: linear-gradient(135deg, #fff7ed, #fff1e5);
+            width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; padding: 0; background: linear-gradient(135deg, #fff7ed, #fff1e5);
         }
         body.dark-theme .app-wrapper { background: linear-gradient(135deg, #1e293b, #0f172a); }
 
@@ -35,37 +35,34 @@
         .login-button:hover { background-color: #e86c0e; transform: translateY(-2px); }
         #login-error-message { color: #ef4444; margin-top: 1rem; display: none; }
 
-        /* --- ANA EKRAN YAPISI --- */
         #app-container {
-            width: 100%; height: 100%; max-width: 800px; display: none; flex-direction: column; background: var(--card-bg); border-radius: 1.5rem; box-shadow: 0 20px 40px rgba(0,0,0,0.08); overflow: hidden; opacity: 0; transform: translateY(20px); transition: opacity 0.5s ease-out, transform 0.5s ease-out, background-color 0.3s ease;
+            width: 100%; height: 100%; display: none; background: var(--card-bg); opacity: 0; transform: translateY(20px); transition: opacity 0.5s ease-out, transform 0.5s ease-out;
         }
         #app-container.visible { opacity: 1; transform: translateY(0); }
-        .app-content { position: relative; width: 100%; flex-grow: 1; display: flex; }
-        .app-view { width: 100%; height: 100%; flex-shrink: 0; position: absolute; top: 0; left: 0; display: flex; flex-direction: column; transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1); }
-        #menu-view { transform: translateX(0); }
-        #file-view { transform: translateX(100%); }
-        #app-container.files-visible #menu-view { transform: translateX(-100%); }
-        #app-container.files-visible #file-view { transform: translateX(0); }
+        
+        .sidebar {
+            width: var(--sidebar-width); height: 100%; background-color: var(--background); border-right: 1px solid var(--border-color); padding: 1.5rem; display: flex; flex-direction: column; position: fixed; top: 0; left: 0; transform: translateX(-100%); transition: transform 0.4s ease, background-color 0.3s ease; z-index: 200;
+        }
+        .sidebar-header { margin-bottom: 2rem; font-size: 1.8rem; font-weight: 700; color: var(--text-dark); }
+        .nav-list { list-style: none; padding: 0; margin: 0; }
+        .nav-item a { display: flex; align-items: center; padding: 0.9rem 1rem; border-radius: 0.5rem; text-decoration: none; color: var(--text-light); font-weight: 500; transition: background-color 0.2s, color 0.2s; }
+        .nav-item a:hover { background-color: var(--light-accent); color: var(--primary-accent); }
+        .nav-item svg { width: 20px; height: 20px; margin-right: 1rem; }
 
-        .app-header { padding: 1rem 1.5rem; border-bottom: 1px solid var(--border-color); flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; }
-        .app-header h1 { margin: 0; font-size: 1.5rem; font-weight: 700; }
-        .back-button { background: none; border: none; color: var(--text-dark); cursor: pointer; padding: 0.5rem; display: flex; align-items: center; font-size: 1rem; font-weight: 600; }
-        .back-button svg { width: 24px; height: 24px; margin-right: 0.5rem; }
-
-        .menu-list, .file-list { list-style: none; padding: 0; margin: 0; }
+        .main-content { width: 100%; height: 100%; display: flex; flex-direction: column; }
+        .main-header { padding: 1rem 1.5rem; border-bottom: 1px solid var(--border-color); flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; }
+        .main-header h1 { margin: 0; font-size: 1.5rem; font-weight: 700; }
+        .hamburger-button { background: none; border: none; cursor: pointer; padding: 0.5rem; }
+        
         .content-area { flex-grow: 1; overflow-y: auto; padding: 1.5rem; }
-        
-        .menu-item { display: flex; align-items: center; background-color: var(--card-bg); padding: 1rem; border: 1px solid var(--border-color); border-radius: 1rem; margin-bottom: 1rem; box-shadow: 0 4px 10px rgba(0,0,0,0.03); cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
-        .menu-item:hover { transform: translateY(-3px); box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
-        .menu-icon { width: 40px; height: 40px; margin-right: 1rem; flex-shrink: 0; display: flex; justify-content: center; align-items: center; background-color: var(--light-accent); border-radius: 0.75rem; color: var(--primary-accent); }
-        .menu-icon svg, .file-icon svg { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-        .menu-details { flex-grow: 1; }
-        .menu-name { font-weight: 600; color: var(--text-dark); }
-        .menu-arrow { color: var(--border-color); }
-        
+        #welcome-view { display: flex; justify-content: center; align-items: center; height: 100%; color: var(--text-light); font-size: 1.2rem; text-align: center; }
+        #file-view { display: none; }
+
+        .file-list { list-style: none; padding: 0; margin: 0; }
         .file-item { display: flex; align-items: center; background-color: var(--card-bg); padding: 1rem; border: 1px solid var(--border-color); border-radius: 1rem; margin-bottom: 1rem; box-shadow: 0 4px 10px rgba(0,0,0,0.03); opacity: 0; transform: translateY(20px); animation: slideUp 0.5s ease-out forwards; transition: background-color 0.3s ease, border-color 0.3s ease; }
         @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
         .file-icon { width: 40px; height: 40px; margin-right: 1rem; flex-shrink: 0; display: flex; justify-content: center; align-items: center; background-color: var(--light-accent); border-radius: 0.75rem; color: var(--primary-accent); transition: background-color 0.3s ease; }
+        .file-icon svg { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
         .file-details { flex-grow: 1; }
         .file-name { font-weight: 600; color: var(--text-dark); }
         .edit-button { background-color: var(--light-accent); color: var(--primary-accent); border: none; padding: 0.75rem 1.25rem; border-radius: 0.75rem; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: background-color 0.2s; }
@@ -75,13 +72,27 @@
         .app-footer { padding: 1rem; text-align: center; color: var(--text-light); font-size: 0.85rem; flex-shrink: 0; }
         .main-footer { border-top: 1px solid var(--border-color); background-color: var(--card-bg); transition: background-color 0.3s ease, border-color 0.3s ease; }
         .login-footer { position: absolute; bottom: 0; width: 100%; }
-        .version-info { position: fixed; bottom: 10px; left: 10px; font-size: 0.75rem; color: var(--text-light); background-color: rgba(255, 255, 255, 0.7); padding: 2px 6px; border-radius: 4px; z-index: 11; }
+        .version-info { position: fixed; bottom: 10px; left: 10px; font-size: 0.75rem; color: var(--text-light); background-color: rgba(255, 255, 255, 0.7); padding: 2px 6px; border-radius: 4px; z-index: 210; }
         body.dark-theme .version-info { background-color: rgba(0, 0, 0, 0.3); }
 
         .theme-toggle-button { background: none; border: 1px solid var(--border-color); color: var(--text-light); width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease; }
-        .theme-toggle-button svg { width: 20px; height: 20px; }
         #login-screen .theme-toggle-button { position: absolute; top: 1.5rem; right: 1.5rem; z-index: 100; }
-        #app-container .theme-toggle-button { position: static; }
+        
+        #menu-overlay { position: fixed; inset: 0; background-color: rgba(0,0,0,0.4); z-index: 199; opacity: 0; transition: opacity 0.4s ease; pointer-events: none; }
+        
+        /* MASAÜSTÜ GÖRÜNÜMÜ */
+        @media (min-width: 800px) {
+            #app-container { flex-direction: row; }
+            .sidebar { position: static; transform: translateX(0); box-shadow: none; }
+            .main-content { flex-grow: 1; }
+            .hamburger-button, #menu-overlay { display: none; } /* Hamburger menüyü ve overlay'i gizle */
+        }
+        /* MOBİL GÖRÜNÜMÜ */
+        @media (max-width: 799px) {
+            body.sidebar-open .sidebar { transform: translateX(0); box-shadow: 10px 0 30px rgba(0,0,0,0.1); }
+            body.sidebar-open #menu-overlay { opacity: 1; pointer-events: auto; }
+        }
+
     </style>
 </head>
 <body>
@@ -102,37 +113,38 @@
         </div>
 
         <div id="app-container">
-            <div class="app-content">
-                <div id="menu-view" class="app-view">
-                    <header class="app-header">
-                        <h1>MHDS</h1>
-                        <button id="theme-toggle-main" class="theme-toggle-button" title="Temayı Değiştir"></button>
-                    </header>
-                    <div class="content-area">
-                        <ul class="menu-list">
-                            <li class="menu-item" id="show-files-button">
-                                <div class="menu-icon"><svg><use href="#icon-folder" /></svg></div>
-                                <div class="menu-details"><div class="menu-name">Sistem Dosyaları</div></div>
-                                <div class="menu-arrow"><svg><use href="#icon-chevron-right" /></svg></div>
-                            </li>
-                            </ul>
-                    </div>
-                </div>
+            <nav class="sidebar" id="sidebar">
+                <div class="sidebar-header">MHDS</div>
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="#" id="show-files-button">
+                            <svg><use href="#icon-folder" /></svg> Formlar
+                        </a>
+                    </li>
+                    <!-- Gelecekte yeni klasörler buraya eklenebilir -->
+                </ul>
+            </nav>
 
-                <div id="file-view" class="app-view">
-                    <header class="app-header">
-                        <button id="back-to-menu-button" class="back-button">
-                            <svg><use href="#icon-chevron-left" /></svg> Geri
-                        </button>
-                        <h1>Sistem Dosyaları</h1>
-                    </header>
-                    <div class="content-area">
+            <main class="main-content">
+                <header class="main-header">
+                    <button class="hamburger-button" id="hamburger-button" title="Menüyü Aç">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                    </button>
+                    <h1 id="main-title">MHDS</h1>
+                    <button id="theme-toggle-main" class="theme-toggle-button" title="Temayı Değiştir"></button>
+                </header>
+                <div class="content-area">
+                    <div id="welcome-view">
+                        <p>Erişmek istediğiniz klasörü seçin.</p>
+                    </div>
+                    <div id="file-view">
                         <ul class="file-list" id="file-list"></ul>
                     </div>
                 </div>
-            </div>
-            <footer class="app-footer main-footer">MHDS - Mayatech Bilgi İşlem 2025©</footer>
+                <footer class="app-footer main-footer">MHDS - Mayatech Bilgi İşlem 2025©</footer>
+            </main>
         </div>
+        <div id="menu-overlay"></div>
     </div>
 
     <div class="version-info">v.6</div>
@@ -143,8 +155,6 @@
             <symbol id="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></symbol>
             <symbol id="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></symbol>
             <symbol id="icon-folder" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></symbol>
-            <symbol id="icon-chevron-right" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></symbol>
-            <symbol id="icon-chevron-left" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></symbol>
         </defs>
     </svg>
 
@@ -158,7 +168,11 @@
         const themeToggleLogin = document.getElementById('theme-toggle-login');
         const themeToggleMain = document.getElementById('theme-toggle-main');
         const showFilesButton = document.getElementById('show-files-button');
-        const backToMenuButton = document.getElementById('back-to-menu-button');
+        const hamburgerButton = document.getElementById('hamburger-button');
+        const menuOverlay = document.getElementById('menu-overlay');
+        const mainTitle = document.getElementById('main-title');
+        const welcomeView = document.getElementById('welcome-view');
+        const fileView = document.getElementById('file-view');
 
         // --- TEMA YÖNETİMİ ---
         const sunIcon = '<svg><use href="#icon-sun" /></svg>';
@@ -185,9 +199,20 @@
         themeToggleLogin.addEventListener('click', toggleTheme);
         themeToggleMain.addEventListener('click', toggleTheme);
         
+        // --- MENÜ KONTROLÜ ---
+        function openSidebar() { document.body.classList.add('sidebar-open'); }
+        function closeSidebar() { document.body.classList.remove('sidebar-open'); }
+        hamburgerButton.addEventListener('click', openSidebar);
+        menuOverlay.addEventListener('click', closeSidebar);
+        
         // --- SAYFA NAVİGASYONU ---
-        showFilesButton.addEventListener('click', () => appContainer.classList.add('files-visible'));
-        backToMenuButton.addEventListener('click', () => appContainer.classList.remove('files-visible'));
+        showFilesButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            welcomeView.style.display = 'none';
+            fileView.style.display = 'block';
+            mainTitle.textContent = 'Formlar';
+            closeSidebar();
+        });
 
         // --- DOSYA LİSTELEME ---
         function displayFiles(files) {
@@ -212,7 +237,7 @@
                 const response = await fetch('/api/getFiles', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: password }) });
                 if (response.ok) {
                     const files = await response.json();
-                    displayFiles(files); 
+                    displayFiles(files);
                     loginScreen.classList.add('hidden');
                     setTimeout(() => {
                         appContainer.style.display = 'flex';
