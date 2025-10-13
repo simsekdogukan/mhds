@@ -204,13 +204,41 @@
             const homeLogoMain = document.getElementById('home-logo-main');
 
              // --- AKILLI DOKUNMA/TIKLAMA YÖNETİCİSİ ---
-             const addSmartEventListener = (element, callback) => {
+const addSmartEventListener = (element, callback) => {
                 const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
                 const eventType = isTouchDevice ? 'touchstart' : 'click';
-                element.addEventListener(eventType, (event) => {
-                    // event.preventDefault(); // Hayalet tıklamaları (ghost clicks) önle - Mobil dokunma sorununu gidermek için yorum satır yorum satır yorumlandı
-                    callback();
-                });
+                let touchStartTime = 0;
+                const TOUCH_THRESHOLD = 200; // milliseconds
+
+                const handleTouchStart = (event) => {
+                    touchStartTime = new Date().getTime();
+                    // event.preventDefault(); // Prevent default only if necessary to avoid scroll issues
+                };
+
+                const handleTouchEnd = (event) => {
+                    const touchEndTime = new Date().getTime();
+                    if (touchEndTime - touchStartTime < TOUCH_THRESHOLD) {
+                        // This is a quick tap, likely intended as a click
+                        event.preventDefault(); // Prevent ghost clicks
+                        event.stopPropagation();
+                        callback();
+                    }
+                };
+
+                const handleClick = (event) => {
+                    if (!isTouchDevice) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        callback();
+                    }
+                };
+
+                if (isTouchDevice) {
+                    element.addEventListener('touchstart', handleTouchStart, { passive: true });
+                    element.addEventListener('touchend', handleTouchEnd, { passive: false });
+                } else {
+                    element.addEventListener('click', handleClick, { passive: false });
+                }
             };
 
             // --- TEMA YÖNETİMİ ---
