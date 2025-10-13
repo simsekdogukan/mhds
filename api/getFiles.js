@@ -5,7 +5,7 @@ export default function handler(request, response) {
     }
 
     // Doğru şifre burada SAKLI
-    const correctPassword = '1234';
+    const correctPassword = '9110880/';
     
     // Google Drive linkleri burada GÜVENDE
     const files = [
