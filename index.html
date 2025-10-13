@@ -40,16 +40,11 @@
         }
         #app-container.visible { opacity: 1; transform: translateY(0); }
         
-        .sidebar-container {
-            position: fixed; inset: 0; z-index: 200;
-            background-color: rgba(0,0,0,0.4);
-            opacity: 0; transition: opacity 0.4s ease;
-            visibility: hidden;
-        }
+        /* DÜZELTME: OVERLAY VE SIDEBAR MIMARISI YENIDEN YAZILDI */
         .sidebar {
             width: var(--sidebar-width); height: 100%; background-color: var(--background); border-right: 1px solid var(--border-color); padding: 1.5rem; display: flex; flex-direction: column; 
-            transform: translateX(-100%);
             transition: transform 0.4s ease, background-color 0.3s ease; 
+            z-index: 201;
         }
         .sidebar-header { margin-bottom: 2rem; }
         .header-logo { max-height: 40px; cursor: pointer; }
@@ -97,16 +92,20 @@
         .theme-toggle-button { background: none; border: 1px solid var(--border-color); color: var(--text-light); width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease; }
         #login-screen .theme-toggle-button { position: absolute; top: 1.5rem; right: 1.5rem; z-index: 100; }
         
+        #sidebar-overlay { 
+            position: fixed; inset: 0; background-color: rgba(0,0,0,0.4); z-index: 200; opacity: 0; transition: opacity 0.4s ease; pointer-events: none;
+        }
+        
         @media (min-width: 800px) {
             #app-container { flex-direction: row; }
-            .sidebar-container { display: none !important; }
-            .sidebar { position: static; transform: translateX(0); visibility: visible; box-shadow: none; }
+            .sidebar { position: static; transform: translateX(0); box-shadow: none; }
             .main-content { flex-grow: 1; }
-            .hamburger-button { display: none; }
+            .hamburger-button, #sidebar-overlay { display: none; }
         }
         @media (max-width: 799px) {
-            body.sidebar-open .sidebar-container { visibility: visible; opacity: 1; }
+            .sidebar { position: fixed; transform: translateX(-100%); }
             body.sidebar-open .sidebar { transform: translateX(0); box-shadow: 10px 0 30px rgba(0,0,0,0.1); }
+            body.sidebar-open #sidebar-overlay { opacity: 1; pointer-events: auto; }
         }
     </style>
 </head>
@@ -128,28 +127,26 @@
         </div>
 
         <div id="app-container">
-            <div class="sidebar-container" id="sidebar-container">
-                <nav class="sidebar" id="sidebar">
-                    <div>
-                        <div class="sidebar-header">
-                            <img src="logo.png" alt="MHDS Logo" class="header-logo" id="home-logo-sidebar">
-                        </div>
-                        <ul class="nav-list">
-                            <li class="nav-item">
-                                <button id="show-files-button">
-                                    <svg><use href="#icon-folder" /></svg> Formlar
-                                </button>
-                            </li>
-                        </ul>
+            <nav class="sidebar" id="sidebar">
+                <div>
+                    <div class="sidebar-header">
+                        <img src="logo.png" alt="MHDS Logo" class="header-logo" id="home-logo-sidebar">
                     </div>
-                    <footer class="sidebar-footer">
-                        <div class="version-info" id="version-info">
-                            <span class="short-version">v.11.2</span>
-                            <span class="long-version">v.11.2 - DOM Yüklenme hatası giderildi</span>
-                        </div>
-                    </footer>
-                </nav>
-            </div>
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            <button id="show-files-button">
+                                <svg><use href="#icon-folder" /></svg> Formlar
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+                <footer class="sidebar-footer">
+                    <div class="version-info" id="version-info">
+                        <span class="short-version">v.11.3</span>
+                        <span class="long-version">v.11.3 - Masaüstü/Mobil responsive mimarisi yeniden yazıldı</span>
+                    </div>
+                </footer>
+            </nav>
 
             <main class="main-content">
                 <header class="main-header">
@@ -170,6 +167,7 @@
                 <footer class="app-footer main-footer">MHDS - Mayatech Bilgi İşlem 2025©</footer>
             </main>
         </div>
+        <div id="sidebar-overlay"></div>
     </div>
 
     <svg width="0" height="0" style="position:absolute;">
@@ -196,7 +194,7 @@
             const themeToggleMain = document.getElementById('theme-toggle-main');
             const showFilesButton = document.getElementById('show-files-button');
             const hamburgerButton = document.getElementById('hamburger-button');
-            const sidebarContainer = document.getElementById('sidebar-container');
+            const sidebarOverlay = document.getElementById('sidebar-overlay');
             const welcomeView = document.getElementById('welcome-view');
             const fileView = document.getElementById('file-view');
             const versionInfo = document.getElementById('version-info');
@@ -224,12 +222,13 @@
             themeToggleLogin.addEventListener('click', toggleTheme);
             themeToggleMain.addEventListener('click', toggleTheme);
             
-            // --- MENÜ KONTROLÜ ---
+            // --- MENÜ KONTROLÜ (YENİ MİMARİ) ---
             function openSidebar() { document.body.classList.add('sidebar-open'); }
             function closeSidebar() { document.body.classList.remove('sidebar-open'); }
             hamburgerButton.addEventListener('click', openSidebar);
-            sidebarContainer.addEventListener('click', (event) => {
-                if (event.target === sidebarContainer) {
+            sidebarOverlay.addEventListener('click', (event) => {
+                // Sadece overlay'in kendisine (boş alana) tıklandığında menüyü kapat.
+                if (event.target === sidebarOverlay) {
                     closeSidebar();
                 }
             });
@@ -244,7 +243,7 @@
                 welcomeView.style.display = 'none';
                 fileView.style.display = 'block';
                 closeSidebar();
-            });
+});
             homeLogoSidebar.addEventListener('click', goHome);
             homeLogoMain.addEventListener('click', goHome);
             
