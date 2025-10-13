@@ -208,7 +208,7 @@
                 const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
                 const eventType = isTouchDevice ? 'touchstart' : 'click';
                 element.addEventListener(eventType, (event) => {
-                    event.preventDefault(); // Hayalet tıklamaları (ghost clicks) önle
+                    // event.preventDefault(); // Hayalet tıklamaları (ghost clicks) önle - Mobil dokunma sorununu gidermek için yorum satır yorum satır yorumlandı
                     callback();
                 });
             };
