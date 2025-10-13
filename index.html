@@ -96,12 +96,14 @@
             position: fixed; inset: 0; background-color: rgba(0,0,0,0.4); z-index: 200; opacity: 0; transition: opacity 0.4s ease; pointer-events: none;
         }
         
+        /* MASAÜSTÜ GÖRÜNÜMÜ */
         @media (min-width: 800px) {
             #app-container { flex-direction: row; }
             .sidebar { position: static; transform: translateX(0); }
             .main-content { flex-grow: 1; }
             .hamburger-button, #sidebar-overlay { display: none; }
         }
+        /* MOBİL GÖRÜNÜMÜ */
         @media (max-width: 799px) {
             .sidebar { position: fixed; transform: translateX(-100%); }
             body.sidebar-open .sidebar { transform: translateX(0); box-shadow: 10px 0 30px rgba(0,0,0,0.1); }
