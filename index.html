@@ -41,7 +41,6 @@
         }
         #app-container.visible { opacity: 1; transform: translateY(0); }
         
-        /* DÜZELTME: OVERLAY VE SIDEBAR MIMARISI YENIDEN YAZILDI */
         .sidebar {
             width: var(--sidebar-width); height: 100%; background-color: var(--background); border-right: 1px solid var(--border-color); padding: 1.5rem; display: flex; flex-direction: column; 
             transition: transform 0.4s ease, background-color 0.3s ease; 
@@ -97,16 +96,18 @@
             position: fixed; inset: 0; background-color: rgba(0,0,0,0.4); z-index: 200; opacity: 0; transition: opacity 0.4s ease; pointer-events: none;
         }
         
-        /* MASAÜSTÜ GÖRÜNÜMÜ */
+        /* DÜZELTME: MASAÜSTÜ GÖRÜNÜMÜ YENİDEN YAZILDI */
         @media (min-width: 800px) {
             #app-container { flex-direction: row; }
             .sidebar { position: static; transform: translateX(0); }
             .main-content { flex-grow: 1; }
             .hamburger-button, #sidebar-overlay { display: none; }
         }
-        /* MOBİL GÖRÜNÜMÜ */
+        /* DÜZELTME: MOBİL GÖRÜNÜMÜ YENİDEN YAZILDI */
         @media (max-width: 799px) {
+            #app-container { flex-direction: column; }
             .sidebar { position: fixed; transform: translateX(-100%); }
+            .main-content { width: 100%; }
             body.sidebar-open .sidebar { transform: translateX(0); box-shadow: 10px 0 30px rgba(0,0,0,0.1); }
             body.sidebar-open #sidebar-overlay { opacity: 1; pointer-events: auto; }
         }
@@ -146,7 +147,7 @@
                 <footer class="sidebar-footer">
                     <div class="version-info" id="version-info">
                         <span class="short-version">v.20.0</span>
-                        <span class="long-version">v.20.0 - Mobil etkileşim motoru sıfırdan yazıldı</span>
+                        <span class="long-version">v.20.0 - Responsive mimarisi temelden yeniden yazıldı</span>
                     </div>
                 </footer>
             </nav>
