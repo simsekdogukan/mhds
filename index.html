@@ -1,156 +1,96 @@
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mayatech Hızlı Dosya Sistemi</title>
-    <style>
-        body {
-            margin: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f4f4f9;
+}
+}
+.file-icon {
+            font-size: 2rem;
+            width: 40px;
+            height: 40px;
+margin-right: 1rem;
+flex-shrink: 0;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-        }
-        .container {
-            width: 100%;
-            max-width: 500px;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-        .window {
-            background: #ffffff;
-            border-radius: 16px;
-            padding: 24px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-        h1 {
-            text-align: center;
-            color: #333;
-            margin-top: 0;
-        }
-        input[type="password"] {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            box-sizing: border-box;
-            margin-top: 20px;
-            text-align: center;
-        }
-        button {
-            width: 100%;
-            padding: 12px;
-            background-color: #5d3fd3;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-weight: bold;
-            font-size: 16px;
-            margin-top: 16px;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-        button:hover { background-color: #4a32a8; }
-        #error-message { color: red; text-align: center; margin-top: 10px; display: none; }
-        .file-card {
-            background-color: #f8f8ff;
-            border: 1px solid #e6e6fa;
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        .file-info { display: flex; align-items: center; }
-        .file-icon { font-size: 24px; margin-right: 12px; }
-        .file-name { color: #333; }
-        .file-card a {
-            text-decoration: none;
-            background-color: #e6e6fa;
-            color: #5d3fd3;
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-weight: bold;
-            font-size: 14px;
-        }
-    </style>
-</head>
-<body>
+            background-color: var(--light-accent);
+            border-radius: 0.75rem;
+            color: var(--primary-accent);
+}
+.file-details {
+flex-grow: 1;
+@@ -199,7 +206,7 @@
+<div class="login-logo">MHDS</div>
+<p>Devam etmek için lütfen parolanızı girin.</p>
+<div class="input-group">
+                    <input type="password" id="password" placeholder="••••••••">
+                    <input type="password" id="password" placeholder="Parola">
+<button class="login-button" id="login-button">Giriş Yap</button>
+</div>
+<p id="login-error-message">Hatalı parola.</p>
+@@ -212,12 +219,31 @@ <h1>Mayatech Hızlı Dosya Sistemi</h1>
+</header>
+<div class="file-list-container">
+<ul class="file-list" id="file-list">
+                    <!-- Dosyalar buraya dinamik olarak eklenecek -->
+                </ul>
+                    </ul>
+</div>
+</main>
+</div>
 
-    <div class="container" id="login-container">
-        <div class="window">
-            <h1>Giriş Yap</h1>
-            <input type="password" id="password">
-            <button id="login-button">Giriş</button>
-            <p id="error-message">Hatalı veya eksik şifre.</p>
-        </div>
-    </div>
+    <svg width="0" height="0" style="position:absolute;">
+        <defs>
+            <symbol id="icon-file-text" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+            </symbol>
+            <symbol id="icon-file-sheet" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <line x1="10" y1="9" x2="8" y2="9"></line>
+                <polyline points="15 9 15 18 12 18 12 9 15 9"></polyline>
+            </symbol>
+        </defs>
+    </svg>
 
-    <div class="container" id="main-content" style="display: none;">
-        <h1>Mayatech Hızlı Dosya Sistemi</h1>
-        <div id="file-list-container"></div>
-    </div>
-
-    <script>
-        const loginContainer = document.getElementById('login-container');
-        const mainContent = document.getElementById('main-content');
-        const loginButton = document.getElementById('login-button');
-        const passwordInput = document.getElementById('password');
-        const errorMessage = document.getElementById('error-message');
-        const fileListContainer = document.getElementById('file-list-container');
-
-        const handleLogin = async () => {
-            const password = passwordInput.value;
-            if (!password) {
-                errorMessage.style.display = 'block';
-                return;
-            }
-
-            try {
-                const response = await fetch('/api/getFiles', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ password: password })
-                });
-
-                if (response.ok) {
-                    const files = await response.json();
-                    loginContainer.style.display = 'none';
-                    mainContent.style.display = 'block';
-                    populateFileList(files);
-                } else {
-                    errorMessage.style.display = 'block';
-                }
-            } catch (error) {
-                errorMessage.style.display = 'block';
-            }
-        };
-        
-        loginButton.addEventListener('click', handleLogin);
-        passwordInput.addEventListener('keyup', (event) => {
-            if (event.key === 'Enter') handleLogin();
-        });
-
-        function populateFileList(files) {
-            fileListContainer.innerHTML = '';
-            files.forEach(file => {
-                const card = document.createElement('div');
-                card.className = 'file-card';
-                card.innerHTML = `
-                    <div class="file-info">
-                        <span class="file-icon">⭐</span>
-                        <span class="file-name">${file.name}</span>
+<script>
+const loginScreen = document.getElementById('login-screen');
+const mainScreen = document.getElementById('main-screen');
+@@ -230,13 +256,14 @@ <h1>Mayatech Hızlı Dosya Sistemi</h1>
+fileList.innerHTML = '';
+files.forEach((file, index) => {
+const isSheet = file.name.includes('.xls') || file.name.includes('Listesi');
+                const fileTypeIcon = isSheet ? '📊' : '📄';
+                const iconId = isSheet ? '#icon-file-sheet' : '#icon-file-text';
+const listItem = document.createElement('li');
+listItem.className = 'file-item';
+                // Animasyon gecikmesi
+listItem.style.animationDelay = `${index * 100}ms`;
+listItem.innerHTML = `
+                    <div class="file-icon">${fileTypeIcon}</div>
+                    <div class="file-icon">
+                        <svg width="24" height="24"><use href="${iconId}" /></svg>
                     </div>
-                    <a href="${file.url}" target="_blank">Düzenle</a>
-                `;
-                fileListContainer.appendChild(card);
-            });
-        }
-    </script>
-
-</body>
-</html>
+                   <div class="file-details">
+                       <div class="file-name">${file.name}</div>
+                   </div>
+@@ -261,16 +288,12 @@ <h1>Mayatech Hızlı Dosya Sistemi</h1>
+const response = await fetch('/api/getFiles', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: password }) });
+if (response.ok) {
+const files = await response.json();
+                    
+                    // Animasyonlu geçiş
+loginScreen.classList.add('hidden');
+setTimeout(() => {
+mainScreen.style.display = 'flex';
+                        // displayFiles'ı ana ekran göründükten sonra çağırıyoruz
+displayFiles(files); 
+                        setTimeout(() => mainScreen.classList.add('visible'), 50); // Kısa bir gecikme ile animasyonu tetikle
+                        setTimeout(() => mainScreen.classList.add('visible'), 50);
+}, 500);
+                    
+} else {
+loginErrorMessage.style.display = 'block';
+passwordInput.value = '';
