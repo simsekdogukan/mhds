@@ -234,13 +234,13 @@
             
             // DÜZELTME: Hem 'click' hem de 'touchstart' olayını dinle
             const handleShowFiles = (event) => {
-                event.preventDefault(); // Varsayılan davranışı engelle
+                event.preventDefault(); // Varsayılan davranışı engelle (linke gitme gibi)
                 welcomeView.style.display = 'none';
                 fileView.style.display = 'block';
                 closeSidebar();
             };
             showFilesButton.addEventListener('click', handleShowFiles);
-            showFilesButton.addEventListener('touchstart', handleShowFiles);
+            showFilesButton.addEventListener('touchstart', handleShowFiles, { passive: false });
             
             homeLogoSidebar.addEventListener('click', goHome);
             homeLogoMain.addEventListener('click', goHome);
@@ -255,65 +255,3 @@
                 fileList.innerHTML = '';
                 files.forEach((file, index) => {
                     const listItem = document.createElement('li');
-                    listItem.className = 'file-item';
-                    listItem.style.animationDelay = `${index * 100}ms`;
-                    listItem.innerHTML = `<div class="file-icon"><svg><use href="#icon-file" /></svg></div><div class="file-details"><div class="file-name">${file.name}</div></div><a href="${file.url}" target="_blank" style="text-decoration: none;"><button class="edit-button">Düzenle</button></a>`;
-                    fileList.appendChild(listItem);
-                });
-            }
-            
-            // --- GİRİŞ VE OTURUM YÖNETİMİ ---
-            function showApp(files) {
-                displayFiles(files);
-                loginScreen.classList.add('hidden');
-                setTimeout(() => {
-                    appContainer.style.display = 'flex';
-                    setTimeout(() => appContainer.classList.add('visible'), 50);
-                }, 500);
-            }
-
-            async function handleLogin() {
-                const password = passwordInput.value;
-                if (!password) { loginErrorMessage.style.display = 'block'; return; }
-                loginButton.disabled = true;
-                loginButton.textContent = 'Doğrulanıyor...';
-                loginErrorMessage.style.display = 'none';
-                try {
-                    const response = await fetch('/api/getFiles', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: password }) });
-                    if (response.ok) {
-                        const files = await response.json();
-                        sessionStorage.setItem('isLoggedIn', 'true');
-                        sessionStorage.setItem('fileCache', JSON.stringify(files));
-                        showApp(files);
-                    } else {
-                        loginErrorMessage.style.display = 'block';
-                        passwordInput.value = '';
-                    }
-                } catch (error) {
-                    loginErrorMessage.textContent = 'Bir ağ hatası oluştu. Lütfen tekrar deneyin.';
-                    loginErrorMessage.style.display = 'block';
-                } finally {
-                    loginButton.disabled = false;
-                    loginButton.textContent = 'Giriş Yap';
-                }
-            }
-            
-            // --- SAYFA YÜKLENDİĞİNDE ÇALIŞAN KOD ---
-            (() => {
-                applyTheme(localStorage.getItem('theme') || 'dark'); // Önce temayı uygula
-                
-                if (sessionStorage.getItem('isLoggedIn') === 'true') {
-                    const cachedFiles = JSON.parse(sessionStorage.getItem('fileCache'));
-                    if (cachedFiles) {
-                        showApp(cachedFiles);
-                    }
-                }
-            })();
-
-            loginButton.addEventListener('click', handleLogin);
-            passwordInput.addEventListener('keyup', (event) => { if (event.key === 'Enter') { handleLogin(); } });
-
-        });
-    </script>
-</body>
-</html>
