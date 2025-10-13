@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
+            /* Varsayılan (Açık Tema) Renk Paleti */
             --primary-accent: #f37f21;
             --light-accent: #fed7aa;
             --background: #f9fafb;
@@ -17,6 +18,18 @@
             --text-light: #6b7280;
             --border-color: #e5e7eb;
         }
+
+        body.dark-theme {
+            /* Karanlık Tema Renk Paleti */
+            --primary-accent: #f37f21;
+            --light-accent: #523013;
+            --background: #111827;
+            --card-bg: #1f2937;
+            --text-dark: #f9fafb;
+            --text-light: #9ca3af;
+            --border-color: #374151;
+        }
+
         *, *::before, *::after {
             box-sizing: border-box;
         }
@@ -27,6 +40,7 @@
             color: var(--text-dark);
             height: 100vh;
             overflow: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
         .app-wrapper {
             width: 100%;
@@ -36,6 +50,9 @@
             align-items: center;
             padding: 1rem;
             background: linear-gradient(135deg, #fff7ed, #fff1e5);
+        }
+        body.dark-theme .app-wrapper {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
         }
 
         /* --- Giriş Ekranı Tasarımı --- */
@@ -58,7 +75,7 @@
             pointer-events: none;
         }
         .login-logo {
-            max-width: 140px; /* Logo boyutu büyütüldü */
+            max-width: 140px;
             height: auto;
             margin-bottom: 2rem;
         }
@@ -81,6 +98,8 @@
             border-radius: 0.75rem;
             font-size: 1rem;
             text-align: center;
+            background-color: var(--card-bg);
+            color: var(--text-dark);
         }
         .login-button {
             background-color: var(--primary-accent);
@@ -116,16 +135,19 @@
             overflow: hidden;
             opacity: 0;
             transform: translateY(20px);
-            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out, background-color 0.3s ease;
         }
         #main-screen.visible {
             opacity: 1;
             transform: translateY(0);
         }
         .main-header {
-            padding: 1.5rem;
+            padding: 1rem 1.5rem;
             border-bottom: 1px solid var(--border-color);
             flex-shrink: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         .main-header h1 {
             margin: 0;
@@ -154,13 +176,9 @@
             opacity: 0;
             transform: translateY(20px);
             animation: slideUp 0.5s ease-out forwards;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
         }
-        @keyframes slideUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+        @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
         .file-icon {
             width: 40px;
             height: 40px;
@@ -172,6 +190,7 @@
             background-color: var(--light-accent);
             border-radius: 0.75rem;
             color: var(--primary-accent);
+            transition: background-color 0.3s ease;
         }
         .file-icon svg {
             width: 24px;
@@ -182,13 +201,8 @@
             stroke-linecap: round;
             stroke-linejoin: round;
         }
-        .file-details {
-            flex-grow: 1;
-        }
-        .file-name {
-            font-weight: 600;
-            color: var(--text-dark);
-        }
+        .file-details { flex-grow: 1; }
+        .file-name { font-weight: 600; color: var(--text-dark); }
         .edit-button {
             background-color: var(--light-accent);
             color: var(--primary-accent);
@@ -200,9 +214,8 @@
             cursor: pointer;
             transition: background-color 0.2s;
         }
-        .edit-button:hover {
-            background-color: #fdbf80;
-        }
+        .edit-button:hover { background-color: #fdbf80; }
+        body.dark-theme .edit-button:hover { background-color: #6a3d16; }
         
         .app-footer {
             padding: 1rem;
@@ -214,12 +227,9 @@
         .main-footer {
             border-top: 1px solid var(--border-color);
             background-color: var(--card-bg);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
         }
-        .login-footer {
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-        }
+        .login-footer { position: absolute; bottom: 0; width: 100%; }
         .version-info {
             position: fixed;
             bottom: 10px;
@@ -230,6 +240,24 @@
             padding: 2px 6px;
             border-radius: 4px;
         }
+        body.dark-theme .version-info {
+            background-color: rgba(0, 0, 0, 0.3);
+        }
+
+        /* Tema Değiştirme Butonu */
+        .theme-toggle-button {
+            background: none;
+            border: 1px solid var(--border-color);
+            color: var(--text-light);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .theme-toggle-button svg { width: 20px; height: 20px; }
 
     </style>
 </head>
@@ -246,22 +274,18 @@
                 </div>
                 <p id="login-error-message">Hatalı parola.</p>
             </div>
-            <footer class="app-footer login-footer">
-                MHDS - Mayatech Bilgi İşlem 2025©
-            </footer>
+            <footer class="app-footer login-footer">MHDS - Mayatech Bilgi İşlem 2025©</footer>
         </div>
 
         <main id="main-screen">
             <header class="main-header">
                 <h1>MHDS</h1>
+                <button id="theme-toggle" title="Temayı Değiştir"></button>
             </header>
             <div class="file-list-container">
-                <ul class="file-list" id="file-list">
-                </ul>
+                <ul class="file-list" id="file-list"></ul>
             </div>
-            <footer class="app-footer main-footer">
-                MHDS - Mayatech Bilgi İşlem 2025©
-            </footer>
+            <footer class="app-footer main-footer">MHDS - Mayatech Bilgi İşlem 2025©</footer>
         </main>
     </div>
 
@@ -269,12 +293,9 @@
 
     <svg width="0" height="0" style="position:absolute;">
         <defs>
-            <symbol id="icon-file" viewBox="0 0 24 24">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                <polyline points="14 2 14 8 20 8"></polyline>
-                <line x1="16" y1="13" x2="8" y2="13"></line>
-                <line x1="16" y1="17" x2="8" y2="17"></line>
-            </symbol>
+            <symbol id="icon-file" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></symbol>
+            <symbol id="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></symbol>
+            <symbol id="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></symbol>
         </defs>
     </svg>
 
@@ -285,36 +306,60 @@
         const loginButton = document.getElementById('login-button');
         const loginErrorMessage = document.getElementById('login-error-message');
         const fileList = document.getElementById('file-list');
+        const themeToggle = document.getElementById('theme-toggle');
 
+        // --- TEMA YÖNETİMİ ---
+        const sunIcon = '<svg><use href="#icon-sun" /></svg>';
+        const moonIcon = '<svg><use href="#icon-moon" /></svg>';
+
+        function applyTheme(theme) {
+            if (theme === 'dark') {
+                document.body.classList.add('dark-theme');
+                themeToggle.innerHTML = sunIcon;
+            } else {
+                document.body.classList.remove('dark-theme');
+                themeToggle.innerHTML = moonIcon;
+            }
+        }
+
+        // Sayfa yüklendiğinde temayı belirle
+        (() => {
+            const savedTheme = localStorage.getItem('theme');
+            const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            if (savedTheme) { // 1. Kayıtlı tercih varsa onu kullan
+                applyTheme(savedTheme);
+            } else { // 2. Kayıtlı tercih yoksa, sistem ayarına bak (varsayılan dark)
+                applyTheme(systemPrefersDark ? 'dark' : 'dark');
+            }
+        })();
+        
+        themeToggle.addEventListener('click', () => {
+            const currentIsDark = document.body.classList.contains('dark-theme');
+            const newTheme = currentIsDark ? 'light' : 'dark';
+            localStorage.setItem('theme', newTheme);
+            applyTheme(newTheme);
+        });
+
+        // --- DOSYA LİSTELEME ---
         function displayFiles(files) {
             fileList.innerHTML = '';
             files.forEach((file, index) => {
                 const listItem = document.createElement('li');
                 listItem.className = 'file-item';
                 listItem.style.animationDelay = `${index * 100}ms`;
-                listItem.innerHTML = `
-                    <div class="file-icon">
-                        <svg><use href="#icon-file" /></svg>
-                    </div>
-                    <div class="file-details">
-                        <div class="file-name">${file.name}</div>
-                    </div>
-                    <a href="${file.url}" target="_blank" style="text-decoration: none;">
-                        <button class="edit-button">Düzenle</button>
-                    </a>
-                `;
+                listItem.innerHTML = `<div class="file-icon"><svg><use href="#icon-file" /></svg></div><div class="file-details"><div class="file-name">${file.name}</div></div><a href="${file.url}" target="_blank" style="text-decoration: none;"><button class="edit-button">Düzenle</button></a>`;
                 fileList.appendChild(listItem);
             });
         }
         
+        // --- GÜVENLİ GİRİŞ FONKSİYONU ---
         async function handleLogin() {
             const password = passwordInput.value;
             if (!password) { loginErrorMessage.style.display = 'block'; return; }
-            
             loginButton.disabled = true;
             loginButton.textContent = 'Doğrulanıyor...';
             loginErrorMessage.style.display = 'none';
-
             try {
                 const response = await fetch('/api/getFiles', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: password }) });
                 if (response.ok) {
@@ -339,11 +384,7 @@
         }
 
         loginButton.addEventListener('click', handleLogin);
-        passwordInput.addEventListener('keyup', (event) => {
-            if (event.key === 'Enter') {
-                handleLogin();
-            }
-        });
+        passwordInput.addEventListener('keyup', (event) => { if (event.key === 'Enter') { handleLogin(); } });
     </script>
 </body>
 </html>
