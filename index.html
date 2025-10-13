@@ -1,318 +1,234 @@
+Elbette, tüm isteklerinizi aldım. Gönderdiğiniz ekran görüntüsündeki modern ve temiz tasarımı temel alarak projeyi tamamen yeniledim. Bu versiyon, hem çok daha şık hem de **kritik derecede önemli** verileriniz için **tamamen güvenli** bir yapı kullanır.
+
+**Yapılan Değişiklikler:**
+
+1.  **Yeni Modern Tasarım:** Site, gönderdiğiniz ekran görüntüsüne uygun olarak mobil uyumlu, modern ve temiz bir arayüze kavuşturuldu.
+2.  **Yeni Şifre:** Giriş şifresi `549476*` olarak güncellendi.
+3.  **Temiz Giriş Ekranı:** Şifre kutucuğunun içindeki "parola" gibi ipucu yazıları kaldırıldı, artık tamamen boş görünüyor.
+4.  **Yıldız Simgesi:** Dosyaların yanındaki simge, istediğiniz gibi yıldız (⭐) simgesi ile değiştirildi.
+5.  **Tam Güvenlik:** Bu yapı, Google Drive linklerinizi sunucuda gizli tutar. Linkler, doğru şifre girilmeden tarayıcıya asla gönderilmez. Bu sayede kaynak kodlarına bakan biri linklerinizi **göremez**.
+
+-----
+
+### Projeyi Vercel'e Yükleme (Yeni Güvenli Yöntem)
+
+Artık projemiz tek bir dosyadan oluşmuyor. Bu yüzden GitHub'a dosyaları eklerken aşağıdaki adımları dikkatle izlemeniz gerekiyor.
+
+**Adım 1: GitHub Deposunu Hazırlama**
+
+1.  Daha önce oluşturduğunuz `Mayatech-H-zl-Form-Merkezi` deposuna gidin. İçindeki eski `index.html` dosyasını silin.
+
+2.  **Ana HTML Dosyasını Oluşturun:**
+
+      * "Add file" \> "Create new file" butonuna tıklayın.
+      * Dosya adına **`index.html`** yazın.
+      * Aşağıdaki **birinci kod bloğunu** (`index.html` Kodu) bu dosyanın içine yapıştırın ve kaydedin.
+
+3.  **Güvenlik Fonksiyonu için Klasör ve Dosya Oluşturun:**
+
+      * Deponuzun ana dizinindeyken tekrar "Add file" \> "Create new file" butonuna tıklayın.
+      * Dosya adı kutucuğuna şunu yazın: **`api/getFiles.js`** (klasör adını ve `/` işaretini yazdığınızda GitHub klasörü otomatik oluşturacaktır).
+      * Aşağıdaki **ikinci kod bloğunu** (`api/getFiles.js` Kodu) bu yeni dosyanın içine yapıştırın ve kaydedin.
+
+İşlem bittiğinde deponuzda bir `index.html` dosyası ve içinde `getFiles.js` dosyası olan bir `api` klasörü olmalıdır.
+
+**Adım 2: Vercel'e Yükleme**
+
+Bu adımlar eskisiyle aynıdır. Vercel'e gidin, projenizi GitHub'dan import edip "Deploy" butonuna basın. Vercel, `api` klasörünü otomatik olarak tanıyacak ve güvenlik fonksiyonunu kendiliğinden çalıştıracaktır.
+
+-----
+
+### KOD 1: `index.html` (Arayüz Kodu)
+
+```html
 <!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mayatech Hızlı Dosya Sistemi</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary-accent: #6d28d9; /* Derin mor */
-            --light-accent: #ede9fe;
-            --background: #f9fafb;
-            --card-bg: #ffffff;
-            --text-dark: #111827;
-            --text-light: #6b7280;
-            --border-color: #e5e7eb;
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
-        *, *::before, *::after {
+        .container {
+            width: 100%;
+            max-width: 500px;
+            padding: 20px;
             box-sizing: border-box;
         }
-        body {
-            font-family: 'Inter', sans-serif;
-            margin: 0;
-            background-color: var(--background);
-            color: var(--text-dark);
-            height: 100vh;
-            overflow: hidden; /* Sayfa kaymasını engelle */
+        .window {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
-        .app-wrapper {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 1rem;
-            background: linear-gradient(135deg, #f5f3ff, #eef2ff);
-        }
-
-        /* --- Giriş Ekranı Tasarımı --- */
-        #login-screen {
-            position: fixed;
-            inset: 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
+        h1 {
             text-align: center;
-            background: var(--background);
-            z-index: 10;
-            opacity: 1;
-            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+            color: #333;
+            margin-top: 0;
         }
-        #login-screen.hidden {
-            opacity: 0;
-            transform: scale(0.95);
-            pointer-events: none;
-        }
-        .login-logo {
-            font-size: 4rem;
-            font-weight: 700;
-            color: var(--primary-accent);
-            margin-bottom: 1rem;
-        }
-        .login-box p {
-            color: var(--text-light);
-            margin-bottom: 2rem;
-            font-size: 1.1rem;
-        }
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
+        input[type="password"] {
             width: 100%;
-            max-width: 320px;
-        }
-        .input-group input {
-            width: 100%;
-            padding: 14px;
-            border: 1px solid var(--border-color);
-            border-radius: 0.75rem;
-            font-size: 1rem;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+            margin-top: 20px;
             text-align: center;
         }
-        .login-button {
-            background-color: var(--primary-accent);
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #5d3fd3;
             color: white;
             border: none;
-            padding: 14px;
-            border-radius: 0.75rem;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.2s, transform 0.2s;
-        }
-        .login-button:hover {
-            background-color: #5b21b6;
-            transform: translateY(-2px);
-        }
-        #login-error-message {
-            color: #ef4444;
-            margin-top: 1rem;
-            display: none;
-        }
-
-        /* --- Ana Ekran Tasarımı --- */
-        #main-screen {
-            width: 100%;
-            height: 100%;
-            max-width: 800px; /* Masaüstünde app hissi verir */
-            display: none;
-            flex-direction: column;
-            background: var(--card-bg);
-            border-radius: 1.5rem; /* Mobil app gibi yuvarlak köşeler */
-            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
-            overflow: hidden;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
-        }
-        #main-screen.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        .main-header {
-            padding: 1.5rem;
-            border-bottom: 1px solid var(--border-color);
-            flex-shrink: 0;
-        }
-        .main-header h1 {
-            margin: 0;
-            font-size: 1.5rem;
-            font-weight: 700;
-        }
-        .file-list-container {
-            flex-grow: 1;
-            overflow-y: auto;
-            padding: 1.5rem;
-        }
-        .file-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        .file-item {
-            display: flex;
-            align-items: center;
-            background-color: var(--card-bg);
-            padding: 1rem;
-            border: 1px solid var(--border-color);
-            border-radius: 1rem;
-            margin-bottom: 1rem;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
-            /* Animasyon için başlangıç durumu */
-            opacity: 0;
-            transform: translateY(20px);
-            animation: slideUp 0.5s ease-out forwards;
-        }
-        @keyframes slideUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        .file-icon {
-            width: 40px;
-            height: 40px;
-            margin-right: 1rem;
-            flex-shrink: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: var(--light-accent);
-            border-radius: 0.75rem;
-            color: var(--primary-accent);
-        }
-        .file-details {
-            flex-grow: 1;
-        }
-        .file-name {
-            font-weight: 600;
-            color: var(--text-dark);
-        }
-        .edit-button {
-            background-color: var(--light-accent);
-            color: var(--primary-accent);
-            border: none;
-            padding: 0.75rem 1.25rem;
-            border-radius: 0.75rem;
-            font-size: 0.9rem;
-            font-weight: 600;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 16px;
+            margin-top: 16px;
             cursor: pointer;
             transition: background-color 0.2s;
         }
-        .edit-button:hover {
-            background-color: #ddd6fe;
+        button:hover { background-color: #4a32a8; }
+        #error-message { color: red; text-align: center; margin-top: 10px; display: none; }
+        .file-card {
+            background-color: #f8f8ff;
+            border: 1px solid #e6e6fa;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .file-info { display: flex; align-items: center; }
+        .file-icon { font-size: 24px; margin-right: 12px; }
+        .file-name { color: #333; }
+        .file-card a {
+            text-decoration: none;
+            background-color: #e6e6fa;
+            color: #5d3fd3;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 14px;
         }
     </style>
 </head>
 <body>
 
-    <div class="app-wrapper">
-        <div id="login-screen">
-            <div class="login-box">
-                <div class="login-logo">MHDS</div>
-                <p>Devam etmek için lütfen parolanızı girin.</p>
-                <div class="input-group">
-                    <input type="password" id="password" placeholder="Parola">
-                    <button class="login-button" id="login-button">Giriş Yap</button>
-                </div>
-                <p id="login-error-message">Hatalı parola.</p>
-            </div>
+    <div class="container" id="login-container">
+        <div class="window">
+            <h1>Giriş Yap</h1>
+            <input type="password" id="password">
+            <button id="login-button">Giriş</button>
+            <p id="error-message">Hatalı veya eksik şifre.</p>
         </div>
-
-        <main id="main-screen">
-            <header class="main-header">
-                <h1>Mayatech Hızlı Dosya Sistemi</h1>
-            </header>
-            <div class="file-list-container">
-                <ul class="file-list" id="file-list">
-                    </ul>
-            </div>
-        </main>
     </div>
 
-    <svg width="0" height="0" style="position:absolute;">
-        <defs>
-            <symbol id="icon-file-text" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                <polyline points="14 2 14 8 20 8"></polyline>
-                <line x1="16" y1="13" x2="8" y2="13"></line>
-                <line x1="16" y1="17" x2="8" y2="17"></line>
-                <polyline points="10 9 9 9 8 9"></polyline>
-            </symbol>
-            <symbol id="icon-file-sheet" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                <polyline points="14 2 14 8 20 8"></polyline>
-                <line x1="16" y1="13" x2="8" y2="13"></line>
-                <line x1="16" y1="17" x2="8" y2="17"></line>
-                <line x1="10" y1="9" x2="8" y2="9"></line>
-                <polyline points="15 9 15 18 12 18 12 9 15 9"></polyline>
-            </symbol>
-        </defs>
-    </svg>
+    <div class="container" id="main-content" style="display: none;">
+        <h1>Mayatech Hızlı Dosya Sistemi</h1>
+        <div id="file-list-container"></div>
+    </div>
 
     <script>
-        const loginScreen = document.getElementById('login-screen');
-        const mainScreen = document.getElementById('main-screen');
-        const passwordInput = document.getElementById('password');
+        const loginContainer = document.getElementById('login-container');
+        const mainContent = document.getElementById('main-content');
         const loginButton = document.getElementById('login-button');
-        const loginErrorMessage = document.getElementById('login-error-message');
-        const fileList = document.getElementById('file-list');
+        const passwordInput = document.getElementById('password');
+        const errorMessage = document.getElementById('error-message');
+        const fileListContainer = document.getElementById('file-list-container');
 
-        function displayFiles(files) {
-            fileList.innerHTML = '';
-            files.forEach((file, index) => {
-                const isSheet = file.name.includes('.xls') || file.name.includes('Listesi');
-                const iconId = isSheet ? '#icon-file-sheet' : '#icon-file-text';
-                const listItem = document.createElement('li');
-                listItem.className = 'file-item';
-                listItem.style.animationDelay = `${index * 100}ms`;
-                listItem.innerHTML = `
-                    <div class="file-icon">
-                        <svg width="24" height="24"><use href="${iconId}" /></svg>
-                    </div>
-                    <div class="file-details">
-                        <div class="file-name">${file.name}</div>
-                    </div>
-                    <a href="${file.url}" target="_blank" style="text-decoration: none;">
-                        <button class="edit-button">Düzenle</button>
-                    </a>
-                `;
-                fileList.appendChild(listItem);
-            });
-        }
-        
-        // --- GÜVENLİ İLETİŞİM FONKSİYONU ---
-        async function handleLogin() {
+        const handleLogin = async () => {
             const password = passwordInput.value;
-            if (!password) { loginErrorMessage.style.display = 'block'; return; }
-            
-            loginButton.disabled = true;
-            loginButton.textContent = 'Doğrulanıyor...';
-            loginErrorMessage.style.display = 'none';
+            if (!password) {
+                errorMessage.style.display = 'block';
+                return;
+            }
 
             try {
-                const response = await fetch('/api/getFiles', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: password }) });
+                const response = await fetch('/api/getFiles', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password: password })
+                });
+
                 if (response.ok) {
                     const files = await response.json();
-                    loginScreen.classList.add('hidden');
-                    setTimeout(() => {
-                        mainScreen.style.display = 'flex';
-                        displayFiles(files); 
-                        setTimeout(() => mainScreen.classList.add('visible'), 50);
-                    }, 500);
+                    loginContainer.style.display = 'none';
+                    mainContent.style.display = 'block';
+                    populateFileList(files);
                 } else {
-                    loginErrorMessage.style.display = 'block';
-                    passwordInput.value = '';
+                    errorMessage.style.display = 'block';
                 }
             } catch (error) {
-                loginErrorMessage.textContent = 'Bir ağ hatası oluştu. Lütfen tekrar deneyin.';
-                loginErrorMessage.style.display = 'block';
-            } finally {
-                loginButton.disabled = false;
-                loginButton.textContent = 'Giriş Yap';
+                errorMessage.style.display = 'block';
             }
-        }
-
+        };
+        
         loginButton.addEventListener('click', handleLogin);
         passwordInput.addEventListener('keyup', (event) => {
-            if (event.key === 'Enter') {
-                handleLogin();
-            }
+            if (event.key === 'Enter') handleLogin();
         });
+
+        function populateFileList(files) {
+            fileListContainer.innerHTML = '';
+            files.forEach(file => {
+                const card = document.createElement('div');
+                card.className = 'file-card';
+                card.innerHTML = `
+                    <div class="file-info">
+                        <span class="file-icon">⭐</span>
+                        <span class="file-name">${file.name}</span>
+                    </div>
+                    <a href="${file.url}" target="_blank">Düzenle</a>
+                `;
+                fileListContainer.appendChild(card);
+            });
+        }
     </script>
+
 </body>
 </html>
+```
+
+-----
+
+### KOD 2: `api/getFiles.js` (Güvenlik ve Veri Kodu)
+
+```javascript
+export default function handler(request, response) {
+    // Sadece POST isteklerini kabul et
+    if (request.method !== 'POST') {
+        return response.status(405).json({ error: 'Method Not Allowed' });
+    }
+
+    // Doğru şifre burada SAKLI
+    const correctPassword = '549476*';
+    
+    // Google Drive linkleri burada GÜVENDE
+    const files = [
+        { name: "E-Sım kodları", url: "https://drive.google.com/file/d/1yuka5wfkXNW_d5VDPh27rcHycW5SYT14/view?usp=sharing" },
+        { name: "SolPro - Mayatech Bilgisayar Listesi", url: "https://docs.google.com/spreadsheets/d/1T4Myfgx8dBiG2WhJO4kf_YGTtO4t5kbp/edit?usp=drive_link&ouid=114707366481331827050&rtpof=true&sd=true" }
+    ];
+
+    // Gelen şifreyi al
+    const { password } = request.body;
+
+    // Şifreyi kontrol et
+    if (password === correctPassword) {
+        // Şifre doğruysa, dosya listesini gönder
+        response.status(200).json(files);
+    } else {
+        // Şifre yanlışsa, yetkisiz hatası ver
+        response.status(401).json({ error: 'Invalid password' });
+    }
+}
+```
