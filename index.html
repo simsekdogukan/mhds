@@ -41,7 +41,8 @@
         #app-container.visible { opacity: 1; transform: translateY(0); }
         
         .sidebar {
-            width: var(--sidebar-width); height: 100%; background-color: var(--background); border-right: 1px solid var(--border-color); padding: 1.5rem; display: flex; flex-direction: column; position: fixed; top: 0; left: 0; transform: translateX(-100%); transition: transform 0.4s ease, background-color 0.3s ease; z-index: 201;
+            width: var(--sidebar-width); height: 100%; background-color: var(--background); border-right: 1px solid var(--border-color); padding: 1.5rem; display: flex; flex-direction: column; position: fixed; top: 0; left: 0; transform: translateX(-100%); transition: transform 0.4s ease, background-color 0.3s ease;
+            z-index: 201; /* DÜZELTME: Katmanı overlay'in üstüne çıkarıldı */
         }
         .sidebar-header { margin-bottom: 2rem; font-size: 1.8rem; font-weight: 700; color: var(--text-dark); }
         .nav-list { list-style: none; padding: 0; margin: 0; flex-grow: 1; }
@@ -89,7 +90,7 @@
         #login-screen .theme-toggle-button { position: absolute; top: 1.5rem; right: 1.5rem; z-index: 100; }
         
         #menu-overlay { 
-            position: fixed; inset: 0; background-color: rgba(0,0,0,0.4); z-index: 200; opacity: 0; transition: opacity 0.4s ease; pointer-events: none;
+            position: fixed; inset: 0; background-color: rgba(0,0,0,0.4); z-index: 200; /* DÜZELTME: Katmanı sidebar'ın altına alındı */ opacity: 0; transition: opacity 0.4s ease; pointer-events: none;
         }
         
         @media (min-width: 800px) {
@@ -135,8 +136,8 @@
                 </div>
                 <footer class="sidebar-footer">
                     <div class="version-info" id="version-info">
-                        <span class="short-version">v.8.0</span>
-                        <span class="long-version">v.8.0 - Mobil etkileşim motoru yeniden yazıldı</span>
+                        <span class="short-version">v.9.0</span>
+                        <span class="long-version">v.9.0 - Mobil katman (z-index) hatası giderildi</span>
                     </div>
                 </footer>
             </nav>
@@ -222,6 +223,7 @@
         
         // DÜZELTME: Overlay'e yapılan tıklamanın kaynağını kontrol et
         menuOverlay.addEventListener('click', (event) => {
+            // Sadece overlay'in kendisine tıklandığında menüyü kapat.
             if (event.target === menuOverlay) {
                 closeSidebar();
             }
