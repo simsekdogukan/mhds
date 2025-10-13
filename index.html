@@ -44,7 +44,7 @@
             width: var(--sidebar-width); height: 100%; background-color: var(--background); border-right: 1px solid var(--border-color); padding: 1.5rem; display: flex; flex-direction: column; position: fixed; top: 0; left: 0; transform: translateX(-100%); transition: transform 0.4s ease, background-color 0.3s ease; z-index: 201;
         }
         .sidebar-header { margin-bottom: 2rem; font-size: 1.8rem; font-weight: 700; color: var(--text-dark); }
-        .nav-list { list-style: none; padding: 0; margin: 0; }
+        .nav-list { list-style: none; padding: 0; margin: 0; flex-grow: 1; }
         .nav-item button { 
             display: flex; align-items: center; padding: 0.9rem 1rem; border-radius: 0.5rem; text-decoration: none; color: var(--text-light); font-weight: 500; transition: background-color 0.2s, color 0.2s;
             width: 100%; background: none; border: none; font-family: 'Inter', sans-serif; font-size: 1rem; cursor: pointer; text-align: left;
@@ -77,18 +77,20 @@
         .main-footer { border-top: 1px solid var(--border-color); background-color: var(--card-bg); transition: background-color 0.3s ease, border-color 0.3s ease; }
         .login-footer { position: absolute; bottom: 0; width: 100%; }
         
+        .sidebar-footer { margin-top: auto; padding-top: 1rem; border-top: 1px solid var(--border-color); }
         .version-info {
-            position: fixed; bottom: 10px; left: 10px; font-size: 0.75rem; color: var(--text-light); background-color: rgba(255, 255, 255, 0.7); padding: 2px 6px; border-radius: 4px; z-index: 210; cursor: pointer; white-space: nowrap;
+            font-size: 0.75rem; color: var(--text-light); background-color: transparent; padding: 2px 6px; border-radius: 4px; cursor: pointer; white-space: nowrap; text-align: center;
         }
         .version-info .long-version { display: none; }
         .version-info.expanded .short-version { display: none; }
         .version-info.expanded .long-version { display: inline; }
-        body.dark-theme .version-info { background-color: rgba(0, 0, 0, 0.3); }
 
         .theme-toggle-button { background: none; border: 1px solid var(--border-color); color: var(--text-light); width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease; }
         #login-screen .theme-toggle-button { position: absolute; top: 1.5rem; right: 1.5rem; z-index: 100; }
         
-        #menu-overlay { position: fixed; inset: 0; background-color: rgba(0,0,0,0.4); z-index: 200; opacity: 0; transition: opacity 0.4s ease; pointer-events: none; }
+        #menu-overlay { 
+            position: fixed; inset: 0; background-color: rgba(0,0,0,0.4); z-index: 200; opacity: 0; transition: opacity 0.4s ease; pointer-events: none;
+        }
         
         @media (min-width: 800px) {
             #app-container { flex-direction: row; }
@@ -121,14 +123,22 @@
 
         <div id="app-container">
             <nav class="sidebar" id="sidebar">
-                <div class="sidebar-header">MHDS</div>
-                <ul class="nav-list">
-                    <li class="nav-item">
-                        <button id="show-files-button">
-                            <svg><use href="#icon-folder" /></svg> Formlar
-                        </button>
-                    </li>
-                </ul>
+                <div>
+                    <div class="sidebar-header">MHDS</div>
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            <button id="show-files-button">
+                                <svg><use href="#icon-folder" /></svg> Formlar
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+                <footer class="sidebar-footer">
+                    <div class="version-info" id="version-info">
+                        <span class="short-version">v.8.0</span>
+                        <span class="long-version">v.8.0 - Mobil etkileşim motoru yeniden yazıldı</span>
+                    </div>
+                </footer>
             </nav>
 
             <main class="main-content">
@@ -151,11 +161,6 @@
             </main>
         </div>
         <div id="menu-overlay"></div>
-    </div>
-
-    <div class="version-info" id="version-info">
-        <span class="short-version">v.7.3</span>
-        <span class="long-version">v.7.3 - Kritik mobil tıklama çakışması giderildi</span>
     </div>
 
     <svg width="0" height="0" style="position:absolute;">
@@ -214,12 +219,16 @@
         function openSidebar() { document.body.classList.add('sidebar-open'); }
         function closeSidebar() { document.body.classList.remove('sidebar-open'); }
         hamburgerButton.addEventListener('click', openSidebar);
-        menuOverlay.addEventListener('click', closeSidebar);
+        
+        // DÜZELTME: Overlay'e yapılan tıklamanın kaynağını kontrol et
+        menuOverlay.addEventListener('click', (event) => {
+            if (event.target === menuOverlay) {
+                closeSidebar();
+            }
+        });
         
         // --- SAYFA NAVİGASYONU ---
-        showFilesButton.addEventListener('click', (e) => {
-            // DÜZELTME: Olayın overlay tarafından yakalanmasını engelle
-            e.stopPropagation(); 
+        showFilesButton.addEventListener('click', () => {
             welcomeView.style.display = 'none';
             fileView.style.display = 'block';
             mainTitle.textContent = 'Formlar';
