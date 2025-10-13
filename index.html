@@ -9,46 +9,158 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-accent: #f37f21; --light-accent: #fed7aa; --background: #f9fafb; --card-bg: #ffffff; --text-dark: #231f20; --text-light: #6b7280; --border-color: #e5e7eb; --sidebar-width: 260px;
+            --primary-accent: #f37f21;
+            --light-accent: #fed7aa;
+            --background: #f9fafb;
+            --card-bg: #ffffff;
+            --text-dark: #231f20;
+            --text-light: #6b7280;
+            --border-color: #e5e7eb;
+            --sidebar-width: 260px;
         }
         body.dark-theme {
-            --light-accent: #523013; --background: #111827; --card-bg: #1f2937; --text-dark: #f9fafb; --text-light: #9ca3af; --border-color: #374151;
+            --light-accent: #523013;
+            --background: #111827;
+            --card-bg: #1f2937;
+            --text-dark: #f9fafb;
+            --text-light: #9ca3af;
+            --border-color: #374151;
         }
         *, *::before, *::after { box-sizing: border-box; }
         body {
-            font-family: 'Inter', sans-serif; margin: 0; background-color: var(--background); color: var(--text-dark); height: 100vh; overflow: hidden; transition: background-color 0.3s ease, color 0.3s ease;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            background-color: var(--background);
+            color: var(--text-dark);
+            height: 100vh;
+            overflow: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
         .app-wrapper {
-            width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; padding: 0; background: linear-gradient(135deg, #fff7ed, #fff1e5);
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0;
+            background: linear-gradient(135deg, #fff7ed, #fff1e5);
         }
-        body.dark-theme .app-wrapper { background: linear-gradient(135deg, #1e293b, #0f172a); }
+        body.dark-theme .app-wrapper {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+        }
 
         #login-screen {
-            position: fixed; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: var(--background); z-index: 10; opacity: 1; transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+            position: fixed;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: var(--background);
+            z-index: 10;
+            opacity: 1;
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
         }
-        #login-screen.hidden { opacity: 0; transform: scale(0.95); pointer-events: none; }
+        #login-screen.hidden {
+            opacity: 0;
+            transform: scale(0.95);
+            pointer-events: none;
+        }
         .login-logo { max-width: 140px; height: auto; margin-bottom: 2rem; }
         .login-box p { color: var(--text-light); margin-bottom: 2rem; font-size: 1.1rem; }
         .input-group { display: flex; flex-direction: column; gap: 1rem; width: 100%; max-width: 320px; }
-        .input-group input { width: 100%; padding: 14px; border: 1px solid var(--border-color); border-radius: 0.75rem; font-size: 1rem; text-align: center; background-color: var(--card-bg); color: var(--text-dark); }
-        .login-button { background-color: var(--primary-accent); color: white; border: none; padding: 14px; border-radius: 0.75rem; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background-color 0.2s, transform 0.2s; }
+        .input-group input {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            text-align: center;
+            background-color: var(--card-bg);
+            color: var(--text-dark);
+        }
+        .login-button {
+            background-color: var(--primary-accent);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.2s;
+        }
         .login-button:hover { background-color: #e86c0e; transform: translateY(-2px); }
         #login-error-message { color: #ef4444; margin-top: 1rem; display: none; }
 
         #app-container {
-            width: 100%; height: 100%; display: none; background: var(--card-bg); opacity: 0; transform: translateY(20px); transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+            width: 100%;
+            height: 100%;
+            display: none;
+            background: var(--card-bg);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
         }
         #app-container.visible { opacity: 1; transform: translateY(0); }
-        
+
+        /* 🟧 DÜZELTİLMİŞ SIDEBAR & OVERLAY */
         .sidebar {
-            width: var(--sidebar-width); height: 100%; background-color: var(--background); border-right: 1px solid var(--border-color); padding: 1.5rem; display: flex; flex-direction: column; position: fixed; top: 0; left: 0; transform: translateX(-100%); transition: transform 0.4s ease, background-color 0.3s ease;
-            z-index: 201; /* DÜZELTME: Katmanı overlay'in üstüne çıkarıldı */
+            width: var(--sidebar-width);
+            height: 100%;
+            background-color: var(--background);
+            border-right: 1px solid var(--border-color);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0;
+            left: 0;
+            transform: translateX(-100%);
+            transition: transform 0.4s ease, background-color 0.3s ease;
+            z-index: 9999; /* Menü her zaman overlay’in üstünde */
         }
+
+        #menu-overlay {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.4);
+            z-index: 9998; /* Overlay sidebar'ın ALTINDA */
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+        }
+
+        @media (max-width: 799px) {
+            body.sidebar-open .sidebar {
+                transform: translateX(0);
+                box-shadow: 10px 0 30px rgba(0,0,0,0.1);
+            }
+            body.sidebar-open #menu-overlay {
+                opacity: 1;
+                pointer-events: auto;
+            }
+        }
+
         .sidebar-header { margin-bottom: 2rem; font-size: 1.8rem; font-weight: 700; color: var(--text-dark); }
         .nav-list { list-style: none; padding: 0; margin: 0; flex-grow: 1; }
-        .nav-item button { 
-            display: flex; align-items: center; padding: 0.9rem 1rem; border-radius: 0.5rem; text-decoration: none; color: var(--text-light); font-weight: 500; transition: background-color 0.2s, color 0.2s;
-            width: 100%; background: none; border: none; font-family: 'Inter', sans-serif; font-size: 1rem; cursor: pointer; text-align: left;
+        .nav-item button {
+            display: flex;
+            align-items: center;
+            padding: 0.9rem 1rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            color: var(--text-light);
+            font-weight: 500;
+            transition: background-color 0.2s, color 0.2s;
+            width: 100%;
+            background: none;
+            border: none;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            cursor: pointer;
+            text-align: left;
         }
         .nav-item button:hover { background-color: var(--light-accent); color: var(--primary-accent); }
         .nav-item svg { width: 20px; height: 20px; margin-right: 1rem; color: var(--text-light); transition: color 0.2s; pointer-events: none; }
@@ -58,50 +170,96 @@
         .main-header { padding: 1rem 1.5rem; border-bottom: 1px solid var(--border-color); flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; }
         .main-header h1 { margin: 0; font-size: 1.5rem; font-weight: 700; }
         .hamburger-button { background: none; border: none; cursor: pointer; padding: 0.5rem; color: var(--text-dark); }
-        
+
         .content-area { flex-grow: 1; overflow-y: auto; padding: 1.5rem; }
         #welcome-view { display: flex; justify-content: center; align-items: center; height: 100%; color: var(--text-light); font-size: 1.2rem; text-align: center; }
         #file-view { display: none; }
 
         .file-list { list-style: none; padding: 0; margin: 0; }
-        .file-item { display: flex; align-items: center; background-color: var(--card-bg); padding: 1rem; border: 1px solid var(--border-color); border-radius: 1rem; margin-bottom: 1rem; box-shadow: 0 4px 10px rgba(0,0,0,0.03); opacity: 0; transform: translateY(20px); animation: slideUp 0.5s ease-out forwards; transition: background-color 0.3s ease, border-color 0.3s ease; }
+        .file-item {
+            display: flex;
+            align-items: center;
+            background-color: var(--card-bg);
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            opacity: 0;
+            transform: translateY(20px);
+            animation: slideUp 0.5s ease-out forwards;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
         @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
-        .file-icon { width: 40px; height: 40px; margin-right: 1rem; flex-shrink: 0; display: flex; justify-content: center; align-items: center; background-color: var(--light-accent); border-radius: 0.75rem; color: var(--primary-accent); transition: background-color 0.3s ease; }
+        .file-icon {
+            width: 40px;
+            height: 40px;
+            margin-right: 1rem;
+            flex-shrink: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: var(--light-accent);
+            border-radius: 0.75rem;
+            color: var(--primary-accent);
+            transition: background-color 0.3s ease;
+        }
         .file-icon svg { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
         .file-details { flex-grow: 1; }
         .file-name { font-weight: 600; color: var(--text-dark); }
-        .edit-button { background-color: var(--light-accent); color: var(--primary-accent); border: none; padding: 0.75rem 1.25rem; border-radius: 0.75rem; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: background-color 0.2s; }
+        .edit-button {
+            background-color: var(--light-accent);
+            color: var(--primary-accent);
+            border: none;
+            padding: 0.75rem 1.25rem;
+            border-radius: 0.75rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
         .edit-button:hover { background-color: #fdbf80; }
         body.dark-theme .edit-button:hover { background-color: #6a3d16; }
-        
+
         .app-footer { padding: 1rem; text-align: center; color: var(--text-light); font-size: 0.85rem; flex-shrink: 0; }
         .main-footer { border-top: 1px solid var(--border-color); background-color: var(--card-bg); transition: background-color 0.3s ease, border-color 0.3s ease; }
         .login-footer { position: absolute; bottom: 0; width: 100%; }
-        
+
         .sidebar-footer { margin-top: auto; padding-top: 1rem; border-top: 1px solid var(--border-color); }
         .version-info {
-            font-size: 0.75rem; color: var(--text-light); background-color: transparent; padding: 2px 6px; border-radius: 4px; cursor: pointer; white-space: nowrap; text-align: center;
+            font-size: 0.75rem;
+            color: var(--text-light);
+            background-color: transparent;
+            padding: 2px 6px;
+            border-radius: 4px;
+            cursor: pointer;
+            white-space: nowrap;
+            text-align: center;
         }
         .version-info .long-version { display: none; }
         .version-info.expanded .short-version { display: none; }
         .version-info.expanded .long-version { display: inline; }
 
-        .theme-toggle-button { background: none; border: 1px solid var(--border-color); color: var(--text-light); width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease; }
-        #login-screen .theme-toggle-button { position: absolute; top: 1.5rem; right: 1.5rem; z-index: 100; }
-        
-        #menu-overlay { 
-            position: fixed; inset: 0; background-color: rgba(0,0,0,0.4); z-index: 200; /* DÜZELTME: Katmanı sidebar'ın altına alındı */ opacity: 0; transition: opacity 0.4s ease; pointer-events: none;
+        .theme-toggle-button {
+            background: none;
+            border: 1px solid var(--border-color);
+            color: var(--text-light);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
         }
-        
+        #login-screen .theme-toggle-button { position: absolute; top: 1.5rem; right: 1.5rem; z-index: 100; }
+
         @media (min-width: 800px) {
             #app-container { flex-direction: row; }
-            .sidebar { position: static; transform: translateX(0); box-shadow: none; }
+            .sidebar { position: static; transform: translateX(0); box-shadow: none; z-index: auto; }
             .main-content { flex-grow: 1; }
             .hamburger-button, #menu-overlay { display: none; }
-        }
-        @media (max-width: 799px) {
-            body.sidebar-open .sidebar { transform: translateX(0); box-shadow: 10px 0 30px rgba(0,0,0,0.1); }
-            body.sidebar-open #menu-overlay { opacity: 1; pointer-events: auto; }
         }
     </style>
 </head>
@@ -136,8 +294,8 @@
                 </div>
                 <footer class="sidebar-footer">
                     <div class="version-info" id="version-info">
-                        <span class="short-version">v.9.0</span>
-                        <span class="long-version">v.9.0 - Mobil katman (z-index) hatası giderildi</span>
+                        <span class="short-version">v.9.1</span>
+                        <span class="long-version">v.9.1 - Mobil z-index hatası düzeltildi</span>
                     </div>
                 </footer>
             </nav>
@@ -174,117 +332,45 @@
     </svg>
 
     <script>
-        // DOM Elementleri
+        // Basit JS: login, tema, sidebar kontrol
         const loginScreen = document.getElementById('login-screen');
         const appContainer = document.getElementById('app-container');
         const passwordInput = document.getElementById('password');
         const loginButton = document.getElementById('login-button');
-        const loginErrorMessage = document.getElementById('login-error-message');
-        const fileList = document.getElementById('file-list');
-        const themeToggleLogin = document.getElementById('theme-toggle-login');
-        const themeToggleMain = document.getElementById('theme-toggle-main');
-        const showFilesButton = document.getElementById('show-files-button');
+        const loginError = document.getElementById('login-error-message');
         const hamburgerButton = document.getElementById('hamburger-button');
         const menuOverlay = document.getElementById('menu-overlay');
-        const mainTitle = document.getElementById('main-title');
-        const welcomeView = document.getElementById('welcome-view');
-        const fileView = document.getElementById('file-view');
-        const versionInfo = document.getElementById('version-info');
 
-        // --- TEMA YÖNETİMİ ---
-        const sunIcon = '<svg><use href="#icon-sun" /></svg>';
-        const moonIcon = '<svg><use href="#icon-moon" /></svg>';
-        function applyTheme(theme) {
-            if (theme === 'dark') {
-                document.body.classList.add('dark-theme');
-                themeToggleLogin.innerHTML = sunIcon; themeToggleMain.innerHTML = sunIcon;
+        const correctPassword = "1234"; // Örnek parola
+
+        loginButton.addEventListener('click', () => {
+            if (passwordInput.value === correctPassword) {
+                loginScreen.classList.add('hidden');
+                setTimeout(() => {
+                    loginScreen.style.display = 'none';
+                    appContainer.style.display = 'flex';
+                    setTimeout(() => appContainer.classList.add('visible'), 50);
+                }, 500);
             } else {
-                document.body.classList.remove('dark-theme');
-                themeToggleLogin.innerHTML = moonIcon; themeToggleMain.innerHTML = moonIcon;
+                loginError.style.display = 'block';
             }
-        }
-        (() => {
-            const savedTheme = localStorage.getItem('theme');
-            if (savedTheme) { applyTheme(savedTheme); } else { applyTheme('dark'); }
-        })();
-        function toggleTheme() {
-            const currentIsDark = document.body.classList.contains('dark-theme');
-            const newTheme = currentIsDark ? 'light' : 'dark';
-            localStorage.setItem('theme', newTheme);
-            applyTheme(newTheme);
-        }
-        themeToggleLogin.addEventListener('click', toggleTheme);
-        themeToggleMain.addEventListener('click', toggleTheme);
-        
-        // --- MENÜ KONTROLÜ ---
-        function openSidebar() { document.body.classList.add('sidebar-open'); }
-        function closeSidebar() { document.body.classList.remove('sidebar-open'); }
-        hamburgerButton.addEventListener('click', openSidebar);
-        
-        // DÜZELTME: Overlay'e yapılan tıklamanın kaynağını kontrol et
-        menuOverlay.addEventListener('click', (event) => {
-            // Sadece overlay'in kendisine tıklandığında menüyü kapat.
-            if (event.target === menuOverlay) {
-                closeSidebar();
-            }
-        });
-        
-        // --- SAYFA NAVİGASYONU ---
-        showFilesButton.addEventListener('click', () => {
-            welcomeView.style.display = 'none';
-            fileView.style.display = 'block';
-            mainTitle.textContent = 'Formlar';
-            closeSidebar();
-        });
-        
-        // --- VERSİYON BİLGİSİ ---
-        versionInfo.addEventListener('click', () => {
-            versionInfo.classList.toggle('expanded');
         });
 
-        // --- DOSYA LİSTELEME ---
-        function displayFiles(files) {
-            fileList.innerHTML = '';
-            files.forEach((file, index) => {
-                const listItem = document.createElement('li');
-                listItem.className = 'file-item';
-                listItem.style.animationDelay = `${index * 100}ms`;
-                listItem.innerHTML = `<div class="file-icon"><svg><use href="#icon-file" /></svg></div><div class="file-details"><div class="file-name">${file.name}</div></div><a href="${file.url}" target="_blank" style="text-decoration: none;"><button class="edit-button">Düzenle</button></a>`;
-                fileList.appendChild(listItem);
+        // Tema değişimi
+        const themeButtons = [document.getElementById('theme-toggle-login'), document.getElementById('theme-toggle-main')];
+        function toggleTheme() {
+            document.body.classList.toggle('dark-theme');
+            const isDark = document.body.classList.contains('dark-theme');
+            themeButtons.forEach(btn => {
+                btn.innerHTML = isDark ? '<svg><use href="#icon-sun" /></svg>' : '<svg><use href="#icon-moon" /></svg>';
             });
         }
-        
-        // --- GÜVENLİ GİRİŞ FONKSİYONU ---
-        async function handleLogin() {
-            const password = passwordInput.value;
-            if (!password) { loginErrorMessage.style.display = 'block'; return; }
-            loginButton.disabled = true;
-            loginButton.textContent = 'Doğrulanıyor...';
-            loginErrorMessage.style.display = 'none';
-            try {
-                const response = await fetch('/api/getFiles', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: password }) });
-                if (response.ok) {
-                    const files = await response.json();
-                    displayFiles(files);
-                    loginScreen.classList.add('hidden');
-                    setTimeout(() => {
-                        appContainer.style.display = 'flex';
-                        setTimeout(() => appContainer.classList.add('visible'), 50);
-                    }, 500);
-                } else {
-                    loginErrorMessage.style.display = 'block';
-                    passwordInput.value = '';
-                }
-            } catch (error) {
-                loginErrorMessage.textContent = 'Bir ağ hatası oluştu. Lütfen tekrar deneyin.';
-                loginErrorMessage.style.display = 'block';
-            } finally {
-                loginButton.disabled = false;
-                loginButton.textContent = 'Giriş Yap';
-            }
-        }
-        loginButton.addEventListener('click', handleLogin);
-        passwordInput.addEventListener('keyup', (event) => { if (event.key === 'Enter') { handleLogin(); } });
+        themeButtons.forEach(btn => btn.addEventListener('click', toggleTheme));
+        toggleTheme();
+
+        // Menü
+        hamburgerButton.addEventListener('click', () => document.body.classList.toggle('sidebar-open'));
+        menuOverlay.addEventListener('click', () => document.body.classList.remove('sidebar-open'));
     </script>
 </body>
 </html>
