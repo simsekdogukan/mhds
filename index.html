@@ -9,11 +9,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-accent: #6d28d9; /* Derin mor */
-            --light-accent: #ede9fe;
+            /* YENİ RENK PALETİ: Logonuzdaki renklere göre güncellendi */
+            --primary-accent: #f37f21; /* Canlı Turuncu */
+            --light-accent: #fed7aa;  /* Açık Turuncu */
             --background: #f9fafb;
             --card-bg: #ffffff;
-            --text-dark: #111827;
+            --text-dark: #231f20;   /* Logodaki Koyu Renk */
             --text-light: #6b7280;
             --border-color: #e5e7eb;
         }
@@ -26,7 +27,7 @@
             background-color: var(--background);
             color: var(--text-dark);
             height: 100vh;
-            overflow: hidden; /* Sayfa kaymasını engelle */
+            overflow: hidden;
         }
         .app-wrapper {
             width: 100%;
@@ -35,7 +36,8 @@
             justify-content: center;
             align-items: center;
             padding: 1rem;
-            background: linear-gradient(135deg, #f5f3ff, #eef2ff);
+            /* Arka plan gradyanı yeni renklere uyarlandı */
+            background: linear-gradient(135deg, #fff7ed, #fff1e5);
         }
 
         /* --- Giriş Ekranı Tasarımı --- */
@@ -95,7 +97,8 @@
             transition: background-color 0.2s, transform 0.2s;
         }
         .login-button:hover {
-            background-color: #5b21b6;
+            /* Hover rengi ana renge uygun olarak güncellendi */
+            background-color: #e86c0e;
             transform: translateY(-2px);
         }
         #login-error-message {
@@ -108,11 +111,11 @@
         #main-screen {
             width: 100%;
             height: 100%;
-            max-width: 800px; /* Masaüstünde app hissi verir */
+            max-width: 800px;
             display: none;
             flex-direction: column;
             background: var(--card-bg);
-            border-radius: 1.5rem; /* Mobil app gibi yuvarlak köşeler */
+            border-radius: 1.5rem;
             box-shadow: 0 20px 40px rgba(0,0,0,0.08);
             overflow: hidden;
             opacity: 0;
@@ -152,7 +155,6 @@
             border-radius: 1rem;
             margin-bottom: 1rem;
             box-shadow: 0 4px 10px rgba(0,0,0,0.03);
-            /* Animasyon için başlangıç durumu */
             opacity: 0;
             transform: translateY(20px);
             animation: slideUp 0.5s ease-out forwards;
@@ -174,6 +176,7 @@
             background-color: var(--light-accent);
             border-radius: 0.75rem;
             color: var(--primary-accent);
+            font-size: 1.25rem; /* Yıldız boyutu için eklendi */
         }
         .file-details {
             flex-grow: 1;
@@ -194,7 +197,8 @@
             transition: background-color 0.2s;
         }
         .edit-button:hover {
-            background-color: #ddd6fe;
+            /* Hover rengi açık renge uygun olarak güncellendi */
+            background-color: #fdbf80;
         }
     </style>
 </head>
@@ -219,30 +223,10 @@
             </header>
             <div class="file-list-container">
                 <ul class="file-list" id="file-list">
-                    </ul>
+                </ul>
             </div>
         </main>
     </div>
-
-    <svg width="0" height="0" style="position:absolute;">
-        <defs>
-            <symbol id="icon-file-text" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                <polyline points="14 2 14 8 20 8"></polyline>
-                <line x1="16" y1="13" x2="8" y2="13"></line>
-                <line x1="16" y1="17" x2="8" y2="17"></line>
-                <polyline points="10 9 9 9 8 9"></polyline>
-            </symbol>
-            <symbol id="icon-file-sheet" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                <polyline points="14 2 14 8 20 8"></polyline>
-                <line x1="16" y1="13" x2="8" y2="13"></line>
-                <line x1="16" y1="17" x2="8" y2="17"></line>
-                <line x1="10" y1="9" x2="8" y2="9"></line>
-                <polyline points="15 9 15 18 12 18 12 9 15 9"></polyline>
-            </symbol>
-        </defs>
-    </svg>
 
     <script>
         const loginScreen = document.getElementById('login-screen');
@@ -255,15 +239,12 @@
         function displayFiles(files) {
             fileList.innerHTML = '';
             files.forEach((file, index) => {
-                const isSheet = file.name.includes('.xls') || file.name.includes('Listesi');
-                const iconId = isSheet ? '#icon-file-sheet' : '#icon-file-text';
                 const listItem = document.createElement('li');
                 listItem.className = 'file-item';
                 listItem.style.animationDelay = `${index * 100}ms`;
+                // DÜZELTME: SVG ikonları kaldırıldı, yerine yıldız eklendi
                 listItem.innerHTML = `
-                    <div class="file-icon">
-                        <svg width="24" height="24"><use href="${iconId}" /></svg>
-                    </div>
+                    <div class="file-icon">⭐</div>
                     <div class="file-details">
                         <div class="file-name">${file.name}</div>
                     </div>
