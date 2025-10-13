@@ -9,11 +9,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-accent: #f37f21; /* Canlı Turuncu */
-            --light-accent: #fed7aa;  /* Açık Turuncu */
+            --primary-accent: #f37f21;
+            --light-accent: #fed7aa;
             --background: #f9fafb;
             --card-bg: #ffffff;
-            --text-dark: #231f20;   /* Logodaki Koyu Renk */
+            --text-dark: #231f20;
             --text-light: #6b7280;
             --border-color: #e5e7eb;
         }
@@ -58,10 +58,9 @@
             pointer-events: none;
         }
         .login-logo {
-            font-size: 4rem;
-            font-weight: 700;
-            color: var(--primary-accent);
-            margin-bottom: 1rem;
+            max-width: 120px; /* Logonun boyutunu ayarlar */
+            height: auto;
+            margin-bottom: 2rem; /* Logo ile yazı arasına boşluk koyar */
         }
         .login-box p {
             color: var(--text-light);
@@ -205,26 +204,21 @@
             background-color: #fdbf80;
         }
         
-        /* --- Alt Bilgi Tasarımı --- */
         .app-footer {
             padding: 1rem;
             text-align: center;
             color: var(--text-light);
             font-size: 0.85rem;
+            flex-shrink: 0;
+        }
+        .main-footer {
             border-top: 1px solid var(--border-color);
-            margin-top: auto; /* Ana ekranda en alta yapışır */
-            background-color: var(--card-bg); /* Footer arka planı */
-            flex-shrink: 0; /* İçerik büyüdüğünde küçülmez */
+            background-color: var(--card-bg);
         }
-        /* main-screen flex olduğu için footer'ın yerleşimi için ek düzenleme */
-        #main-screen {
-            display: flex; /* Zaten flex, ama emin olmak için */
-            flex-direction: column; /* Dikey sıralama */
-            justify-content: space-between; /* Header, Content, Footer arasına boşluk bırakır */
-        }
-        .file-list-container {
-            flex-grow: 1; /* İçerik alanının esnemesini sağlar */
-            overflow-y: auto; /* Sadece liste kısmı kaydırılabilir olur */
+        .login-footer {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
         }
 
     </style>
@@ -234,7 +228,7 @@
     <div class="app-wrapper">
         <div id="login-screen">
             <div class="login-box">
-                <div class="login-logo">MHDS</div>
+                <img src="logo.png" alt="Mayatech Logo" class="login-logo">
                 <p>Devam etmek için lütfen parolanızı girin.</p>
                 <div class="input-group">
                     <input type="password" id="password" placeholder="Parola">
@@ -242,6 +236,9 @@
                 </div>
                 <p id="login-error-message">Hatalı parola.</p>
             </div>
+            <footer class="app-footer login-footer">
+                Mayatech Bilgi İşlem 2025©
+            </footer>
         </div>
 
         <main id="main-screen">
@@ -252,7 +249,7 @@
                 <ul class="file-list" id="file-list">
                 </ul>
             </div>
-            <footer class="app-footer">
+            <footer class="app-footer main-footer">
                 Mayatech Bilgi İşlem 2025©
             </footer>
         </main>
