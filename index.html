@@ -9,7 +9,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* YENİ RENK PALETİ: Logonuzdaki renklere göre güncellendi */
             --primary-accent: #f37f21; /* Canlı Turuncu */
             --light-accent: #fed7aa;  /* Açık Turuncu */
             --background: #f9fafb;
@@ -36,7 +35,6 @@
             justify-content: center;
             align-items: center;
             padding: 1rem;
-            /* Arka plan gradyanı yeni renklere uyarlandı */
             background: linear-gradient(135deg, #fff7ed, #fff1e5);
         }
 
@@ -97,7 +95,6 @@
             transition: background-color 0.2s, transform 0.2s;
         }
         .login-button:hover {
-            /* Hover rengi ana renge uygun olarak güncellendi */
             background-color: #e86c0e;
             transform: translateY(-2px);
         }
@@ -176,7 +173,15 @@
             background-color: var(--light-accent);
             border-radius: 0.75rem;
             color: var(--primary-accent);
-            font-size: 1.25rem; /* Yıldız boyutu için eklendi */
+        }
+        .file-icon svg {
+            width: 24px;
+            height: 24px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
         }
         .file-details {
             flex-grow: 1;
@@ -197,9 +202,31 @@
             transition: background-color 0.2s;
         }
         .edit-button:hover {
-            /* Hover rengi açık renge uygun olarak güncellendi */
             background-color: #fdbf80;
         }
+        
+        /* --- Alt Bilgi Tasarımı --- */
+        .app-footer {
+            padding: 1rem;
+            text-align: center;
+            color: var(--text-light);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--border-color);
+            margin-top: auto; /* Ana ekranda en alta yapışır */
+            background-color: var(--card-bg); /* Footer arka planı */
+            flex-shrink: 0; /* İçerik büyüdüğünde küçülmez */
+        }
+        /* main-screen flex olduğu için footer'ın yerleşimi için ek düzenleme */
+        #main-screen {
+            display: flex; /* Zaten flex, ama emin olmak için */
+            flex-direction: column; /* Dikey sıralama */
+            justify-content: space-between; /* Header, Content, Footer arasına boşluk bırakır */
+        }
+        .file-list-container {
+            flex-grow: 1; /* İçerik alanının esnemesini sağlar */
+            overflow-y: auto; /* Sadece liste kısmı kaydırılabilir olur */
+        }
+
     </style>
 </head>
 <body>
@@ -225,8 +252,19 @@
                 <ul class="file-list" id="file-list">
                 </ul>
             </div>
+            <footer class="app-footer">
+                Mayatech Bilgi İşlem 2025©
+            </footer>
         </main>
     </div>
+
+    <svg width="0" height="0" style="position:absolute;">
+        <defs>
+            <symbol id="icon-star" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+            </symbol>
+        </defs>
+    </svg>
 
     <script>
         const loginScreen = document.getElementById('login-screen');
@@ -242,9 +280,10 @@
                 const listItem = document.createElement('li');
                 listItem.className = 'file-item';
                 listItem.style.animationDelay = `${index * 100}ms`;
-                // DÜZELTME: SVG ikonları kaldırıldı, yerine yıldız eklendi
                 listItem.innerHTML = `
-                    <div class="file-icon">⭐</div>
+                    <div class="file-icon">
+                        <svg><use href="#icon-star" /></svg>
+                    </div>
                     <div class="file-details">
                         <div class="file-name">${file.name}</div>
                     </div>
@@ -256,7 +295,6 @@
             });
         }
         
-        // --- GÜVENLİ İLETİŞİM FONKSİYONU ---
         async function handleLogin() {
             const password = passwordInput.value;
             if (!password) { loginErrorMessage.style.display = 'block'; return; }
