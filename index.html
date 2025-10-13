@@ -30,6 +30,7 @@
             text-align: center;
             color: #333;
             margin-top: 0;
+            font-size: 22px;
         }
         input[type="password"] {
             width: 100%;
@@ -39,11 +40,12 @@
             box-sizing: border-box;
             margin-top: 20px;
             text-align: center;
+            font-size: 16px;
         }
         button {
             width: 100%;
             padding: 12px;
-            background-color: #5d3fd3;
+            background-color: #6A5ACD; /* Mor tonu */
             color: white;
             border: none;
             border-radius: 8px;
@@ -53,7 +55,7 @@
             cursor: pointer;
             transition: background-color 0.2s;
         }
-        button:hover { background-color: #4a32a8; }
+        button:hover { background-color: #483D8B; }
         #error-message { color: red; text-align: center; margin-top: 10px; display: none; }
         .file-card {
             background-color: #f8f8ff;
@@ -71,7 +73,7 @@
         .file-card a {
             text-decoration: none;
             background-color: #e6e6fa;
-            color: #5d3fd3;
+            color: #6A5ACD;
             padding: 8px 16px;
             border-radius: 8px;
             font-weight: bold;
@@ -142,7 +144,7 @@
                 card.className = 'file-card';
                 card.innerHTML = `
                     <div class="file-info">
-                        <span class="file-icon">⭐</span>
+                        <span class="file-icon">📄</span>
                         <span class="file-name">${file.name}</span>
                     </div>
                     <a href="${file.url}" target="_blank">Düzenle</a>
