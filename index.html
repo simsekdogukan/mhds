@@ -323,8 +323,8 @@
                 </div>
                 <footer class="sidebar-footer">
                     <div class="version-info" id="version-info" role="button" tabindex="0" aria-expanded="false">
-                        <span class="short-version">v.29</span>
-                        <span class="long-version">v.29 - Arayüz ve fonksiyon güncellemeleri</span>
+                        <span class="short-version">v.36</span>
+                        <span class="long-version">v.36 - Arayüz ve fonksiyon güncellemeleri</span>
                     </div>
                 </footer>
             </nav>
@@ -353,7 +353,7 @@
                         <div class="file-list" id="file-list"></div>
                     </div>
                      <div id="settings-view">
-                        <p>Ayarları sadece yönetici veritabanından değiştirir.</p>
+                         <p>Ayarları sadece yönetici veritabanından değiştirir.</p>
                     </div>
                 </div>
             </main>
@@ -477,19 +477,31 @@
 
             // --- DOSYA LİSTELEME ---
             function displayFiles(files) {
-                fileList.innerHTML = '';
+                fileList.innerHTML = ''; 
+                
+                if (!files || files.length === 0) {
+                    fileList.innerHTML = '<p style="text-align:center; color: var(--text-light); padding: 2rem 0;">Bu klasörde görüntülenecek dosya bulunmuyor.</p>';
+                    return;
+                }
+
                 files.forEach((file) => {
                     const row = document.createElement('div');
                     row.className = 'file-row';
+
+                    const modifiedDate = new Date(file.modifiedTime);
+                    const formattedDate = new Intl.DateTimeFormat('tr-TR', {
+                        year: 'numeric', month: 'long', day: 'numeric'
+                    }).format(modifiedDate);
+
                     row.innerHTML = `
                         <div class="file-name-cell">
                             <svg class="file-icon"><use href="#icon-file" /></svg>
                             <span class="file-name">${file.name}</span>
                         </div>
-                        <div class="file-date">Bugün</div>
+                        <div class="file-date">${formattedDate}</div>
                         <div class="file-actions">
-                            <a href="${file.url}" target="_blank" style="text-decoration:none;">
-                                <button class="action-button">Düzenle</button>
+                            <a href="${file.url}" target="_blank" rel="noopener noreferrer" style="text-decoration:none;">
+                                <button class="action-button">Aç</button>
                             </a>
                         </div>
                     `;
@@ -500,10 +512,10 @@
             // --- GİRİŞ VE OTURUM YÖNETİMİ ---
             function showApp(files) {
                 displayFiles(files);
-                goHome(); // Başlangıçta anasayfayı göster
+                goHome(); 
                 loginScreen.classList.add('hidden');
                 setTimeout(() => {
-                    appContainer.style.display = 'grid'; // Grid'i burada etkinleştir
+                    appContainer.style.display = 'grid'; 
                     setTimeout(() => appContainer.classList.add('visible'), 50);
                 }, 500);
             }
