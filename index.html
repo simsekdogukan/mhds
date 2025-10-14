@@ -1,576 +1,333 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Mayatech Drive - v25.0 (Drive-like UI)</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-:root{
-  --bg: #f8fafc;
-  --card:#fff;
-  --muted:#6b7280;
-  --primary:#1a73e8; /* slightly Drive-like blue but not Google's exact brand shade */
-  --accent:#f37f21;
-  --border:#e6e9ee;
-  --radius:10px;
-  --sidebar-w:260px;
-  --glass: rgba(255,255,255,0.6);
-}
-body.dark-theme{
-  --bg:#0f1724; --card:#0b1220; --muted:#9aa4b2; --primary:#2b6be6; --border:#223042;
-}
-*{box-sizing:border-box}
-html,body{height:100%}
-body{
-  margin:0; font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
-  background:linear-gradient(135deg,#fff7ed,#fff1e5);
-  color:#111827; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
-  -webkit-tap-highlight-color:transparent;
-}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MHDS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --blue-accent: #0061ff; --blue-accent-hover: #0052d9;
+            --background: #f7f9fa; --card-bg: #ffffff; --text-dark: #1e1919; --text-light: #637282; --border-color: #dbe0e4; --sidebar-width: 280px;
+        }
+        body.dark-theme {
+            --background: #121212; --card-bg: #1e1e1e; --text-dark: #e8e6e3; --text-light: #8e9aA7; --border-color: #333333;
+        }
+        *, *::before, *::after { box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif; margin: 0; background-color: var(--background); color: var(--text-dark); height: 100vh; overflow: hidden; transition: background-color 0.3s ease, color 0.3s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        #login-screen {
+            position: fixed; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: var(--background); z-index: 210; opacity: 1; transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+        }
+        #login-screen.hidden { opacity: 0; transform: scale(0.95); pointer-events: none; }
+        .login-logo { max-width: 140px; height: auto; margin-bottom: 2rem; }
+        .login-box p { color: var(--text-light); margin-bottom: 2rem; font-size: 1.1rem; }
+        .input-group { display: flex; flex-direction: column; gap: 1rem; width: 100%; max-width: 320px; }
+        .input-group input { width: 100%; padding: 14px; border: 1px solid var(--border-color); border-radius: 0.75rem; font-size: 1rem; text-align: center; background-color: var(--card-bg); color: var(--text-dark); }
+        .login-button { background-color: var(--blue-accent); color: white; border: none; padding: 14px; border-radius: 0.75rem; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background-color 0.2s, transform 0.2s; }
+        .login-button:hover { background-color: var(--blue-accent-hover); transform: translateY(-2px); }
+        #login-error-message { color: #ef4444; margin-top: 1rem; display: none; }
+        .login-footer { position: absolute; bottom: 0; width: 100%; padding: 1rem; text-align: center; color: var(--text-light); font-size: 0.85rem; }
 
-/* Overall app container */
-.app {
-  max-width:1200px; height:calc(100vh - 32px); margin:16px auto; background:var(--card);
-  border-radius:12px; overflow:hidden; display:grid; grid-template-columns: var(--sidebar-w) 1fr; box-shadow:0 18px 40px rgba(2,6,23,0.08);
-}
+        #app-container {
+            width: 100%; height: 100%; display: none; opacity: 0; transition: opacity 0.5s ease-out;
+        }
+        #app-container.visible { opacity: 1; }
+        
+        .sidebar {
+            width: var(--sidebar-width); height: 100%; background-color: var(--background); border-right: 1px solid var(--border-color); padding: 1.5rem; display: flex; flex-direction: column; 
+            transition: transform 0.4s ease, background-color 0.3s ease; z-index: 201;
+        }
+        .sidebar-header { margin-bottom: 2rem; padding: 0 0.5rem; }
+        .header-logo { max-height: 40px; cursor: pointer; }
+        .nav-list { list-style: none; padding: 0; margin: 0; flex-grow: 1; }
+        .nav-item button { 
+            display: flex; align-items: center; padding: 0.75rem 1rem; border-radius: 0.5rem; text-decoration: none; color: var(--text-dark); font-weight: 500; transition: background-color 0.2s, color 0.2s;
+            width: 100%; background: none; border: none; font-family: 'Inter', sans-serif; font-size: 1rem; cursor: pointer; text-align: left;
+        }
+        .nav-item button.active, .nav-item button:hover { background-color: var(--border-color); }
+        .nav-item svg { width: 20px; height: 20px; margin-right: 1rem; color: var(--text-light); transition: color 0.2s; pointer-events: none; }
 
-/* Sidebar */
-.sidebar{
-  padding:18px; border-right:1px solid var(--border); background:var(--bg);
-  display:flex; flex-direction:column; gap:12px;
-}
-.logo { display:flex; align-items:center; gap:10px; cursor:pointer }
-.logo img{ height:34px }
-.side-menu{ list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:8px }
-.side-menu button{
-  background:none; border:none; text-align:left; padding:10px; border-radius:8px; cursor:pointer;
-  color:var(--muted); font-weight:600; display:flex; gap:10px; align-items:center;
-}
-.side-menu button:hover{ background:var(--accent); color:#fff }
-.sidebar .footer{ margin-top:auto; font-size:13px; color:var(--muted) }
+        .main-content { flex-grow: 1; height: 100%; display: flex; flex-direction: column; }
+        .main-header { padding: 1rem 1.5rem; flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); }
+        .hamburger-button { background: none; border: none; cursor: pointer; padding: 0.5rem; color: var(--text-dark); display: none; }
+        .search-bar { flex-grow: 1; margin: 0 1rem; background-color: var(--background); border: 1px solid var(--border-color); border-radius: 2rem; padding: 0.6rem 1rem; color: var(--text-light); }
+        
+        .content-area { flex-grow: 1; overflow-y: auto; padding: 1.5rem; }
+        .content-header { margin-bottom: 1.5rem; }
+        .content-header h1 { margin: 0; font-size: 1.8rem; }
+        
+        #welcome-view { display: flex; justify-content: center; align-items: center; height: 100%; color: var(--text-light); font-size: 1.2rem; text-align: center; }
+        #file-view { display: none; }
 
-/* Topbar (toolbar) */
-.toolbar{
-  display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 18px; border-bottom:1px solid var(--border);
-}
-.toolbar-left{ display:flex; align-items:center; gap:12px }
-.hamburger{ display:none; border:none; background:none; cursor:pointer; padding:6px; border-radius:8px }
-.search {
-  display:flex; align-items:center; gap:8px; background:var(--bg); padding:8px 12px; border-radius:10px; border:1px solid var(--border);
-}
-.search input{ border:0; outline:0; background:transparent; width:260px; font-size:14px }
+        .file-list-header, .file-row { display: grid; grid-template-columns: 1fr 150px 120px; align-items: center; padding: 0 1rem; }
+        .file-list-header { color: var(--text-light); font-size: 0.85rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-color); }
+        .file-row { background-color: var(--card-bg); border-bottom: 1px solid var(--border-color); transition: background-color 0.2s; }
+        .file-row:hover { background-color: var(--background); }
+        .file-name-cell { display: flex; align-items: center; padding: 0.8rem 0; }
+        .file-icon { width: 32px; height: 32px; margin-right: 1rem; color: var(--text-light); }
+        .file-name { font-weight: 500; color: var(--text-dark); }
+        .file-date, .file-actions { font-size: 0.9rem; color: var(--text-light); }
+        .action-button { background: none; border: 1px solid var(--border-color); border-radius: 0.5rem; padding: 0.5rem 1rem; color: var(--text-dark); cursor: pointer; }
+        
+        .sidebar-footer { margin-top: auto; padding-top: 1rem; border-top: 1px solid var(--border-color); }
+        .version-info {
+            font-size: 0.75rem; color: var(--text-light); cursor: pointer; white-space: nowrap; text-align: center;
+        }
+        .version-info .long-version { display: none; }
+        .version-info.expanded .short-version { display: none; }
+        .version-info.expanded .long-version { display: inline; }
 
-/* Action buttons */
-.actions{ display:flex; gap:8px; align-items:center }
-.btn{
-  border:0; padding:8px 12px; border-radius:8px; cursor:pointer; font-weight:700;
-}
-.btn.primary{ background:var(--primary); color:#fff }
-.btn.ghost{ background:transparent; border:1px solid var(--border); color:var(--muted) }
-
-/* Content area */
-.content { padding:18px; display:flex; gap:18px; min-height:0 } /* min-height:0 for overflow in flex */
-.view-area{ flex:1; display:flex; flex-direction:column; min-height:0 }
-.controls-row{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px }
-.view-toggle{ display:flex; gap:8px; align-items:center }
-
-/* File list - two modes: grid & list */
-.file-grid{ display:grid; grid-template-columns: repeat(auto-fill,minmax(180px,1fr)); gap:12px }
-.card-file{
-  background:var(--card); border:1px solid var(--border); padding:12px; border-radius:10px; display:flex; flex-direction:column; gap:8px;
-  min-height:96px; cursor:pointer;
-}
-.card-file .title{ font-weight:600; color:inherit }
-.card-file .meta{ color:var(--muted); font-size:13px }
-
-/* list mode */
-.file-list{ display:flex; flex-direction:column; gap:8px }
-.file-row{
-  display:flex; align-items:center; gap:12px; padding:10px; border-radius:8px; border:1px solid var(--border); background:transparent;
-}
-.file-checkbox{ width:20px; height:20px }
-
-/* right details panel */
-.details-panel{
-  width:340px; border-left:1px solid var(--border); padding:18px; background:var(--bg); display:flex; flex-direction:column; gap:12px;
-}
-.details-panel.hidden{ display:none }
-/* mobile adjust - panel overlays */
-@media(max-width:900px){
-  .app{ grid-template-columns: 1fr; height:100vh }
-  .sidebar{ position:fixed; left:0; top:0; bottom:0; transform:translateX(-100%); transition:transform .28s ease; z-index:50; width:var(--sidebar-w) }
-  body.sidebar-open .sidebar{ transform:translateX(0) }
-  .hamburger{ display:inline-flex }
-  .details-panel{ position:fixed; right:0; top:0; bottom:0; transform:translateX(100%); width:320px; z-index:60; transition:transform .28s ease; }
-  .details-panel.open{ transform:translateX(0) }
-}
-
-/* file description (expand in-list) */
-.file-desc{ font-size:13px; color:var(--muted); margin-top:6px; max-height:0; overflow:hidden; transition:max-height .28s ease, padding .28s ease }
-.file-desc.open{ max-height:220px; padding-top:6px }
-
-/* small helpers */
-.hidden{ display:none }
-.muted{ color:var(--muted) }
-.right{ margin-left:auto }
-
-body.dark-theme{ background:linear-gradient(135deg,#0f1724,#071227); color:#e6eef8; }
-body.dark-theme .app{ background: #071427 }
-</style>
+        .theme-toggle-button { background: none; border: 1px solid var(--border-color); color: var(--text-light); width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease; }
+        #login-screen .theme-toggle-button { position: absolute; top: 1.5rem; right: 1.5rem; z-index: 100; }
+        
+        #sidebar-overlay { 
+            position: fixed; inset: 0; background-color: rgba(0,0,0,0.4); z-index: 200; opacity: 0; transition: opacity 0.4s ease; pointer-events: none;
+        }
+        
+        @media (min-width: 900px) {
+            #app-container { display: grid; grid-template-columns: var(--sidebar-width) auto; }
+            .main-content { flex-grow: 1; }
+            .hamburger-button, #sidebar-overlay { display: none; }
+        }
+        @media (max-width: 899px) {
+            #app-container { display: flex; flex-direction: column; }
+            .sidebar { position: fixed; transform: translateX(-100%); }
+            .main-content { width: 100%; }
+            .hamburger-button { display: inline-flex; }
+            .file-list-header, .file-row { grid-template-columns: 1fr 120px; }
+            .file-date { display: none; }
+            body.sidebar-open .sidebar { transform: translateX(0); box-shadow: 10px 0 30px rgba(0,0,0,0.1); }
+            body.sidebar-open #sidebar-overlay { opacity: 1; pointer-events: auto; }
+        }
+    </style>
 </head>
 <body>
-<!-- Top theme toggle and global overlay for mobile -->
-<div id="global-overlay" style="position:fixed;inset:0;display:none;z-index:40;background:rgba(0,0,0,0.35)"></div>
+    <div class="app-wrapper">
+        <div id="login-screen">
+            <button id="theme-toggle-login" class="theme-toggle-button" title="Temayı Değiştir"></button>
+            <div class="login-box">
+                <img src="logo.png" alt="Mayatech Logo" class="login-logo">
+                <p>Devam etmek için lütfen parolanızı girin.</p>
+                <div class="input-group">
+                    <input type="password" id="password" placeholder="Parola">
+                    <button class="login-button" id="login-button">Giriş Yap</button>
+                </div>
+                <p id="login-error-message">Hatalı parola.</p>
+            </div>
+            <footer class="login-footer">MHDS - Mayatech Bilgi İşlem 2025©</footer>
+        </div>
 
-<!-- Login screen (kept) -->
-<div id="login-screen" style="position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:100;">
-  <div style="width:360px;max-width:90%;background:var(--card);padding:20px;border-radius:12px;border:1px solid var(--border);text-align:center;">
-    <img src="logo.png" alt="logo" style="height:48px;margin-bottom:10px">
-    <p style="color:var(--muted)">Devam etmek için lütfen parolanızı girin.</p>
-    <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px">
-      <input id="pw" type="password" placeholder="Parola" style="padding:10px;border-radius:8px;border:1px solid var(--border);outline:none">
-      <button id="login" class="btn primary">Giriş Yap</button>
-      <div id="pw-err" class="muted" style="display:none;color:#ef4444">Hatalı parola.</div>
+        <div id="app-container">
+            <nav class="sidebar" id="sidebar">
+                <div>
+                    <div class="sidebar-header">
+                        <img src="logo.png" alt="MHDS Logo" class="header-logo" id="home-logo-sidebar">
+                    </div>
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            <button id="show-files-button">
+                                <svg><use href="#icon-folder" /></svg> Formlar
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+                <footer class="sidebar-footer">
+                    <div class="version-info" id="version-info">
+                        <span class="short-version">v.25.0</span>
+                        <span class="long-version">v.25.0 - Proje mimarisi sıfırdan yeniden yazıldı</span>
+                    </div>
+                </footer>
+            </nav>
+
+            <main class="main-content">
+                <header class="main-header">
+                    <button class="hamburger-button" id="hamburger-button" title="Menüyü Aç">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                    </button>
+                    <input type="text" class="search-bar" placeholder="Dosyalarda ara...">
+                    <button id="theme-toggle-main" class="theme-toggle-button" title="Temayı Değiştir"></button>
+                </header>
+                <div class="content-area">
+                    <div id="welcome-view">
+                        <p>Erişmek istediğiniz klasörü seçin.</p>
+                    </div>
+                    <div id="file-view">
+                        <div class="content-header">
+                             <h1 id="main-title"></h1>
+                        </div>
+                        <div class="file-list-header">
+                            <div>Ad</div>
+                            <div class="file-date">Değiştirme</div>
+                            <div></div>
+                        </div>
+                        <div class="file-list" id="file-list"></div>
+                    </div>
+                </div>
+            </main>
+        </div>
+        <div id="sidebar-overlay"></div>
     </div>
-    <div style="margin-top:12px;color:var(--muted);font-size:13px">MHDS - Mayatech Bilgi İşlem 2025©</div>
-  </div>
-</div>
 
-<!-- Main app -->
-<div id="app" class="app" style="display:none" role="application" aria-label="Mayatech Drive like app">
-  <!-- Sidebar -->
-  <aside class="sidebar" id="sidebar" aria-label="Sol menü">
-    <div class="logo" id="home-logo">
-      <img src="logo.png" alt="MHDS">
-      <div style="font-weight:700">MHDS</div>
-    </div>
+    <svg width="0" height="0" style="position:absolute;">
+        <defs>
+            <symbol id="icon-file" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></symbol>
+            <symbol id="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></symbol>
+            <symbol id="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></symbol>
+            <symbol id="icon-folder" viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></symbol>
+        </defs>
+    </svg>
 
-    <ul class="side-menu" role="menu">
-      <li><button id="btn-files"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><use href="#icon-folder"></use></svg> Formlar</button></li>
-      <li><button id="btn-starred">⭐ Öne Çıkanlar</button></li>
-      <li><button id="btn-trash">🗑️ Çöp Kutusu</button></li>
-    </ul>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // DOM Elementleri
+            const loginScreen = document.getElementById('login-screen');
+            const appContainer = document.getElementById('app-container');
+            const passwordInput = document.getElementById('password');
+            const loginButton = document.getElementById('login-button');
+            const loginErrorMessage = document.getElementById('login-error-message');
+            const fileList = document.getElementById('file-list');
+            const themeToggleLogin = document.getElementById('theme-toggle-login');
+            const themeToggleMain = document.getElementById('theme-toggle-main');
+            const showFilesButton = document.getElementById('show-files-button');
+            const hamburgerButton = document.getElementById('hamburger-button');
+            const sidebarOverlay = document.getElementById('sidebar-overlay');
+            const mainTitle = document.getElementById('main-title');
+            const welcomeView = document.getElementById('welcome-view');
+            const fileView = document.getElementById('file-view');
+            const versionInfo = document.getElementById('version-info');
+            const homeLogoSidebar = document.getElementById('home-logo-sidebar');
 
-    <div style="margin-top:10px">
-      <button id="new-button" class="btn primary" style="width:100%">Yeni</button>
-    </div>
+            // --- TEMA YÖNETİMİ ---
+            const sunIcon = '<svg><use href="#icon-sun" /></svg>';
+            const moonIcon = '<svg><use href="#icon-moon" /></svg>';
+            function applyTheme(theme) {
+                if (theme === 'dark') {
+                    document.body.classList.add('dark-theme');
+                    themeToggleLogin.innerHTML = sunIcon; themeToggleMain.innerHTML = sunIcon;
+                } else {
+                    document.body.classList.remove('dark-theme');
+                    themeToggleLogin.innerHTML = moonIcon; themeToggleMain.innerHTML = moonIcon;
+                }
+            }
+            function toggleTheme() {
+                const currentIsDark = document.body.classList.contains('dark-theme');
+                const newTheme = currentIsDark ? 'light' : 'dark';
+                localStorage.setItem('theme', newTheme);
+                applyTheme(newTheme);
+            }
+            themeToggleLogin.addEventListener('click', toggleTheme);
+            themeToggleMain.addEventListener('click', toggleTheme);
+            
+            // --- MENÜ KONTROLÜ ---
+            function openSidebar() { document.body.classList.add('sidebar-open'); }
+            function closeSidebar() { document.body.classList.remove('sidebar-open'); }
+            hamburgerButton.addEventListener('click', openSidebar);
+            sidebarOverlay.addEventListener('click', closeSidebar);
+            
+            // --- SAYFA NAVİGASYONU ---
+            function goHome() {
+                welcomeView.style.display = 'flex';
+                fileView.style.display = 'none';
+                mainTitle.textContent = 'Ana Sayfa';
+                document.querySelectorAll('.nav-item button').forEach(b => b.classList.remove('active'));
+                closeSidebar();
+            }
+            showFilesButton.addEventListener('click', () => {
+                welcomeView.style.display = 'none';
+                fileView.style.display = 'block';
+                mainTitle.textContent = 'Formlar';
+                document.querySelectorAll('.nav-item button').forEach(b => b.classList.remove('active'));
+                showFilesButton.classList.add('active');
+                closeSidebar();
+            });
+            homeLogoSidebar.addEventListener('click', goHome);
+            
+            // --- VERSİYON BİLGİSİ ---
+            versionInfo.addEventListener('click', () => {
+                versionInfo.classList.toggle('expanded');
+            });
 
-    <div class="footer muted" style="margin-top:12px">v.25.0 — Drive-like UI</div>
-  </aside>
+            // --- DOSYA LİSTELEME ---
+            function displayFiles(files) {
+                fileList.innerHTML = '';
+                files.forEach((file) => {
+                    const row = document.createElement('div');
+                    row.className = 'file-row';
+                    row.innerHTML = `
+                        <div class="file-name-cell">
+                            <svg class="file-icon"><use href="#icon-file" /></svg>
+                            <span class="file-name">${file.name}</span>
+                        </div>
+                        <div class="file-date">Bugün</div>
+                        <div class="file-actions">
+                            <a href="${file.url}" target="_blank" style="text-decoration:none;">
+                                <button class="action-button">Düzenle</button>
+                            </a>
+                        </div>
+                    `;
+                    fileList.appendChild(row);
+                });
+            }
+            
+            // --- GİRİŞ VE OTURUM YÖNETİMİ ---
+            function showApp(files) {
+                displayFiles(files);
+                goHome(); // Başlangıçta anasayfayı göster
+                loginScreen.classList.add('hidden');
+                setTimeout(() => {
+                    appContainer.style.display = 'grid'; // Grid'i burada etkinleştir
+                    setTimeout(() => appContainer.classList.add('visible'), 50);
+                }, 500);
+            }
 
-  <!-- Main content area -->
-  <div style="display:flex;flex-direction:column;min-height:0">
-    <!-- top toolbar -->
-    <div class="toolbar">
-      <div class="toolbar-left">
-        <button class="hamburger" id="hamburger" aria-label="Menü aç"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            async function handleLogin() {
+                const password = passwordInput.value;
+                if (!password) { loginErrorMessage.style.display = 'block'; return; }
+                loginButton.disabled = true;
+                loginButton.textContent = 'Doğrulanıyor...';
+                loginErrorMessage.style.display = 'none';
+                try {
+                    const response = await fetch('/api/getFiles', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: password }) });
+                    if (response.ok) {
+                        const files = await response.json();
+                        sessionStorage.setItem('isLoggedIn', 'true');
+                        sessionStorage.setItem('fileCache', JSON.stringify(files));
+                        showApp(files);
+                    } else {
+                        loginErrorMessage.style.display = 'block';
+                        passwordInput.value = '';
+                    }
+                } catch (error) {
+                    loginErrorMessage.textContent = 'Bir ağ hatası oluştu. Lütfen tekrar deneyin.';
+                    loginErrorMessage.style.display = 'block';
+                } finally {
+                    loginButton.disabled = false;
+                    loginButton.textContent = 'Giriş Yap';
+                }
+            }
+            
+            // --- SAYFA YÜKLENDİĞİNDE ÇALIŞAN KOD ---
+            (() => {
+                applyTheme(localStorage.getItem('theme') || 'dark');
+                
+                if (sessionStorage.getItem('isLoggedIn') === 'true') {
+                    const cachedFiles = JSON.parse(sessionStorage.getItem('fileCache'));
+                    if (cachedFiles) {
+                        showApp(cachedFiles);
+                    }
+                }
+            })();
 
-        <div class="search" role="search">
-          <svg width="18" height="18" viewBox="0 0 24 24" style="opacity:0.7"><circle cx="11" cy="11" r="6" stroke="currentColor" fill="none"/></svg>
-          <input id="search" placeholder="Dosyalarda ara" aria-label="Ara">
-        </div>
+            loginButton.addEventListener('click', handleLogin);
+            passwordInput.addEventListener('keyup', (event) => { if (event.key === 'Enter') { handleLogin(); } });
 
-        <div class="view-toggle" style="margin-left:10px">
-          <button id="toggle-grid" class="btn ghost" title="Grid"><svg width="16" height="16" viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" stroke="currentColor" fill="none"/></svg></button>
-          <button id="toggle-list" class="btn ghost" title="Liste"><svg width="16" height="16" viewBox="0 0 24 24"><line x1="4" y1="6" x2="20" y2="6" stroke="currentColor"/><line x1="4" y1="12" x2="20" y2="12" stroke="currentColor"/></svg></button>
-        </div>
-      </div>
-
-      <div class="actions">
-        <button id="btn-upload" class="btn ghost">Yükle</button>
-        <button id="theme-toggle" class="btn ghost" aria-label="Tema">🌙</button>
-      </div>
-    </div>
-
-    <!-- content -->
-    <div class="content">
-      <div class="view-area">
-        <div class="controls-row">
-          <div>
-            <strong id="current-title">Formlar</strong>
-            <div class="muted" id="sub-title" style="font-size:13px">Dosyalarınızı yönetin</div>
-          </div>
-          <div style="display:flex;gap:8px;align-items:center">
-            <div class="muted" id="selection-count">0 seçili</div>
-          </div>
-        </div>
-
-        <!-- welcome -->
-        <div id="welcome" style="padding:40px;display:flex;align-items:center;justify-content:center;color:var(--muted)">Erişmek istediğiniz klasörü seçin.</div>
-
-        <!-- file view -->
-        <div id="files-area" style="display:none;min-height:0;overflow:auto">
-          <!-- list or grid container -->
-          <div id="grid-container" class="file-grid" style="display:none"></div>
-          <div id="list-container" class="file-list" style="display:none"></div>
-        </div>
-      </div>
-
-      <!-- details panel -->
-      <aside id="details" class="details-panel hidden" aria-hidden="true">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <strong>Öğe Bilgisi</strong>
-          <button id="close-details" class="btn ghost">Kapat</button>
-        </div>
-        <div id="details-content" style="display:flex;flex-direction:column;gap:8px">
-          <div class="muted" id="det-name">İsim: —</div>
-          <div class="muted" id="det-size">Boyut: —</div>
-          <div class="muted" id="det-modified">Güncellendi: —</div>
-          <div class="muted" id="det-desc">Açıklama: —</div>
-        </div>
-        <div style="margin-top:auto">
-          <a id="det-edit" class="btn primary" href="#">Düzenle</a>
-        </div>
-      </aside>
-    </div>
-  </div>
-</div>
-
-<!-- icons defs (kept) -->
-<svg width="0" height="0" style="position:absolute">
-  <defs>
-    <symbol id="icon-folder" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></symbol>
-  </defs>
-</svg>
-
-<script>
-/*
-  Drive-like UI implementation (single file).
-  - Uses /api/getFiles POST with { password } to load files.
-  - Files expected to be objects: { name, size, modified, description, url }
-  - "Düzenle" opens /editFile?name=...
-  - No Google trademarks; look & feel inspired by Drive
-*/
-
-(() => {
-  // elements
-  const loginScreen = document.getElementById('login-screen');
-  const app = document.getElementById('app');
-  const loginBtn = document.getElementById('login');
-  const pw = document.getElementById('pw');
-  const pwErr = document.getElementById('pw-err');
-  const btnFiles = document.getElementById('btn-files');
-  const filesArea = document.getElementById('files-area');
-  const welcome = document.getElementById('welcome');
-  const gridContainer = document.getElementById('grid-container');
-  const listContainer = document.getElementById('list-container');
-  const toggleGrid = document.getElementById('toggle-grid');
-  const toggleList = document.getElementById('toggle-list');
-  const searchInput = document.getElementById('search');
-  const details = document.getElementById('details');
-  const detailsContent = {
-    name: document.getElementById('det-name'),
-    size: document.getElementById('det-size'),
-    modified: document.getElementById('det-modified'),
-    desc: document.getElementById('det-desc'),
-    edit: document.getElementById('det-edit')
-  };
-  const hamburger = document.getElementById('hamburger');
-  const sidebar = document.getElementById('sidebar');
-  const globalOverlay = document.getElementById('global-overlay');
-  const sidebarToggleBtn = document.getElementById('hamburger');
-  const themeToggle = document.getElementById('theme-toggle');
-  const selectionCount = document.getElementById('selection-count');
-  const homeLogo = document.getElementById('home-logo');
-
-  let files = []; // cached
-  let viewMode = 'grid'; // or 'list'
-  let selected = new Set();
-  let openDescEl = null;
-
-  // theme
-  function applyTheme(t){
-    if(t === 'dark') document.body.classList.add('dark-theme');
-    else document.body.classList.remove('dark-theme');
-    themeToggle.textContent = document.body.classList.contains('dark-theme') ? '☀️' : '🌙';
-  }
-  const savedTheme = localStorage.getItem('theme') || 'dark';
-  applyTheme(savedTheme);
-  themeToggle.addEventListener('click', () => {
-    const t = document.body.classList.contains('dark-theme') ? 'light' : 'dark';
-    localStorage.setItem('theme', t);
-    applyTheme(t);
-  });
-
-  // mobile sidebar
-  function openSidebar(){
-    document.body.classList.add('sidebar-open');
-    globalOverlay.style.display = 'block';
-  }
-  function closeSidebar(){
-    document.body.classList.remove('sidebar-open');
-    globalOverlay.style.display = 'none';
-  }
-  hamburger.addEventListener('click', (e) => { e.stopPropagation(); openSidebar(); });
-  globalOverlay.addEventListener('click', closeSidebar);
-
-  // helpers
-  function formatMeta(f){
-    const parts = [];
-    if(f.size) parts.push(f.size);
-    if(f.modified) parts.push(f.modified);
-    return parts.join(' • ');
-  }
-  function clearSelection(){ selected.clear(); updateSelectionCount(); document.querySelectorAll('.file-row.selected').forEach(el=>el.classList.remove('selected')) }
-  function updateSelectionCount(){ selectionCount.textContent = `${selected.size} seçili` }
-
-  // renderers
-  function createGridItem(file, idx){
-    const el = document.createElement('div');
-    el.className = 'card-file';
-    el.dataset.name = file.name || '';
-    el.innerHTML = `
-      <div style="display:flex;align-items:center;gap:10px">
-        <div style="width:44px;height:44px;border-radius:8px;background:#f3f4f6;display:flex;align-items:center;justify-content:center">${/* icon */''}<svg width="18" height="18"><use href="#icon-folder"></use></svg></div>
-        <div style="flex:1">
-          <div class="title">${escapeHtml(file.name||'İsimsiz')}</div>
-          <div class="meta">${escapeHtml(formatMeta(file))}</div>
-        </div>
-      </div>
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <div class="muted" style="font-size:13px">${escapeHtml(file.modified||'—')}</div>
-        <div><a href="/editFile?name=${encodeURIComponent(file.name||'')}" class="btn ghost">Düzenle</a></div>
-      </div>
-      <div class="file-desc">${escapeHtml(file.description || `Bu dosya son olarak ${file.modified || 'bilinmeyen bir tarihte'} güncellendi.`)}</div>
-    `;
-    // click toggles desc
-    el.addEventListener('click', (e) => {
-      // ignore clicks on links
-      if(e.target.closest('a')) return;
-      const desc = el.querySelector('.file-desc');
-      const wasOpen = desc.classList.contains('open');
-      document.querySelectorAll('.file-desc.open').forEach(d => d.classList.remove('open'));
-      if(!wasOpen) desc.classList.add('open');
-    });
-    // right-click or long press opens details panel
-    el.addEventListener('contextmenu', (ev) => {
-      ev.preventDefault();
-      showDetails(file);
-    });
-    return el;
-  }
-
-  function createListItem(file, idx){
-    const row = document.createElement('div');
-    row.className = 'file-row';
-    row.dataset.name = file.name || '';
-    row.innerHTML = `
-      <input type="checkbox" class="file-checkbox" aria-label="Seç" />
-      <div style="flex:1">
-        <div style="display:flex;align-items:center;gap:8px">
-          <div style="width:36px;height:36px;border-radius:8px;background:#f3f4f6;display:flex;align-items:center;justify-content:center">
-            <svg width="16" height="16"><use href="#icon-folder"></use></svg>
-          </div>
-          <div style="display:flex;flex-direction:column">
-            <div style="font-weight:600">${escapeHtml(file.name||'İsimsiz')}</div>
-            <div class="muted" style="font-size:13px">${escapeHtml(formatMeta(file))}</div>
-          </div>
-        </div>
-      </div>
-      <div style="display:flex;align-items:center;gap:8px">
-        <a class="btn ghost" href="/editFile?name=${encodeURIComponent(file.name||'')}" style="text-decoration:none">Düzenle</a>
-      </div>
-      <div class="file-desc">${escapeHtml(file.description || `Bu dosya son olarak ${file.modified || 'bilinmeyen bir tarihte'} güncellendi.`)}</div>
-    `;
-
-    // checkbox handling
-    const checkbox = row.querySelector('.file-checkbox');
-    checkbox.addEventListener('click', (e) => {
-      e.stopPropagation();
-      if(checkbox.checked) selected.add(file.name); else selected.delete(file.name);
-      updateSelectionCount();
-      row.classList.toggle('selected', checkbox.checked);
-    });
-
-    // clicking row toggles description (but not clicking the edit link)
-    row.addEventListener('click', (e) => {
-      if(e.target.closest('a') || e.target.type === 'checkbox') return;
-      const desc = row.querySelector('.file-desc');
-      const wasOpen = desc.classList.contains('open');
-      document.querySelectorAll('.file-desc.open').forEach(d => d.classList.remove('open'));
-      if(!wasOpen) desc.classList.add('open');
-    });
-
-    // double-click opens details panel (desktop)
-    row.addEventListener('dblclick', (e) => {
-      showDetails(file);
-    });
-
-    return row;
-  }
-
-  function renderFiles(list){
-    gridContainer.innerHTML = '';
-    listContainer.innerHTML = '';
-    if(!Array.isArray(list) || list.length === 0){
-      gridContainer.innerHTML = '<div class="muted">Görüntülenecek dosya yok.</div>';
-      listContainer.innerHTML = '<div class="muted">Görüntülenecek dosya yok.</div>';
-      return;
-    }
-    list.forEach((f,i) => {
-      gridContainer.appendChild(createGridItem(f,i));
-      listContainer.appendChild(createListItem(f,i));
-    });
-  }
-
-  // details panel
-  function showDetails(file){
-    details.classList.remove('hidden');
-    details.classList.add('open');
-    details.setAttribute('aria-hidden','false');
-    detailsContent.name.textContent = 'İsim: ' + (file.name || '—');
-    detailsContent.size.textContent = 'Boyut: ' + (file.size || '—');
-    detailsContent.modified.textContent = 'Güncellendi: ' + (file.modified || '—');
-    detailsContent.desc.textContent = 'Açıklama: ' + (file.description || '—');
-    detailsContent.edit.href = '/editFile?name=' + encodeURIComponent(file.name || '');
-    if(window.innerWidth <= 900){
-      details.classList.add('open'); // slide-in on mobile
-    }
-  }
-  document.getElementById('close-details').addEventListener('click', () => {
-    details.classList.add('hidden');
-    details.setAttribute('aria-hidden','true');
-  });
-
-  // search
-  function applySearch(q){
-    const filtered = files.filter(f => {
-      if(!q) return true;
-      const s = q.toLowerCase();
-      return (f.name || '').toLowerCase().includes(s) || (f.description||'').toLowerCase().includes(s);
-    });
-    renderFiles(filtered);
-    // reapply view mode
-    setViewMode(viewMode);
-  }
-
-  searchInput.addEventListener('input', (e) => {
-    applySearch(e.target.value.trim());
-  });
-
-  // view toggles
-  function setViewMode(m){
-    viewMode = m;
-    if(m === 'grid'){
-      gridContainer.style.display = 'grid';
-      listContainer.style.display = 'none';
-    } else {
-      gridContainer.style.display = 'none';
-      listContainer.style.display = 'block';
-    }
-  }
-  toggleGrid.addEventListener('click', ()=> setViewMode('grid'));
-  toggleList.addEventListener('click', ()=> setViewMode('list'));
-
-  // load files and show UI
-  async function handleLogin(){
-    const password = pw.value;
-    if(!password){ pwErr.style.display = 'block'; return; }
-    loginBtn.disabled = true; loginBtn.textContent = 'Doğrulanıyor...';
-    pwErr.style.display = 'none';
-    try {
-      const res = await fetch('/api/getFiles', {
-        method:'POST',
-        headers:{ 'Content-Type':'application/json' },
-        body: JSON.stringify({ password })
-      });
-      if(res.ok){
-        const data = await res.json();
-        files = Array.isArray(data) ? data : [];
-        sessionStorage.setItem('isLoggedIn','true');
-        sessionStorage.setItem('fileCache', JSON.stringify(files));
-        // hide login, show app
-        loginScreen.style.display = 'none';
-        app.style.display = 'grid';
-        welcome.style.display = 'none';
-        filesArea.style.display = 'block';
-        renderFiles(files);
-        setViewMode('grid');
-      } else {
-        pwErr.style.display = 'block';
-        pw.value = '';
-      }
-    } catch(err){
-      pwErr.textContent = 'Ağ hatası. Tekrar deneyin.'; pwErr.style.display = 'block';
-    } finally {
-      loginBtn.disabled = false; loginBtn.textContent = 'Giriş Yap';
-    }
-  }
-  loginBtn.addEventListener('click', handleLogin);
-  pw.addEventListener('keyup', (e) => { if(e.key === 'Enter') handleLogin(); });
-
-  // restore session
-  (function restore(){
-    applyTheme(localStorage.getItem('theme') || 'dark');
-    if(sessionStorage.getItem('isLoggedIn') === 'true'){
-      try{
-        const cached = JSON.parse(sessionStorage.getItem('fileCache') || '[]');
-        if(Array.isArray(cached) && cached.length){
-          files = cached;
-          loginScreen.style.display = 'none';
-          app.style.display = 'grid';
-          welcome.style.display = 'none';
-          filesArea.style.display = 'block';
-          renderFiles(files);
-          setViewMode('grid');
-        }
-      }catch(e){}
-    }
-  })();
-
-  // clicking sidebar file button
-  btnFiles.addEventListener('click', (e) => {
-    e.stopPropagation();
-    welcome.style.display = 'none';
-    filesArea.style.display = 'block';
-    // small delay so touch devices register
-    setTimeout(()=> closeSidebar(), 180);
-  });
-
-  // clicking home logo -> go home
-  homeLogo.addEventListener('click', () => {
-    welcome.style.display = 'flex';
-    filesArea.style.display = 'none';
-    closeSidebar();
-  });
-
-  // upload and new button basic handlers (no real backend here)
-  document.getElementById('new-button').addEventListener('click', () => alert('Yeni butonu: buraya dosya/klasör oluşturma ekleyebilirsin.'));
-  document.getElementById('btn-upload').addEventListener('click', () => alert('Yükle: İnteraktif yükleme penceresi ekle.'));
-
-  // click outside close descs; close details on ESC
-  document.addEventListener('click', (e) => {
-    // if click outside sidebar on mobile -> close
-    if(document.body.classList.contains('sidebar-open')){
-      if(!e.composedPath().includes(sidebar) && !e.composedPath().includes(sidebarToggleBtn)){
-        closeSidebar();
-      }
-    }
-    // close any open desc if clicked outside file item
-    if(!e.target.closest('.card-file') && !e.target.closest('.file-row')){
-      document.querySelectorAll('.file-desc.open').forEach(d=>d.classList.remove('open'));
-    }
-  });
-  document.addEventListener('keydown', (e) => {
-    if(e.key === 'Escape'){
-      closeSidebar();
-      document.querySelectorAll('.file-desc.open').forEach(d=>d.classList.remove('open'));
-      if(!details.classList.contains('hidden')){
-        details.classList.add('hidden');
-      }
-    }
-  });
-
-  // small util: escape html to avoid injection
-  function escapeHtml(str){
-    if(typeof str !== 'string') return str;
-    return str.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
-  }
-
-})();
-</script>
+        });
+    </script>
 </body>
 </html>
