@@ -3,27 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mayatech Hızlı Dosya Sistemi</title>
+    <title>MHDS</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-accent: #f37f21; --light-accent: #fed7aa; --background: #f9fafb; --card-bg: #ffffff; --text-dark: #231f20; --text-light: #6b7280; --border-color: #e5e7eb; --sidebar-width: 260px;
+            --blue-accent: #0061ff; --blue-accent-hover: #0052d9;
+            --background: #f7f9fa; --card-bg: #ffffff; --text-dark: #1e1919; --text-light: #637282; --border-color: #dbe0e4; --sidebar-width: 280px;
         }
         body.dark-theme {
-            --light-accent: #523013; --background: #111827; --card-bg: #1f2937; --text-dark: #f9fafb; --text-light: #9ca3af; --border-color: #374151;
+            --background: #121212; --card-bg: #1e1e1e; --text-dark: #e8e6e3; --text-light: #8e9aA7; --border-color: #333333;
         }
         *, *::before, *::after { box-sizing: border-box; }
         body {
             font-family: 'Inter', sans-serif; margin: 0; background-color: var(--background); color: var(--text-dark); height: 100vh; overflow: hidden; transition: background-color 0.3s ease, color 0.3s ease;
             -webkit-tap-highlight-color: transparent;
         }
-        .app-wrapper {
-            width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; padding: 0; background: linear-gradient(135deg, #fff7ed, #fff1e5);
-        }
-        body.dark-theme .app-wrapper { background: linear-gradient(135deg, #1e293b, #0f172a); }
-
+        
         #login-screen {
             position: fixed; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: var(--background); z-index: 210; opacity: 1; transition: opacity 0.5s ease-out, transform 0.5s ease-out;
         }
@@ -32,60 +29,57 @@
         .login-box p { color: var(--text-light); margin-bottom: 2rem; font-size: 1.1rem; }
         .input-group { display: flex; flex-direction: column; gap: 1rem; width: 100%; max-width: 320px; }
         .input-group input { width: 100%; padding: 14px; border: 1px solid var(--border-color); border-radius: 0.75rem; font-size: 1rem; text-align: center; background-color: var(--card-bg); color: var(--text-dark); }
-        .login-button { background-color: var(--primary-accent); color: white; border: none; padding: 14px; border-radius: 0.75rem; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background-color 0.2s, transform 0.2s; }
-        .login-button:hover { background-color: #e86c0e; transform: translateY(-2px); }
+        .login-button { background-color: var(--blue-accent); color: white; border: none; padding: 14px; border-radius: 0.75rem; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background-color 0.2s, transform 0.2s; }
+        .login-button:hover { background-color: var(--blue-accent-hover); transform: translateY(-2px); }
         #login-error-message { color: #ef4444; margin-top: 1rem; display: none; }
+        .login-footer { position: absolute; bottom: 0; width: 100%; padding: 1rem; text-align: center; color: var(--text-light); font-size: 0.85rem; }
 
         #app-container {
-            width: 100%; height: 100%; display: none; background: var(--card-bg); opacity: 0; transform: translateY(20px); transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+            width: 100%; height: 100%; display: none; opacity: 0; transition: opacity 0.5s ease-out;
         }
-        #app-container.visible { opacity: 1; transform: translateY(0); }
+        #app-container.visible { opacity: 1; }
         
         .sidebar {
             width: var(--sidebar-width); height: 100%; background-color: var(--background); border-right: 1px solid var(--border-color); padding: 1.5rem; display: flex; flex-direction: column; 
-            transition: transform 0.4s ease, background-color 0.3s ease; 
-            z-index: 201;
+            transition: transform 0.4s ease, background-color 0.3s ease; z-index: 201;
         }
-        .sidebar-header { margin-bottom: 2rem; }
+        .sidebar-header { margin-bottom: 2rem; padding: 0 0.5rem; }
         .header-logo-link { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--text-dark); font-weight: 700; font-size: 1.5rem; }
-        .header-logo { max-height: 40px; }
+        .header-logo { max-height: 40px; cursor: pointer; }
         .nav-list { list-style: none; padding: 0; margin: 0; flex-grow: 1; }
         .nav-item button { 
-            display: flex; align-items: center; padding: 0.9rem 1rem; border-radius: 0.5rem; text-decoration: none; color: var(--text-light); font-weight: 500; transition: background-color 0.2s, color 0.2s;
+            display: flex; align-items: center; padding: 0.75rem 1rem; border-radius: 0.5rem; text-decoration: none; color: var(--text-dark); font-weight: 500; transition: background-color 0.2s, color 0.2s;
             width: 100%; background: none; border: none; font-family: 'Inter', sans-serif; font-size: 1rem; cursor: pointer; text-align: left;
         }
-        .nav-item button:hover { background-color: var(--light-accent); color: var(--primary-accent); }
+        .nav-item button.active, .nav-item button:hover { background-color: var(--border-color); }
         .nav-item svg { width: 20px; height: 20px; margin-right: 1rem; color: var(--text-light); transition: color 0.2s; pointer-events: none; }
-        .nav-item button:hover svg { color: var(--primary-accent); }
 
-        .main-content { width: 100%; height: 100%; display: flex; flex-direction: column; }
-        .main-header { padding: 1rem 1.5rem; border-bottom: 1px solid var(--border-color); flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; }
-        .main-header .header-logo { margin: 0; display: none; } /* Mobilde ana logoyu gizle */
-        .hamburger-button { background: none; border: none; cursor: pointer; padding: 0.5rem; color: var(--text-dark); }
+        .main-content { flex-grow: 1; height: 100%; display: flex; flex-direction: column; }
+        .main-header { padding: 1rem 1.5rem; flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); }
+        .hamburger-button { background: none; border: none; cursor: pointer; padding: 0.5rem; color: var(--text-dark); display: none; }
+        .search-bar { flex-grow: 1; margin: 0 1rem; background-color: var(--background); border: 1px solid var(--border-color); border-radius: 2rem; padding: 0.6rem 1rem; color: var(--text-light); }
         
         .content-area { flex-grow: 1; overflow-y: auto; padding: 1.5rem; }
+        .content-header { margin-bottom: 1.5rem; }
+        .content-header h1 { margin: 0; font-size: 1.8rem; }
+        
         .centered-view { display: flex; justify-content: center; align-items: center; height: 100%; color: var(--text-light); font-size: 1.2rem; text-align: center; }
         #welcome-view { display: flex; }
         #settings-view, #file-view { display: none; }
 
-        .file-list { list-style: none; padding: 0; margin: 0; }
-        .file-item { display: flex; align-items: center; background-color: var(--card-bg); padding: 1rem; border: 1px solid var(--border-color); border-radius: 1rem; margin-bottom: 1rem; box-shadow: 0 4px 10px rgba(0,0,0,0.03); opacity: 0; transform: translateY(20px); animation: slideUp 0.5s ease-out forwards; transition: background-color 0.3s ease, border-color 0.3s ease; }
-        @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
-        .file-icon { width: 40px; height: 40px; margin-right: 1rem; flex-shrink: 0; display: flex; justify-content: center; align-items: center; background-color: var(--light-accent); border-radius: 0.75rem; color: var(--primary-accent); transition: background-color 0.3s ease; }
-        .file-icon svg { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-        .file-details { flex-grow: 1; }
-        .file-name { font-weight: 600; color: var(--text-dark); }
-        .edit-button { background-color: var(--light-accent); color: var(--primary-accent); border: none; padding: 0.75rem 1.25rem; border-radius: 0.75rem; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: background-color 0.2s; }
-        .edit-button:hover { background-color: #fdbf80; }
-        body.dark-theme .edit-button:hover { background-color: #6a3d16; }
-        
-        .app-footer { padding: 1rem; text-align: center; color: var(--text-light); font-size: 0.85rem; flex-shrink: 0; }
-        .main-footer { border-top: 1px solid var(--border-color); background-color: var(--card-bg); transition: background-color 0.3s ease, border-color 0.3s ease; }
-        .login-footer { position: absolute; bottom: 0; width: 100%; }
+        .file-list-header, .file-row { display: grid; grid-template-columns: 1fr 150px 120px; align-items: center; padding: 0 1rem; }
+        .file-list-header { color: var(--text-light); font-size: 0.85rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-color); }
+        .file-row { background-color: var(--card-bg); border-bottom: 1px solid var(--border-color); transition: background-color 0.2s; }
+        .file-row:hover { background-color: var(--background); }
+        .file-name-cell { display: flex; align-items: center; padding: 0.8rem 0; }
+        .file-icon { width: 32px; height: 32px; margin-right: 1rem; color: var(--text-light); }
+        .file-name { font-weight: 500; color: var(--text-dark); }
+        .file-date, .file-actions { font-size: 0.9rem; color: var(--text-light); }
+        .action-button { background: none; border: 1px solid var(--border-color); border-radius: 0.5rem; padding: 0.5rem 1rem; color: var(--text-dark); cursor: pointer; }
         
         .sidebar-footer { margin-top: auto; padding-top: 1rem; border-top: 1px solid var(--border-color); }
         .version-info {
-            font-size: 0.75rem; color: var(--text-light); background-color: transparent; padding: 2px 6px; border-radius: 4px; cursor: pointer; white-space: nowrap; text-align: center;
+            font-size: 0.75rem; color: var(--text-light); cursor: pointer; white-space: nowrap; text-align: center;
         }
         .version-info .long-version { display: none; }
         .version-info.expanded .short-version { display: none; }
@@ -98,18 +92,18 @@
             position: fixed; inset: 0; background-color: rgba(0,0,0,0.4); z-index: 200; opacity: 0; transition: opacity 0.4s ease; pointer-events: none;
         }
         
-        @media (min-width: 800px) {
+        @media (min-width: 900px) {
             #app-container { display: grid; grid-template-columns: var(--sidebar-width) auto; }
-            .sidebar { position: static; transform: none; }
             .main-content { flex-grow: 1; }
             .hamburger-button, #sidebar-overlay { display: none; }
         }
-        @media (max-width: 799px) {
+        @media (max-width: 899px) {
             #app-container { display: flex; flex-direction: column; }
             .sidebar { position: fixed; transform: translateX(-100%); }
             .main-content { width: 100%; }
             .hamburger-button { display: inline-flex; }
-            .main-header .header-logo { display: block; }
+            .file-list-header, .file-row { grid-template-columns: 1fr 120px; }
+            .file-date { display: none; }
             body.sidebar-open .sidebar { transform: translateX(0); box-shadow: 10px 0 30px rgba(0,0,0,0.1); }
             body.sidebar-open #sidebar-overlay { opacity: 1; pointer-events: auto; }
         }
@@ -128,16 +122,18 @@
                 </div>
                 <p id="login-error-message">Hatalı parola.</p>
             </div>
-            <footer class="app-footer login-footer">MHDS - Mayatech Bilgi İşlem 2025©</footer>
+            <footer class="login-footer">MHDS - Mayatech Bilgi İşlem 2025©</footer>
         </div>
 
         <div id="app-container">
             <nav class="sidebar" id="sidebar">
                 <div>
-                    <a href="#" class="sidebar-header header-logo-link" id="home-logo-sidebar">
-                        <img src="logo.png" alt="MHDS Logo" class="header-logo">
-                        <span>MHDS</span>
-                    </a>
+                    <div class="sidebar-header">
+                        <a href="#" class="header-logo-link" id="home-logo-sidebar">
+                            <img src="logo.png" alt="MHDS Logo" class="header-logo">
+                            <span>MHDS</span>
+                        </a>
+                    </div>
                     <ul class="nav-list">
                         <li class="nav-item">
                             <button id="show-files-button">
@@ -164,23 +160,28 @@
                     <button class="hamburger-button" id="hamburger-button" title="Menüyü Aç">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
                     </button>
-                    <a href="#" class="header-logo-link" id="home-logo-main">
-                        <img src="logo.png" alt="MHDS Logo" class="header-logo">
-                    </a>
+                    <input type="text" id="search-bar" class="search-bar" placeholder="Dosyalarda ara...">
                     <button id="theme-toggle-main" class="theme-toggle-button" title="Temayı Değiştir"></button>
                 </header>
                 <div class="content-area">
                     <div id="welcome-view" class="centered-view">
                         <p>Erişmek istediğiniz klasörü seçin.</p>
                     </div>
-                    <div id="settings-view" class="centered-view">
+                     <div id="settings-view" class="centered-view">
                         <p>Ayarları sadece yönetici veritabanından değiştirebilir.</p>
                     </div>
                     <div id="file-view">
-                        <ul class="file-list" id="file-list"></ul>
+                        <div class="content-header">
+                             <h1 id="main-title"></h1>
+                        </div>
+                        <div class="file-list-header">
+                            <div>Ad</div>
+                            <div class="file-date">Değiştirme</div>
+                            <div></div>
+                        </div>
+                        <div class="file-list" id="file-list"></div>
                     </div>
                 </div>
-                <footer class="app-footer main-footer">MHDS - Mayatech Bilgi İşlem 2025©</footer>
             </main>
         </div>
         <div id="sidebar-overlay"></div>
@@ -188,7 +189,7 @@
 
     <svg width="0" height="0" style="position:absolute;">
         <defs>
-            <symbol id="icon-file" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></symbol>
+            <symbol id="icon-file" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></symbol>
             <symbol id="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></symbol>
             <symbol id="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></symbol>
             <symbol id="icon-folder" viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></symbol>
@@ -198,6 +199,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // DOM Elementleri
             const ui = {
                 loginScreen: document.getElementById('login-screen'),
                 appContainer: document.getElementById('app-container'),
@@ -216,60 +218,77 @@
                     settings: document.getElementById('settings-view'),
                 },
                 versionInfo: document.getElementById('version-info'),
-                homeLogos: [document.getElementById('home-logo-sidebar'), document.getElementById('home-logo-main')],
-                searchBar: document.getElementById('search-bar')
+                homeLogos: [document.getElementById('home-logo-sidebar')],
+                mainTitle: document.getElementById('main-title'),
+                searchBar: document.getElementById('search-bar'),
             };
 
-            const icons = {
-                sun: '<svg><use href="#icon-sun" /></svg>',
-                moon: '<svg><use href="#icon-moon" /></svg>'
-            };
-
+            // --- TEMA YÖNETİMİ ---
+            const sunIcon = '<svg><use href="#icon-sun" /></svg>';
+            const moonIcon = '<svg><use href="#icon-moon" /></svg>';
             function applyTheme(theme) {
                 document.body.classList.toggle('dark-theme', theme === 'dark');
                 ui.themeToggles.forEach(btn => btn.innerHTML = theme === 'dark' ? icons.sun : icons.moon);
             }
-
             function toggleTheme() {
                 const newTheme = document.body.classList.contains('dark-theme') ? 'light' : 'dark';
                 localStorage.setItem('theme', newTheme);
                 applyTheme(newTheme);
             }
-
+            ui.themeToggles.forEach(btn => btn.addEventListener('click', toggleTheme));
+            
+            // --- MENÜ KONTROLÜ ---
             function openSidebar() { document.body.classList.add('sidebar-open'); }
             function closeSidebar() { document.body.classList.remove('sidebar-open'); }
+            ui.hamburgerButton.addEventListener('click', openSidebar);
+            ui.sidebarOverlay.addEventListener('click', closeSidebar);
             
+            // --- SAYFA NAVİGASYONU ---
             function showView(viewName) {
                 Object.values(ui.views).forEach(view => view.style.display = 'none');
-                ui.views[viewName].style.display = 'flex';
+                ui.views[viewName].style.display = 'flex'; // 'flex' kullanarak merkezlemeyi koru
+                document.querySelectorAll('.nav-item button').forEach(b => b.classList.remove('active'));
                 closeSidebar();
             }
 
-            function displayFiles(files) {
+            ui.showFilesButton.addEventListener('click', () => {
+                showView('files');
+                ui.mainTitle.textContent = 'Formlar';
+                ui.showFilesButton.classList.add('active');
+            });
+            ui.showSettingsButton.addEventListener('click', () => {
+                showView('settings');
+                ui.mainTitle.textContent = 'Ayarlar';
+                ui.showSettingsButton.classList.add('active');
+            });
+            ui.homeLogos.forEach(logo => logo.addEventListener('click', () => showView('welcome')));
+            
+            // --- VERSİYON BİLGİSİ ---
+            ui.versionInfo.addEventListener('click', () => {
+                ui.versionInfo.classList.toggle('expanded');
+            });
+
+            // --- DOSYA LİSTELEME VE ARAMA ---
+            function displayFiles(files, searchTerm = '') {
                 ui.fileList.innerHTML = '';
-                files.forEach((file) => {
+                const filteredFiles = files.filter(file => file.name.toLowerCase().includes(searchTerm.toLowerCase()));
+
+                filteredFiles.forEach((file) => {
                     const row = document.createElement('div');
-                    row.className = 'file-item';
+                    row.className = 'file-row';
                     row.innerHTML = `<div class="file-name-cell"><svg class="file-icon"><use href="#icon-file" /></svg><span class="file-name">${file.name}</span></div><div class="file-date">Bugün</div><div class="file-actions"><a href="${file.url}" target="_blank" style="text-decoration:none;"><button class="action-button">Düzenle</button></a></div>`;
                     ui.fileList.appendChild(row);
                 });
             }
-
-            function filterFiles() {
-                const searchTerm = ui.searchBar.value.toLowerCase();
-                const allFiles = ui.fileList.querySelectorAll('.file-item');
-                allFiles.forEach(fileRow => {
-                    const fileName = fileRow.querySelector('.file-name').textContent.toLowerCase();
-                    fileRow.style.display = fileName.includes(searchTerm) ? 'flex' : 'none';
-                });
-            }
             
+            // --- GİRİŞ VE OTURUM YÖNETİMİ ---
             function showApp(files) {
                 displayFiles(files);
                 showView('welcome');
+                ui.searchBar.addEventListener('keyup', () => displayFiles(files, ui.searchBar.value));
                 ui.loginScreen.classList.add('hidden');
                 setTimeout(() => {
-                    ui.appContainer.style.display = 'flex';
+                    ui.appContainer.style.display = 'grid';
                     setTimeout(() => ui.appContainer.classList.add('visible'), 50);
                 }, 500);
             }
@@ -300,23 +319,18 @@
                 }
             }
             
-            // --- INIT & EVENT LISTENERS ---
-            applyTheme(localStorage.getItem('theme') || 'dark');
-            if (sessionStorage.getItem('isLoggedIn') === 'true') {
-                const cachedFiles = JSON.parse(sessionStorage.getItem('fileCache'));
-                if (cachedFiles) showApp(cachedFiles);
-            }
+            // --- SAYFA YÜKLENDİĞİNDE ÇALIŞAN KOD ---
+            (() => {
+                applyTheme(localStorage.getItem('theme') || 'dark');
+                if (sessionStorage.getItem('isLoggedIn') === 'true') {
+                    const cachedFiles = JSON.parse(sessionStorage.getItem('fileCache'));
+                    if (cachedFiles) showApp(cachedFiles);
+                }
+            })();
 
             ui.loginButton.addEventListener('click', handleLogin);
             ui.passwordInput.addEventListener('keyup', (event) => { if (event.key === 'Enter') handleLogin(); });
-            ui.themeToggles.forEach(btn => btn.addEventListener('click', toggleTheme));
-            ui.hamburgerButton.addEventListener('click', openSidebar);
-            ui.sidebarOverlay.addEventListener('click', closeSidebar);
-            ui.showFilesButton.addEventListener('click', () => showView('files'));
-            ui.showSettingsButton.addEventListener('click', () => showView('settings'));
-            ui.homeLogos.forEach(logo => logo.addEventListener('click', () => showView('welcome')));
-            ui.versionInfo.addEventListener('click', () => ui.versionInfo.classList.toggle('expanded'));
-            ui.searchBar.addEventListener('keyup', filterFiles);
+
         });
     </script>
 </body>
