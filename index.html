@@ -41,6 +41,7 @@
         }
         #app-container.visible { opacity: 1; transform: translateY(0); }
         
+        /* DÜZELTME: SIFIRDAN YAZILAN RESPONSIVE MİMARİSİ */
         .sidebar {
             width: var(--sidebar-width); height: 100%; background-color: var(--background); border-right: 1px solid var(--border-color); padding: 1.5rem; display: flex; flex-direction: column; 
             transition: transform 0.4s ease, background-color 0.3s ease; 
@@ -60,7 +61,7 @@
         .main-content { width: 100%; height: 100%; display: flex; flex-direction: column; }
         .main-header { padding: 1rem 1.5rem; border-bottom: 1px solid var(--border-color); flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; }
         .main-header .header-logo { margin: 0; }
-        .hamburger-button { background: none; border: none; cursor: pointer; padding: 0.5rem; color: var(--text-dark); }
+        .hamburger-button { background: none; border: none; cursor: pointer; padding: 0.5rem; color: var(--text-dark); display: none; /* Varsayılan olarak gizli */}
         
         .content-area { flex-grow: 1; overflow-y: auto; padding: 1.5rem; }
         #welcome-view { display: flex; justify-content: center; align-items: center; height: 100%; color: var(--text-light); font-size: 1.2rem; text-align: center; }
@@ -96,18 +97,19 @@
             position: fixed; inset: 0; background-color: rgba(0,0,0,0.4); z-index: 200; opacity: 0; transition: opacity 0.4s ease; pointer-events: none;
         }
         
-        /* DÜZELTME: MASAÜSTÜ GÖRÜNÜMÜ YENİDEN YAZILDI */
+        /* MASAÜSTÜ GÖRÜNÜMÜ - Grid yapısı */
         @media (min-width: 800px) {
-            #app-container { flex-direction: row; }
-            .sidebar { position: static; transform: translateX(0); }
+            #app-container { display: grid; grid-template-columns: var(--sidebar-width) auto; }
+            .sidebar { position: static; transform: none; }
             .main-content { flex-grow: 1; }
             .hamburger-button, #sidebar-overlay { display: none; }
         }
-        /* DÜZELTME: MOBİL GÖRÜNÜMÜ YENİDEN YAZILDI */
+        /* MOBİL GÖRÜNÜMÜ - Hamburger menü yapısı */
         @media (max-width: 799px) {
-            #app-container { flex-direction: column; }
+            #app-container { display: flex; flex-direction: column; }
             .sidebar { position: fixed; transform: translateX(-100%); }
             .main-content { width: 100%; }
+            .hamburger-button { display: inline-flex; }
             body.sidebar-open .sidebar { transform: translateX(0); box-shadow: 10px 0 30px rgba(0,0,0,0.1); }
             body.sidebar-open #sidebar-overlay { opacity: 1; pointer-events: auto; }
         }
@@ -146,8 +148,8 @@
                 </div>
                 <footer class="sidebar-footer">
                     <div class="version-info" id="version-info">
-                        <span class="short-version">v.21.0</span>
-                        <span class="long-version">v.21.0 - Responsive mimarisi temelden yeniden yazıldı</span>
+                        <span class="short-version">v.20.0</span>
+                        <span class="long-version">v.20.0 - Responsive mimarisi temelden yeniden yazıldı</span>
                     </div>
                 </footer>
             </nav>
@@ -203,44 +205,6 @@
             const homeLogoSidebar = document.getElementById('home-logo-sidebar');
             const homeLogoMain = document.getElementById('home-logo-main');
 
-             // --- AKILLI DOKUNMA/TIKLAMA YÖNETİCİSİ ---
-const addSmartEventListener = (element, callback) => {
-                const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-                const eventType = isTouchDevice ? 'touchstart' : 'click';
-                let touchStartTime = 0;
-                const TOUCH_THRESHOLD = 200; // milliseconds
-
-                const handleTouchStart = (event) => {
-                    touchStartTime = new Date().getTime();
-                    // event.preventDefault(); // Prevent default only if necessary to avoid scroll issues
-                };
-
-                const handleTouchEnd = (event) => {
-                    const touchEndTime = new Date().getTime();
-                    if (touchEndTime - touchStartTime < TOUCH_THRESHOLD) {
-                        // This is a quick tap, likely intended as a click
-                        event.preventDefault(); // Prevent ghost clicks
-                        event.stopPropagation();
-                        callback();
-                    }
-                };
-
-                const handleClick = (event) => {
-                    if (!isTouchDevice) {
-                        event.preventDefault();
-                        event.stopPropagation();
-                        callback();
-                    }
-                };
-
-                if (isTouchDevice) {
-                    element.addEventListener('touchstart', handleTouchStart, { passive: true });
-                    element.addEventListener('touchend', handleTouchEnd, { passive: false });
-                } else {
-                    element.addEventListener('click', handleClick, { passive: false });
-                }
-            };
-
             // --- TEMA YÖNETİMİ ---
             const sunIcon = '<svg><use href="#icon-sun" /></svg>';
             const moonIcon = '<svg><use href="#icon-moon" /></svg>';
@@ -259,13 +223,13 @@ const addSmartEventListener = (element, callback) => {
                 localStorage.setItem('theme', newTheme);
                 applyTheme(newTheme);
             }
-            addSmartEventListener(themeToggleLogin, toggleTheme);
-            addSmartEventListener(themeToggleMain, toggleTheme);
+            themeToggleLogin.addEventListener('click', toggleTheme);
+            themeToggleMain.addEventListener('click', toggleTheme);
             
             // --- MENÜ KONTROLÜ ---
             function openSidebar() { document.body.classList.add('sidebar-open'); }
             function closeSidebar() { document.body.classList.remove('sidebar-open'); }
-            addSmartEventListener(hamburgerButton, openSidebar);
+            hamburgerButton.addEventListener('click', openSidebar);
             sidebarOverlay.addEventListener('click', closeSidebar);
             
             // --- SAYFA NAVİGASYONU ---
@@ -274,19 +238,16 @@ const addSmartEventListener = (element, callback) => {
                 fileView.style.display = 'none';
                 closeSidebar();
             }
-            
-            function handleShowFiles() {
+            showFilesButton.addEventListener('click', () => {
                 welcomeView.style.display = 'none';
                 fileView.style.display = 'block';
                 closeSidebar();
-            };
-            
-            addSmartEventListener(showFilesButton, handleShowFiles);
-            addSmartEventListener(homeLogoSidebar, goHome);
-            addSmartEventListener(homeLogoMain, goHome);
+            });
+            homeLogoSidebar.addEventListener('click', goHome);
+            homeLogoMain.addEventListener('click', goHome);
             
             // --- VERSİYON BİLGİSİ ---
-            addSmartEventListener(versionInfo, () => {
+            versionInfo.addEventListener('click', () => {
                 versionInfo.classList.toggle('expanded');
             });
 
@@ -307,7 +268,8 @@ const addSmartEventListener = (element, callback) => {
                 displayFiles(files);
                 loginScreen.classList.add('hidden');
                 setTimeout(() => {
-                    appContainer.style.display = 'flex';
+                    // DÜZELTME: display: flex yerine grid kullan
+                    appContainer.style.display = window.innerWidth >= 800 ? 'grid' : 'flex';
                     setTimeout(() => appContainer.classList.add('visible'), 50);
                 }, 500);
             }
