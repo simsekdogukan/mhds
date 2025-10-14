@@ -9,16 +9,67 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --blue-accent: #0061ff; --blue-accent-hover: #0052d9;
-            --background: #f7f9fa; --card-bg: #ffffff; --text-dark: #1e1919; --text-light: #637282; --border-color: #dbe0e4; --sidebar-width: 280px;
+            /* Modern Color Palette */
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --accent-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --success-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            
+            /* Light Theme */
+            --background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            --card-bg: rgba(255, 255, 255, 0.25);
+            --card-bg-solid: rgba(255, 255, 255, 0.95);
+            --text-dark: #2d3748;
+            --text-light: #718096;
+            --border-color: rgba(255, 255, 255, 0.3);
+            --sidebar-width: 300px;
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+            --shadow-hover: 0 15px 35px rgba(31, 38, 135, 0.5);
         }
+        
         body.dark-theme {
-            --background: #121212; --card-bg: #1e1e1e; --text-dark: #e8e6e3; --text-light: #8e9aA7; --border-color: #333333;
+            --background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%);
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --card-bg-solid: rgba(30, 30, 30, 0.95);
+            --text-dark: #f7fafc;
+            --text-light: #a0aec0;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            --shadow-hover: 0 15px 35px rgba(0, 0, 0, 0.7);
         }
-        *, *::before, *::after { box-sizing: border-box; }
+        *, *::before, *::after { 
+            box-sizing: border-box; 
+        }
+        
         body {
-            font-family: 'Inter', sans-serif; margin: 0; background-color: var(--background); color: var(--text-dark); height: 100vh; overflow: hidden; transition: background-color 0.3s ease, color 0.3s ease;
+            font-family: 'Inter', sans-serif; 
+            margin: 0; 
+            background: var(--background); 
+            color: var(--text-dark); 
+            height: 100vh; 
+            overflow: hidden; 
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             -webkit-tap-highlight-color: transparent;
+            position: relative;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.2) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
         }
         
         #login-screen {
