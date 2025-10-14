@@ -1,7 +1,7 @@
 {
   "name": "mhds-project",
   "version": "1.0.0",
-  "description": "Google Drive file lister",
+  "private": true,
   "dependencies": {
     "googleapis": "^128.0.0"
   }
