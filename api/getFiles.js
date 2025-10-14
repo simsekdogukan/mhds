@@ -1,6 +1,7 @@
+// /api/getFiles.js - Teşhis (Debug) Versiyonu
+
 import { google } from 'googleapis';
 
-// --- BU BÖLÜM AYNI KALIYOR ---
 const auth = new google.auth.GoogleAuth({
     credentials: {
         client_email: process.env.GOOGLE_CLIENT_EMAIL,
@@ -10,35 +11,36 @@ const auth = new google.auth.GoogleAuth({
 });
 const drive = google.drive({ version: 'v3', auth });
 const FOLDER_ID = process.env.DRIVE_FOLDER_ID;
-// --- BU BÖLÜM AYNI KALIYOR ---
-
 
 export default async function handler(request, response) {
-    // Sadece POST isteklerini kabul et
     if (request.method !== 'POST') {
         return response.status(405).json({ error: 'Method Not Allowed' });
     }
 
     // --- TEŞHİS İÇİN EKLENEN KOD BAŞLANGICI ---
-    console.log("--- API Fonksiyonu Çağrıldı ---");
+    console.log("--- API Fonksiyonu Çağrıldı (Teşhis Modu) ---");
 
     const passwordFromUser = request.body.password;
     const passwordFromVercel = process.env.SITE_PASSWORD;
 
+    // Loglara hem gelen şifreyi hem de Vercel'deki değişkeni yazdırıyoruz.
+    // Köşeli parantezler, olası boşlukları görmemize yardımcı olacak.
     console.log(`Kullanıcıdan gelen şifre: [${passwordFromUser}]`);
     console.log(`Vercel'den okunan şifre: [${passwordFromVercel}]`);
 
+    // Şifre kontrolü
     if (passwordFromUser === passwordFromVercel) {
         console.log("ŞİFRE KONTROLÜ: Başarılı. Şifreler eşleşiyor.");
     } else {
-        console.log("ŞİFRE KONTROLÜ: Başarısız! Şifreler eşleşmiyor.");
-        console.log(`Kullanıcıdan gelen tip: ${typeof passwordFromUser}, Vercel'den gelen tip: ${typeof passwordFromVercel}`);
+        console.log("!!! ŞİFRE KONTROLÜ: BAŞARISIZ! Şifreler eşleşmiyor.");
+        // Eğer şifre undefined ise, değişkenin hiç gelmediğini anlarız.
+        if (passwordFromVercel === undefined) {
+            console.log("HATA: 'SITE_PASSWORD' çevre değişkeni bulunamadı (undefined).");
+        }
         return response.status(401).json({ error: 'Invalid password' });
     }
     // --- TEŞHİS İÇİN EKLENEN KOD SONU ---
 
-
-    // Şifre kontrolü başarılı olduğu için kod buraya gelecek.
     try {
         console.log("Google Drive'dan dosyalar isteniyor...");
         const res = await drive.files.list({
