@@ -43,9 +43,12 @@
             width: var(--sidebar-width); height: 100%; background-color: var(--background); border-right: 1px solid var(--border-color); padding: 1.5rem; display: flex; flex-direction: column; 
             transition: transform 0.4s ease, background-color 0.3s ease; z-index: 201;
         }
-        .sidebar-header { margin-bottom: 2rem; padding: 0 0.5rem; }
-        .header-logo-link { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--text-dark); font-weight: 700; font-size: 1.5rem; }
+        .sidebar-header { 
+            margin-bottom: 2rem; padding: 0 0.5rem; 
+            display: flex; align-items: center; gap: 12px;
+        }
         .header-logo { max-height: 40px; cursor: pointer; }
+        .header-title { font-size: 1.6rem; font-weight: 600; color: var(--text-dark); }
         .nav-list { list-style: none; padding: 0; margin: 0; flex-grow: 1; }
         .nav-item button { 
             display: flex; align-items: center; padding: 0.75rem 1rem; border-radius: 0.5rem; text-decoration: none; color: var(--text-dark); font-weight: 500; transition: background-color 0.2s, color 0.2s;
@@ -63,9 +66,8 @@
         .content-header { margin-bottom: 1.5rem; }
         .content-header h1 { margin: 0; font-size: 1.8rem; }
         
-        .centered-view { display: flex; justify-content: center; align-items: center; height: 100%; color: var(--text-light); font-size: 1.2rem; text-align: center; }
-        #welcome-view { display: flex; }
-        #settings-view, #file-view { display: none; }
+        #welcome-view, #settings-view { display: flex; justify-content: center; align-items: center; height: 100%; color: var(--text-light); font-size: 1.2rem; text-align: center; }
+        #file-view, #settings-view { display: none; }
 
         .file-list-header, .file-row { display: grid; grid-template-columns: 1fr 150px 120px; align-items: center; padding: 0 1rem; }
         .file-list-header { color: var(--text-light); font-size: 0.85rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-color); }
@@ -129,10 +131,8 @@
             <nav class="sidebar" id="sidebar">
                 <div>
                     <div class="sidebar-header">
-                        <a href="#" class="header-logo-link" id="home-logo-sidebar">
-                            <img src="logo.png" alt="MHDS Logo" class="header-logo">
-                            <span>MHDS</span>
-                        </a>
+                        <img src="logo.png" alt="MHDS Logo" class="header-logo" id="home-logo-sidebar">
+                        <span class="header-title">MHDS</span>
                     </div>
                     <ul class="nav-list">
                         <li class="nav-item">
@@ -149,8 +149,8 @@
                 </div>
                 <footer class="sidebar-footer">
                     <div class="version-info" id="version-info">
-                        <span class="short-version">v.25.0</span>
-                        <span class="long-version">v.25.0 - Proje mimarisi sıfırdan yeniden yazıldı</span>
+                        <span class="short-version">v.29</span>
+                        <span class="long-version">v.29 - Arayüz ve fonksiyon güncellemeleri</span>
                     </div>
                 </footer>
             </nav>
@@ -160,15 +160,12 @@
                     <button class="hamburger-button" id="hamburger-button" title="Menüyü Aç">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
                     </button>
-                    <input type="text" id="search-bar" class="search-bar" placeholder="Dosyalarda ara...">
+                    <input type="text" id="search-input" class="search-bar" placeholder="Dosyalarda ara...">
                     <button id="theme-toggle-main" class="theme-toggle-button" title="Temayı Değiştir"></button>
                 </header>
                 <div class="content-area">
-                    <div id="welcome-view" class="centered-view">
+                    <div id="welcome-view">
                         <p>Erişmek istediğiniz klasörü seçin.</p>
-                    </div>
-                     <div id="settings-view" class="centered-view">
-                        <p>Ayarları sadece yönetici veritabanından değiştirebilir.</p>
                     </div>
                     <div id="file-view">
                         <div class="content-header">
@@ -180,6 +177,9 @@
                             <div></div>
                         </div>
                         <div class="file-list" id="file-list"></div>
+                    </div>
+                     <div id="settings-view">
+                        <p>Ayarları sadece yönetici veritabanından değiştirir.</p>
                     </div>
                 </div>
             </main>
@@ -193,112 +193,145 @@
             <symbol id="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></symbol>
             <symbol id="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></symbol>
             <symbol id="icon-folder" viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></symbol>
-            <symbol id="icon-settings" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></symbol>
+            <symbol id="icon-settings" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></symbol>
         </defs>
     </svg>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // DOM Elementleri
-            const ui = {
-                loginScreen: document.getElementById('login-screen'),
-                appContainer: document.getElementById('app-container'),
-                passwordInput: document.getElementById('password'),
-                loginButton: document.getElementById('login-button'),
-                loginErrorMessage: document.getElementById('login-error-message'),
-                fileList: document.getElementById('file-list'),
-                themeToggles: [document.getElementById('theme-toggle-login'), document.getElementById('theme-toggle-main')],
-                showFilesButton: document.getElementById('show-files-button'),
-                showSettingsButton: document.getElementById('show-settings-button'),
-                hamburgerButton: document.getElementById('hamburger-button'),
-                sidebarOverlay: document.getElementById('sidebar-overlay'),
-                views: {
-                    welcome: document.getElementById('welcome-view'),
-                    files: document.getElementById('file-view'),
-                    settings: document.getElementById('settings-view'),
-                },
-                versionInfo: document.getElementById('version-info'),
-                homeLogos: [document.getElementById('home-logo-sidebar')],
-                mainTitle: document.getElementById('main-title'),
-                searchBar: document.getElementById('search-bar'),
-            };
+            const loginScreen = document.getElementById('login-screen');
+            const appContainer = document.getElementById('app-container');
+            const passwordInput = document.getElementById('password');
+            const loginButton = document.getElementById('login-button');
+            const loginErrorMessage = document.getElementById('login-error-message');
+            const fileList = document.getElementById('file-list');
+            const searchInput = document.getElementById('search-input');
+            const themeToggleLogin = document.getElementById('theme-toggle-login');
+            const themeToggleMain = document.getElementById('theme-toggle-main');
+            const showFilesButton = document.getElementById('show-files-button');
+            const showSettingsButton = document.getElementById('show-settings-button');
+            const hamburgerButton = document.getElementById('hamburger-button');
+            const sidebarOverlay = document.getElementById('sidebar-overlay');
+            const mainTitle = document.getElementById('main-title');
+            const welcomeView = document.getElementById('welcome-view');
+            const fileView = document.getElementById('file-view');
+            const settingsView = document.getElementById('settings-view');
+            const versionInfo = document.getElementById('version-info');
+            const homeLogoSidebar = document.getElementById('home-logo-sidebar');
 
             // --- TEMA YÖNETİMİ ---
             const sunIcon = '<svg><use href="#icon-sun" /></svg>';
             const moonIcon = '<svg><use href="#icon-moon" /></svg>';
             function applyTheme(theme) {
-                document.body.classList.toggle('dark-theme', theme === 'dark');
-                ui.themeToggles.forEach(btn => btn.innerHTML = theme === 'dark' ? icons.sun : icons.moon);
+                if (theme === 'dark') {
+                    document.body.classList.add('dark-theme');
+                    themeToggleLogin.innerHTML = sunIcon; themeToggleMain.innerHTML = sunIcon;
+                } else {
+                    document.body.classList.remove('dark-theme');
+                    themeToggleLogin.innerHTML = moonIcon; themeToggleMain.innerHTML = moonIcon;
+                }
             }
             function toggleTheme() {
-                const newTheme = document.body.classList.contains('dark-theme') ? 'light' : 'dark';
+                const currentIsDark = document.body.classList.contains('dark-theme');
+                const newTheme = currentIsDark ? 'light' : 'dark';
                 localStorage.setItem('theme', newTheme);
                 applyTheme(newTheme);
             }
-            ui.themeToggles.forEach(btn => btn.addEventListener('click', toggleTheme));
+            themeToggleLogin.addEventListener('click', toggleTheme);
+            themeToggleMain.addEventListener('click', toggleTheme);
             
             // --- MENÜ KONTROLÜ ---
             function openSidebar() { document.body.classList.add('sidebar-open'); }
             function closeSidebar() { document.body.classList.remove('sidebar-open'); }
-            ui.hamburgerButton.addEventListener('click', openSidebar);
-            ui.sidebarOverlay.addEventListener('click', closeSidebar);
+            hamburgerButton.addEventListener('click', openSidebar);
+            sidebarOverlay.addEventListener('click', closeSidebar);
             
             // --- SAYFA NAVİGASYONU ---
-            function showView(viewName) {
-                Object.values(ui.views).forEach(view => view.style.display = 'none');
-                ui.views[viewName].style.display = 'flex'; // 'flex' kullanarak merkezlemeyi koru
+            function goHome() {
+                welcomeView.style.display = 'flex';
+                fileView.style.display = 'none';
+                settingsView.style.display = 'none';
                 document.querySelectorAll('.nav-item button').forEach(b => b.classList.remove('active'));
                 closeSidebar();
             }
-
-            ui.showFilesButton.addEventListener('click', () => {
-                showView('files');
-                ui.mainTitle.textContent = 'Formlar';
-                ui.showFilesButton.classList.add('active');
+            showFilesButton.addEventListener('click', () => {
+                welcomeView.style.display = 'none';
+                fileView.style.display = 'block';
+                settingsView.style.display = 'none';
+                mainTitle.textContent = 'Formlar';
+                document.querySelectorAll('.nav-item button').forEach(b => b.classList.remove('active'));
+                showFilesButton.classList.add('active');
+                closeSidebar();
             });
-            ui.showSettingsButton.addEventListener('click', () => {
-                showView('settings');
-                ui.mainTitle.textContent = 'Ayarlar';
-                ui.showSettingsButton.classList.add('active');
+             showSettingsButton.addEventListener('click', () => {
+                welcomeView.style.display = 'none';
+                fileView.style.display = 'none';
+                settingsView.style.display = 'flex';
+                document.querySelectorAll('.nav-item button').forEach(b => b.classList.remove('active'));
+                showSettingsButton.classList.add('active');
+                closeSidebar();
             });
-            ui.homeLogos.forEach(logo => logo.addEventListener('click', () => showView('welcome')));
+            homeLogoSidebar.addEventListener('click', goHome);
             
             // --- VERSİYON BİLGİSİ ---
-            ui.versionInfo.addEventListener('click', () => {
-                ui.versionInfo.classList.toggle('expanded');
+            versionInfo.addEventListener('click', () => {
+                versionInfo.classList.toggle('expanded');
             });
 
-            // --- DOSYA LİSTELEME VE ARAMA ---
-            function displayFiles(files, searchTerm = '') {
-                ui.fileList.innerHTML = '';
-                const filteredFiles = files.filter(file => file.name.toLowerCase().includes(searchTerm.toLowerCase()));
+            // --- ARAMA FİLTRESİ ---
+            searchInput.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                const fileRows = fileList.querySelectorAll('.file-row');
+                fileRows.forEach(row => {
+                    const fileName = row.querySelector('.file-name').textContent.toLowerCase();
+                    if (fileName.includes(searchTerm)) {
+                        row.style.display = 'grid';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
 
-                filteredFiles.forEach((file) => {
+            // --- DOSYA LİSTELEME ---
+            function displayFiles(files) {
+                fileList.innerHTML = '';
+                files.forEach((file) => {
                     const row = document.createElement('div');
                     row.className = 'file-row';
-                    row.innerHTML = `<div class="file-name-cell"><svg class="file-icon"><use href="#icon-file" /></svg><span class="file-name">${file.name}</span></div><div class="file-date">Bugün</div><div class="file-actions"><a href="${file.url}" target="_blank" style="text-decoration:none;"><button class="action-button">Düzenle</button></a></div>`;
-                    ui.fileList.appendChild(row);
+                    row.innerHTML = `
+                        <div class="file-name-cell">
+                            <svg class="file-icon"><use href="#icon-file" /></svg>
+                            <span class="file-name">${file.name}</span>
+                        </div>
+                        <div class="file-date">Bugün</div>
+                        <div class="file-actions">
+                            <a href="${file.url}" target="_blank" style="text-decoration:none;">
+                                <button class="action-button">Düzenle</button>
+                            </a>
+                        </div>
+                    `;
+                    fileList.appendChild(row);
                 });
             }
             
             // --- GİRİŞ VE OTURUM YÖNETİMİ ---
             function showApp(files) {
                 displayFiles(files);
-                showView('welcome');
-                ui.searchBar.addEventListener('keyup', () => displayFiles(files, ui.searchBar.value));
-                ui.loginScreen.classList.add('hidden');
+                goHome(); // Başlangıçta anasayfayı göster
+                loginScreen.classList.add('hidden');
                 setTimeout(() => {
-                    ui.appContainer.style.display = 'grid';
-                    setTimeout(() => ui.appContainer.classList.add('visible'), 50);
+                    appContainer.style.display = 'grid'; // Grid'i burada etkinleştir
+                    setTimeout(() => appContainer.classList.add('visible'), 50);
                 }, 500);
             }
 
             async function handleLogin() {
-                const password = ui.passwordInput.value;
-                if (!password) { ui.loginErrorMessage.style.display = 'block'; return; }
-                ui.loginButton.disabled = true;
-                ui.loginButton.textContent = 'Doğrulanıyor...';
-                ui.loginErrorMessage.style.display = 'none';
+                const password = passwordInput.value;
+                if (!password) { loginErrorMessage.style.display = 'block'; return; }
+                loginButton.disabled = true;
+                loginButton.textContent = 'Doğrulanıyor...';
+                loginErrorMessage.style.display = 'none';
                 try {
                     const response = await fetch('/api/getFiles', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: password }) });
                     if (response.ok) {
@@ -307,29 +340,32 @@
                         sessionStorage.setItem('fileCache', JSON.stringify(files));
                         showApp(files);
                     } else {
-                        ui.loginErrorMessage.style.display = 'block';
-                        ui.passwordInput.value = '';
+                        loginErrorMessage.style.display = 'block';
+                        passwordInput.value = '';
                     }
                 } catch (error) {
-                    ui.loginErrorMessage.textContent = 'Bir ağ hatası oluştu. Lütfen tekrar deneyin.';
-                    ui.loginErrorMessage.style.display = 'block';
+                    loginErrorMessage.textContent = 'Bir ağ hatası oluştu. Lütfen tekrar deneyin.';
+                    loginErrorMessage.style.display = 'block';
                 } finally {
-                    ui.loginButton.disabled = false;
-                    ui.loginButton.textContent = 'Giriş Yap';
+                    loginButton.disabled = false;
+                    loginButton.textContent = 'Giriş Yap';
                 }
             }
             
             // --- SAYFA YÜKLENDİĞİNDE ÇALIŞAN KOD ---
             (() => {
                 applyTheme(localStorage.getItem('theme') || 'dark');
+                
                 if (sessionStorage.getItem('isLoggedIn') === 'true') {
                     const cachedFiles = JSON.parse(sessionStorage.getItem('fileCache'));
-                    if (cachedFiles) showApp(cachedFiles);
+                    if (cachedFiles) {
+                        showApp(cachedFiles);
+                    }
                 }
             })();
 
-            ui.loginButton.addEventListener('click', handleLogin);
-            ui.passwordInput.addEventListener('keyup', (event) => { if (event.key === 'Enter') handleLogin(); });
+            loginButton.addEventListener('click', handleLogin);
+            passwordInput.addEventListener('keyup', (event) => { if (event.key === 'Enter') { handleLogin(); } });
 
         });
     </script>
