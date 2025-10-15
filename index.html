@@ -90,7 +90,9 @@
         }
         .login-button:hover { background: linear-gradient(90deg, var(--accent-hover), var(--accent)); transform: translateY(-2px); }
         #login-error-message { color: #ef4444; margin-top: 1rem; display: none; }
-        .login-footer { position: absolute; bottom: 0; width: 100%; padding: 1rem; text-align: center; color: var(--text-light); font-size: 0.85rem; }
+        .login-footer { position: absolute; bottom: 0; width: 100%; padding: 1rem; text-align: center; color: var(--text-light); font-size: 0.8rem; }
+        #login-version-info { margin-top: 1.5rem; }
+
 
         #app-container {
             width: 100%; height: 100%;
@@ -165,7 +167,7 @@
         #welcome-view, #settings-view { display: flex; justify-content: center; align-items: center; height: 100%; color: var(--text-light); font-size: 1.2rem; text-align: center; }
         #file-view, #settings-view { display: none; }
 
-        .file-list-header, .file-row { display: grid; grid-template-columns: 1fr 120px; align-items: center; padding: 0 1rem; }
+        .file-list-header, .file-row { display: grid; grid-template-columns: 1fr 80px 80px; align-items: center; padding: 0 1rem; }
         .file-list-header { color: var(--text-light); font-size: 0.85rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-color); }
         .file-row {
             margin-top: 0.75rem; border-radius: 0.9rem;
@@ -177,7 +179,7 @@
         .file-name-cell { display: flex; align-items: center; padding: 0.8rem 0; }
         .file-icon { width: 32px; height: 32px; margin-right: 1rem; color: var(--accent); }
         .file-name { font-weight: 500; color: var(--text-dark); }
-        .file-date { display: none; }
+        .file-date { font-size: 0.9rem; color: var(--text-light); }
         .file-actions { font-size: 0.9rem; color: var(--text-light); }
         .action-button {
             border: 1px solid rgba(249, 115, 22, 0.4); background: linear-gradient(180deg, rgba(249, 115, 22, 0.14), rgba(249, 115, 22, 0.06));
@@ -207,17 +209,16 @@
                 grid-template-rows: 1fr;
             }
             .sidebar {
-                position: static; /* sidebar is now a grid item */
+                position: static;
                 transform: translateX(0);
                 box-shadow: none;
                 border-right: 1px solid var(--glass-border);
             }
             .main-content {
-                grid-column: 2 / 3; /* occupy the second grid column */
+                grid-column: 2 / 3;
             }
             .hamburger-button, #sidebar-overlay { display: none; }
             .file-list-header, .file-row { grid-template-columns: 1fr 150px 120px; }
-            .file-date { display: block; }
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -241,8 +242,12 @@
                     <button class="login-button" id="login-button" aria-label="Giriş yap">Giriş Yap</button>
                 </div>
                 <p id="login-error-message" role="alert" aria-live="polite">Hatalı parola.</p>
+                <div id="login-version-info" class="version-info" role="button" tabindex="0" aria-expanded="false">
+                    <span class="short-version">1.0.0v</span>
+                    <span class="long-version">1.0.0v - Performans iyileştirmeleri yapıldı.</span>
+                </div>
             </div>
-            <footer class="login-footer">MHDS - Mayatech Bilgi İşlem 2025©</footer>
+            <footer class="login-footer">Copyright © 2017 - 2025 Mayatech Bilgi İşlem - Tüm hakları saklıdır.</footer>
         </div>
 
         <div id="app-container">
@@ -274,9 +279,9 @@
                     </li>
                 </ul>
                 <footer class="sidebar-footer">
-                    <div class="version-info" id="version-info" role="button" tabindex="0" aria-expanded="false">
+                    <div id="sidebar-version-info" class="version-info" role="button" tabindex="0" aria-expanded="false">
                         <span class="short-version">1.0.0v</span>
-                        <span class="long-version">1.0.0v - Performans iyileştirildi ve sıcak bir çay içildi.</span>
+                        <span class="long-version">1.0.0v - Performans iyileştirmeleri yapıldı.</span>
                     </div>
                 </footer>
             </nav>
@@ -299,7 +304,7 @@
                         </div>
                         <div class="file-list-header">
                             <div>Ad</div>
-                            <div class="file-date">Değiştirme</div>
+                            <div class="file-date">Tarih</div>
                             <div></div>
                         </div>
                         <div class="file-list" id="file-list"></div>
@@ -345,7 +350,8 @@
             const welcomeView = document.getElementById('welcome-view');
             const fileView = document.getElementById('file-view');
             const settingsView = document.getElementById('settings-view');
-            const versionInfo = document.getElementById('version-info');
+            const loginVersionInfo = document.getElementById('login-version-info');
+            const sidebarVersionInfo = document.getElementById('sidebar-version-info');
             const homeLogoSidebar = document.getElementById('home-logo-sidebar');
 
             let currentPassword = '';
@@ -391,12 +397,14 @@
             }
             
             // --- VERSİYON BİLGİSİ ---
-            function toggleVersion() {
-                const expanded = versionInfo.classList.toggle('expanded');
-                versionInfo.setAttribute('aria-expanded', String(expanded));
+            function toggleVersion(el) {
+                const expanded = el.classList.toggle('expanded');
+                el.setAttribute('aria-expanded', String(expanded));
             }
-            versionInfo.addEventListener('click', toggleVersion);
-            versionInfo.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleVersion(); } });
+            [loginVersionInfo, sidebarVersionInfo].forEach(infoEl => {
+                infoEl.addEventListener('click', () => toggleVersion(infoEl));
+                infoEl.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleVersion(infoEl); } });
+            });
 
             // --- DOSYA LİSTELEME ---
             function displayFiles(files) {
