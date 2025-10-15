@@ -1,4 +1,4 @@
-// /api/getFiles.js - Dosyadan Okuma Versiyonu
+// /api/getFiles.js - Dosyadan Okuyan Son Versiyon
 import { google } from 'googleapis';
 import path from 'path';
 import { promises as fs } from 'fs';
@@ -8,8 +8,10 @@ export default async function handler(request, response) {
         return response.status(405).json({ error: 'Method Not Allowed' });
     }
 
+    // Şifre ve Klasör ID'sini doğrudan buraya yazarak Vercel sorunlarını aşıyoruz.
     const CORRECT_PASSWORD = '3333';
-    const FOLDER_ID = '1Qatn3jYJznm8-4G6DVBraeN-Off_b1t2a'; // Klasör ID'sini doğrudan buraya yazdık.
+    const FOLDER_ID = '1Qatn3jYJznm8-4G6DVBraeN-Off_b1t2a';
+    
     const { password } = request.body;
 
     if (password !== CORRECT_PASSWORD) {
@@ -22,6 +24,7 @@ export default async function handler(request, response) {
         const content = await fs.readFile(credentialsPath, 'utf8');
         const credentials = JSON.parse(content);
 
+        // Kimlik doğrulama
         const auth = new google.auth.GoogleAuth({
             credentials,
             scopes: ['https://www.googleapis.com/auth/drive.readonly'],
@@ -29,6 +32,7 @@ export default async function handler(request, response) {
 
         const drive = google.drive({ version: 'v3', auth });
 
+        // Dosyaları listele
         const res = await drive.files.list({
             q: `'${FOLDER_ID}' in parents and trashed=false`,
             fields: 'files(id, name, webViewLink, modifiedTime)',
