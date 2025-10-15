@@ -16,11 +16,19 @@ export default function handler(request, response) {
         return response.status(401).json({ error: 'Invalid password' });
     }
 
-    // Klasör içerikleri
+    // Dinamik tarih oluştur (gg.aa.yyyy formatında)
+    const today = new Date();
+    const dateString = today.toLocaleDateString('tr-TR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+    });
+
+    // Klasör içerikleri (dinamik tarih ile)
     const content = {
-        forms: Array.from({ length: 10 }, (_, i) => ({ name: `Form ${i + 1}`, url: "#" })),
-        dosyalar: Array.from({ length: 10 }, (_, i) => ({ name: `Dosya ${i + 1}`, url: "#" })),
-        tablolar: Array.from({ length: 10 }, (_, i) => ({ name: `Tablo ${i + 1}`, url: "#" }))
+        forms: Array.from({ length: 10 }, (_, i) => ({ name: `Form ${i + 1}`, url: "#", date: dateString })),
+        dosyalar: Array.from({ length: 10 }, (_, i) => ({ name: `Dosya ${i + 1}`, url: "#", date: dateString })),
+        tablolar: Array.from({ length: 10 }, (_, i) => ({ name: `Tablo ${i + 1}`, url: "#", date: dateString }))
     };
     
     // Eğer 'all' istenirse, tüm içerikleri birleştir
