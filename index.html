@@ -59,7 +59,8 @@
 
         .main-content { 
             flex-grow: 1; height: 100%; display: flex; flex-direction: column; 
-            overflow: hidden; /* EKLENEN SATIR: Bu satır kaydırma sorununu düzeltir */
+            overflow: hidden; 
+            min-height: 0; /* GÜNCELLEME: Bu satır kaydırma sorununu ve menünün sabit kalmasını sağlar */
         }
         .main-header { padding: 1rem 1.5rem; flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); }
         .hamburger-button { background: none; border: none; cursor: pointer; padding: 0.5rem; color: var(--text-dark); display: none; }
