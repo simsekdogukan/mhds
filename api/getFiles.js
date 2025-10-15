@@ -1,17 +1,13 @@
-// /api/getFiles.js - Dosyadan Okuyan Son Versiyon
-import { google } from 'googleapis';
-import path from 'path';
-import { promises as fs } from 'fs';
+// /api/getFiles.js - Google Apps Script Metodu (Garantili Son Versiyon)
 
 export default async function handler(request, response) {
+    // Sadece POST isteklerini kabul et
     if (request.method !== 'POST') {
         return response.status(405).json({ error: 'Method Not Allowed' });
     }
 
-    // Şifre ve Klasör ID'sini doğrudan buraya yazarak Vercel sorunlarını aşıyoruz.
+    // Şifreyi doğrudan buradan kontrol ediyoruz, Vercel değişkeni sorununu tamamen aşıyoruz.
     const CORRECT_PASSWORD = '3333';
-    const FOLDER_ID = '1Qatn3jYJznm8-4G6DVBraeN-Off_b1t2a';
-    
     const { password } = request.body;
 
     if (password !== CORRECT_PASSWORD) {
@@ -19,37 +15,23 @@ export default async function handler(request, response) {
     }
 
     try {
-        // credentials.json dosyasını doğrudan api klasörünün içinden oku
-        const credentialsPath = path.join(process.cwd(), 'api', 'credentials.json');
-        const content = await fs.readFile(credentialsPath, 'utf8');
-        const credentials = JSON.parse(content);
-
-        // Kimlik doğrulama
-        const auth = new google.auth.GoogleAuth({
-            credentials,
-            scopes: ['https://www.googleapis.com/auth/drive.readonly'],
-        });
-
-        const drive = google.drive({ version: 'v3', auth });
-
-        // Dosyaları listele
-        const res = await drive.files.list({
-            q: `'${FOLDER_ID}' in parents and trashed=false`,
-            fields: 'files(id, name, webViewLink, modifiedTime)',
-            orderBy: 'modifiedTime desc',
-        });
-
-        const files = res.data.files.map(file => ({
-            name: file.name,
-            url: file.webViewLink,
-            modifiedTime: file.modifiedTime,
-        }));
-
+        // Vercel'e eklediğimiz Google Apps Script linkini al
+        const appsScriptUrl = process.env.APPS_SCRIPT_URL;
+        
+        // Bu linke gidip dosya listesini al
+        const res = await fetch(appsScriptUrl);
+        if (!res.ok) {
+            // Eğer link çalışmazsa, daha net bir hata verelim
+            throw new Error(`Google Apps Script linki çalışmıyor veya yanıt vermiyor. Durum: ${res.status}`);
+        }
+        
+        const files = await res.json();
+        
+        // Gelen dosyaları kullanıcıya gönder
         response.status(200).json(files);
 
     } catch (error) {
-        console.error('--- KRİTİK HATA ---');
-        console.error('Hata Mesajı:', error.message);
-        response.status(500).json({ error: 'Dosyalar alınamadı. Lütfen yönetici ile iletişime geçin.' });
+        console.error('API Hatası:', error.message);
+        response.status(500).json({ error: 'Dosyalar alınamadı. Google Apps Script linkini kontrol edin.' });
     }
 }
