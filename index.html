@@ -164,8 +164,8 @@
         }
         .content-header { margin-bottom: 1.5rem; }
         .content-header h1 { margin: 0; font-size: 1.8rem; }
-        #welcome-view, #settings-view, #dosyalar-view, #tablolar-view { display: flex; justify-content: center; align-items: center; height: 100%; color: var(--text-light); font-size: 1.2rem; text-align: center; }
-        #file-view, #settings-view, #dosyalar-view, #tablolar-view { display: none; }
+        #welcome-view, #settings-view { display: flex; justify-content: center; align-items: center; height: 100%; color: var(--text-light); font-size: 1.2rem; text-align: center; }
+        #file-view, #settings-view { display: none; }
 
         .file-list-header, .file-row { display: grid; grid-template-columns: 1fr 120px; align-items: center; padding: 0 1rem; }
         .file-list-header { color: var(--text-light); font-size: 0.85rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-color); }
@@ -255,7 +255,7 @@
                 </div>
                 <ul class="nav-list">
                     <li class="nav-item">
-                        <button id="show-files-button" aria-label="Formları göster">
+                        <button id="show-forms-button" aria-label="Formları göster">
                             <svg><use href="#icon-folder" /></svg> Formlar
                         </button>
                     </li>
@@ -277,8 +277,8 @@
                 </ul>
                 <footer class="sidebar-footer">
                     <div class="version-info" id="version-info" role="button" tabindex="0" aria-expanded="false">
-                        <span class="short-version">v33.06</span>
-                        <span class="long-version">v33.06 - Performans geliştirilmeleri yapıldı ve sıcak bir çay içildi.</span>
+                        <span class="short-version">1.0.0v</span>
+                        <span class="long-version">1.0.0v - Performans iyileştirildi ve sıcak bir çay içildi.</span>
                     </div>
                 </footer>
             </nav>
@@ -309,12 +309,6 @@
                      <div id="settings-view">
                         <p>Ayarları sadece yönetici veritabanından değiştirir.</p>
                     </div>
-                    <div id="dosyalar-view">
-                        <p>Henüz içerik yok</p>
-                    </div>
-                    <div id="tablolar-view">
-                        <p>Henüz içerik yok</p>
-                    </div>
                 </div>
             </main>
         </div>
@@ -343,7 +337,7 @@
             const searchInput = document.getElementById('search-input');
             const themeToggleLogin = document.getElementById('theme-toggle-login');
             const themeToggleMain = document.getElementById('theme-toggle-main');
-            const showFilesButton = document.getElementById('show-files-button');
+            const showFormsButton = document.getElementById('show-forms-button');
             const showDosyalarButton = document.getElementById('show-dosyalar-button');
             const showTablolarButton = document.getElementById('show-tablolar-button');
             const showSettingsButton = document.getElementById('show-settings-button');
@@ -352,11 +346,11 @@
             const mainTitle = document.getElementById('main-title');
             const welcomeView = document.getElementById('welcome-view');
             const fileView = document.getElementById('file-view');
-            const dosyalarView = document.getElementById('dosyalar-view');
-            const tablolarView = document.getElementById('tablolar-view');
             const settingsView = document.getElementById('settings-view');
             const versionInfo = document.getElementById('version-info');
             const homeLogoSidebar = document.getElementById('home-logo-sidebar');
+
+            let currentPassword = '';
 
             // --- TEMA YÖNETİMİ ---
             const sunIcon = '<svg><use href="#icon-sun" /></svg>';
@@ -386,7 +380,7 @@
             
             // --- SAYFA NAVİGASYONU ---
             function hideAllViews() {
-                [welcomeView, fileView, settingsView, dosyalarView, tablolarView].forEach(v => v.style.display = 'none');
+                [welcomeView, fileView, settingsView].forEach(v => v.style.display = 'none');
                 document.querySelectorAll('.nav-item button').forEach(b => b.classList.remove('active'));
             }
 
@@ -395,20 +389,6 @@
                 welcomeView.style.display = 'flex';
                 closeSidebar();
             }
-
-            function showView(viewElement, buttonElement, title) {
-                 hideAllViews();
-                 viewElement.style.display = viewElement.id.includes('file') ? 'block' : 'flex';
-                 if (title) mainTitle.textContent = title;
-                 buttonElement.classList.add('active');
-                 closeSidebar();
-            }
-
-            showFilesButton.addEventListener('click', () => showView(fileView, showFilesButton, 'Formlar'));
-            showDosyalarButton.addEventListener('click', () => showView(dosyalarView, showDosyalarButton));
-            showTablolarButton.addEventListener('click', () => showView(tablolarView, showTablolarButton));
-            showSettingsButton.addEventListener('click', () => showView(settingsView, showSettingsButton));
-            homeLogoSidebar.addEventListener('click', goHome);
             
             // --- VERSİYON BİLGİSİ ---
             function toggleVersion() {
@@ -430,6 +410,10 @@
             // --- DOSYA LİSTELEME ---
             function displayFiles(files) {
                 fileList.innerHTML = '';
+                if (!files || files.length === 0) {
+                     fileList.innerHTML = `<p style="text-align:center; color: var(--text-light); margin-top: 2rem;">Bu klasörde içerik bulunmuyor.</p>`;
+                     return;
+                }
                 files.forEach((file) => {
                     const row = document.createElement('div');
                     row.className = 'file-row';
@@ -448,10 +432,47 @@
                     fileList.appendChild(row);
                 });
             }
+
+            async function fetchAndDisplayFiles(folder, title, buttonElement) {
+                hideAllViews();
+                fileView.style.display = 'block';
+                mainTitle.textContent = title;
+                buttonElement.classList.add('active');
+                closeSidebar();
+                fileList.innerHTML = `<p style="text-align:center; color: var(--text-light); margin-top: 2rem;">Yükleniyor...</p>`;
+
+                try {
+                    const response = await fetch('/api/getFiles', { 
+                        method: 'POST', 
+                        headers: { 'Content-Type': 'application/json' }, 
+                        body: JSON.stringify({ password: currentPassword, folder: folder }) 
+                    });
+                    if (response.ok) {
+                        const files = await response.json();
+                        displayFiles(files);
+                    } else {
+                        fileList.innerHTML = `<p style="text-align:center; color: #ef4444; margin-top: 2rem;">Dosyalar yüklenemedi.</p>`;
+                    }
+                } catch (error) {
+                    fileList.innerHTML = `<p style="text-align:center; color: #ef4444; margin-top: 2rem;">Bir ağ hatası oluştu.</p>`;
+                }
+            }
+
+            showFormsButton.addEventListener('click', () => fetchAndDisplayFiles('forms', 'Formlar', showFormsButton));
+            showDosyalarButton.addEventListener('click', () => fetchAndDisplayFiles('dosyalar', 'Dosyalar', showDosyalarButton));
+            showTablolarButton.addEventListener('click', () => fetchAndDisplayFiles('tablolar', 'Tablolar', showTablolarButton));
+            
+            showSettingsButton.addEventListener('click', () => {
+                hideAllViews();
+                settingsView.style.display = 'flex';
+                showSettingsButton.classList.add('active');
+                closeSidebar();
+            });
+
+            homeLogoSidebar.addEventListener('click', goHome);
             
             // --- GİRİŞ VE OTURUM YÖNETİMİ ---
-            function showApp(files) {
-                displayFiles(files);
+            function showApp() {
                 goHome();
                 loginScreen.classList.add('hidden');
                 setTimeout(() => {
@@ -466,13 +487,20 @@
                 loginButton.disabled = true;
                 loginButton.textContent = 'Doğrulanıyor...';
                 loginErrorMessage.style.display = 'none';
+                
+                // Sadece şifre doğrulaması için API'ye istek atıyoruz
                 try {
-                    const response = await fetch('/api/getFiles', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password }) });
+                    const response = await fetch('/api/getFiles', { 
+                        method: 'POST', 
+                        headers: { 'Content-Type': 'application/json' }, 
+                        body: JSON.stringify({ password: password, folder: 'forms' }) // Herhangi bir klasör isteyebiliriz, sadece şifre kontrolü için
+                    });
+
                     if (response.ok) {
-                        const files = await response.json();
+                        currentPassword = password; // Şifreyi sonraki istekler için sakla
                         sessionStorage.setItem('isLoggedIn', 'true');
-                        sessionStorage.setItem('fileCache', JSON.stringify(files));
-                        showApp(files);
+                        sessionStorage.setItem('userPassword', password);
+                        showApp();
                     } else {
                         loginErrorMessage.style.display = 'block';
                         passwordInput.value = '';
@@ -490,8 +518,8 @@
             (() => {
                 applyTheme(localStorage.getItem('theme') || 'dark');
                 if (sessionStorage.getItem('isLoggedIn') === 'true') {
-                    const cachedFiles = JSON.parse(sessionStorage.getItem('fileCache'));
-                    if (cachedFiles) showApp(cachedFiles);
+                    currentPassword = sessionStorage.getItem('userPassword');
+                    if(currentPassword) showApp();
                 }
             })();
 
