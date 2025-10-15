@@ -6,30 +6,30 @@ export default function handler(request, response) {
 
     // Doğru şifre burada SAKLI
     const correctPassword = '0000';
-    
-    // Google Drive linkleri burada GÜVENDE
-    const files = [
-        { name: "Deneme 1", url: "#" },
-        { name: "Deneme 2", url: "#" },
-        { name: "Deneme 3", url: "#" },
-        { name: "Deneme 4", url: "#" },
-        { name: "Deneme 5", url: "#" },
-        { name: "Deneme 6", url: "#" },
-        { name: "Deneme 7", url: "#" },
-        { name: "Deneme 8", url: "#" },
-        { name: "Deneme 9", url: "#" },
-        { name: "Deneme 10", url: "#" }
-    ];
 
-    // Gelen şifreyi al
-    const { password } = request.body;
+    // Gelen istekten şifre ve klasör adını al
+    const { password, folder } = request.body;
 
     // Şifreyi kontrol et
-    if (password === correctPassword) {
-        // Şifre doğruysa, dosya listesini gönder
+    if (password !== correctPassword) {
+        // Şifre yanlışsa, yetkisiz hatası ver
+        return response.status(401).json({ error: 'Invalid password' });
+    }
+
+    // Klasör içerikleri
+    const content = {
+        forms: Array.from({ length: 10 }, (_, i) => ({ name: `Form ${i + 1}`, url: "#" })),
+        dosyalar: Array.from({ length: 10 }, (_, i) => ({ name: `Dosya ${i + 1}`, url: "#" })),
+        tablolar: Array.from({ length: 10 }, (_, i) => ({ name: `Tablo ${i + 1}`, url: "#" }))
+    };
+
+    // İstenen klasörün içeriğini bul
+    const files = content[folder];
+
+    // Eğer istenen klasör varsa içeriğini, yoksa boş bir dizi gönder
+    if (files) {
         response.status(200).json(files);
     } else {
-        // Şifre yanlışsa, yetkisiz hatası ver
-        response.status(401).json({ error: 'Invalid password' });
+        response.status(200).json([]); // Boş veya tanımsız klasörler için
     }
 }
