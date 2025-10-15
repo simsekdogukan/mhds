@@ -9,30 +9,28 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --blue-accent: #7c3aed;
-            --blue-accent-hover: #6d28d9;
-            --background: #eef2f8;
-            --card-bg: rgba(255, 255, 255, 0.6);
-            --text-dark: #0e1116;
-            --text-light: #5b6572;
-            --border-color: rgba(24, 39, 75, 0.18);
+            --accent: #f97316;
+            --accent-hover: #ea580c;
+            --background: #fff7ed;
+            --text-dark: #292524;
+            --text-light: #78716c;
+            --border-color: rgba(41, 37, 36, 0.18);
+            --glass-bg: rgba(255, 247, 237, 0.65);
+            --glass-border: rgba(41, 37, 36, 0.18);
+            --shadow-elevated: 0 10px 30px rgba(41, 37, 36, 0.12), 0 2px 8px rgba(41, 37, 36, 0.08);
+            --ring: 0 0 0 3px rgba(249, 115, 22, 0.35);
             --sidebar-width: 300px;
-            --glass-bg: rgba(255, 255, 255, 0.58);
-            --glass-border: rgba(24, 39, 75, 0.18);
-            --shadow-elevated: 0 10px 30px rgba(15, 23, 42, 0.12), 0 2px 8px rgba(15, 23, 42, 0.08);
-            --ring: 0 0 0 3px rgba(124, 58, 237, 0.35);
         }
 
         body.dark-theme {
-            --background: #0b1220;
-            --card-bg: rgba(17, 24, 39, 0.55);
-            --text-dark: #e5e7eb;
-            --text-light: #9aa4b2;
-            --border-color: rgba(148, 163, 184, 0.18);
-            --glass-bg: rgba(17, 24, 39, 0.55);
-            --glass-border: rgba(148, 163, 184, 0.22);
-            --shadow-elevated: 0 14px 40px rgba(2, 6, 23, 0.35), 0 4px 10px rgba(2, 6, 23, 0.25);
-            --ring: 0 0 0 3px rgba(124, 58, 237, 0.5);
+            --background: #1c1917;
+            --text-dark: #fafaf9;
+            --text-light: #a8a29e;
+            --border-color: rgba(168, 162, 158, 0.18);
+            --glass-bg: rgba(28, 25, 23, 0.6);
+            --glass-border: rgba(168, 162, 158, 0.22);
+            --shadow-elevated: 0 14px 40px rgba(0,0,0, 0.35), 0 4px 10px rgba(0,0,0, 0.25);
+            --ring: 0 0 0 3px rgba(249, 115, 22, 0.5);
         }
 
         *, *::before, *::after { box-sizing: border-box; }
@@ -60,10 +58,10 @@
             inset: -20%;
             z-index: -1;
             background:
-                radial-gradient(40% 30% at 20% 10%, rgba(124, 58, 237, 0.15), transparent 55%),
-                radial-gradient(35% 25% at 80% 20%, rgba(6, 182, 212, 0.18), transparent 55%),
-                radial-gradient(30% 30% at 20% 85%, rgba(236, 72, 153, 0.12), transparent 60%),
-                radial-gradient(30% 30% at 80% 80%, rgba(34, 197, 94, 0.10), transparent 60%);
+                radial-gradient(40% 30% at 20% 10%, rgba(249, 115, 22, 0.15), transparent 55%),
+                radial-gradient(35% 25% at 80% 20%, rgba(234, 88, 12, 0.18), transparent 55%),
+                radial-gradient(30% 30% at 20% 85%, rgba(249, 115, 22, 0.12), transparent 60%),
+                radial-gradient(30% 30% at 80% 80%, rgba(234, 88, 12, 0.10), transparent 60%);
             filter: blur(40px);
             pointer-events: none;
         }
@@ -79,7 +77,7 @@
             padding: 2rem 2.25rem; border-radius: 1.25rem;
             background: var(--glass-bg); border: 1px solid var(--glass-border); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); box-shadow: var(--shadow-elevated);
         }
-        .login-logo { max-width: 140px; height: auto; margin-bottom: 2rem; filter: drop-shadow(0 10px 24px rgba(124, 58, 237, 0.22)); }
+        .login-logo { max-width: 140px; height: auto; margin-bottom: 2rem; filter: drop-shadow(0 10px 24px rgba(234, 88, 12, 0.22)); }
         .login-box p { color: var(--text-light); margin-bottom: 2rem; font-size: 1.1rem; }
         .input-group { display: flex; flex-direction: column; gap: 1rem; width: 100%; max-width: 320px; }
         .input-group input { 
@@ -88,9 +86,9 @@
         }
         .login-button { 
             border: none; padding: 14px; border-radius: 0.75rem; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background-color 0.2s, transform 0.2s;
-            background: linear-gradient(90deg, #7c3aed, #06b6d4); color: white; box-shadow: 0 10px 24px rgba(124, 58, 237, 0.25);
+            background: linear-gradient(90deg, var(--accent), var(--accent-hover)); color: white; box-shadow: 0 10px 24px rgba(234, 88, 12, 0.25);
         }
-        .login-button:hover { background: linear-gradient(90deg, #6d28d9, #0ea5b7); transform: translateY(-2px); }
+        .login-button:hover { background: linear-gradient(90deg, var(--accent-hover), var(--accent)); transform: translateY(-2px); }
         #login-error-message { color: #ef4444; margin-top: 1rem; display: none; }
         .login-footer { position: absolute; bottom: 0; width: 100%; padding: 1rem; text-align: center; color: var(--text-light); font-size: 0.85rem; }
 
@@ -129,8 +127,8 @@
         }
         .nav-item button:hover { transform: translateY(-1px); }
         .nav-item button.active, .nav-item button:hover {
-            background: linear-gradient(180deg, rgba(124, 58, 237, 0.12), rgba(124, 58, 237, 0.06));
-            border-color: rgba(124, 58, 237, 0.35); color: var(--text-dark);
+            background: linear-gradient(180deg, rgba(249, 115, 22, 0.12), rgba(249, 115, 22, 0.06));
+            border-color: rgba(249, 115, 22, 0.35); color: var(--text-dark);
         }
         .nav-item svg { width: 20px; height: 20px; margin-right: 1rem; color: var(--text-light); transition: color 0.2s; }
         .sidebar-footer { margin-top: auto; padding-top: 1rem; border-top: 1px solid var(--glass-border); }
@@ -152,9 +150,9 @@
         .hamburger-button { background: none; border: none; cursor: pointer; padding: 0.5rem; color: var(--text-dark); display: inline-flex; }
         .search-bar { 
             flex-grow: 1; margin: 0 1rem; border-radius: 2rem; padding: 0.6rem 1rem;
-            background: rgba(255, 255, 255, 0.5); border: 1px solid var(--glass-border); color: var(--text-dark); box-shadow: inset 0 1px 0 rgba(255,255,255,0.15);
+            background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--text-dark); box-shadow: inset 0 1px 0 rgba(255,255,255,0.15);
         }
-        body.dark-theme .search-bar { background: rgba(17, 24, 39, 0.5); }
+        body.dark-theme .search-bar { background: rgba(28, 25, 23, 0.5); }
         .search-bar::placeholder { color: var(--text-light); opacity: 0.8; }
         
         .content-area {
@@ -177,19 +175,19 @@
         }
         .file-row:hover { transform: translateY(-2px); background-color: var(--background); }
         .file-name-cell { display: flex; align-items: center; padding: 0.8rem 0; }
-        .file-icon { width: 32px; height: 32px; margin-right: 1rem; color: rgba(124, 58, 237, 0.8); }
+        .file-icon { width: 32px; height: 32px; margin-right: 1rem; color: var(--accent); }
         .file-name { font-weight: 500; color: var(--text-dark); }
         .file-date { display: none; }
         .file-actions { font-size: 0.9rem; color: var(--text-light); }
         .action-button {
-            border: 1px solid rgba(124, 58, 237, 0.4); background: linear-gradient(180deg, rgba(124, 58, 237, 0.14), rgba(124, 58, 237, 0.06));
+            border: 1px solid rgba(249, 115, 22, 0.4); background: linear-gradient(180deg, rgba(249, 115, 22, 0.14), rgba(249, 115, 22, 0.06));
             border-radius: 0.5rem; padding: 0.5rem 1rem; color: var(--text-dark); cursor: pointer; transition: transform 0.12s ease, background-color 0.2s ease;
         }
-        .action-button:hover { transform: translateY(-1px); background: linear-gradient(180deg, rgba(124, 58, 237, 0.22), rgba(124, 58, 237, 0.1)); }
+        .action-button:hover { transform: translateY(-1px); background: linear-gradient(180deg, rgba(249, 115, 22, 0.22), rgba(249, 115, 22, 0.1)); }
         
         .theme-toggle-button {
-            background: linear-gradient(180deg, rgba(124, 58, 237, 0.12), rgba(6, 182, 212, 0.12)); border: 1px solid rgba(124, 58, 237, 0.35);
-            box-shadow: 0 6px 16px rgba(124, 58, 237, 0.15); color: var(--text-light); width: 40px; height: 40px; border-radius: 50%;
+            background: linear-gradient(180deg, rgba(249, 115, 22, 0.12), rgba(234, 88, 12, 0.12)); border: 1px solid rgba(249, 115, 22, 0.35);
+            box-shadow: 0 6px 16px rgba(234, 88, 12, 0.15); color: var(--text-light); width: 40px; height: 40px; border-radius: 50%;
             cursor: pointer; display: flex; justify-content: center; align-items: center; transition: all 0.3s ease;
         }
         .theme-toggle-button:hover { filter: brightness(1.05); }
@@ -227,7 +225,7 @@
         }
 
         button:focus-visible, input:focus-visible {
-            outline: none; box-shadow: var(--ring); border-color: rgba(124, 58, 237, 0.45);
+            outline: none; box-shadow: var(--ring); border-color: rgba(249, 115, 22, 0.45);
         }
     </style>
 </head>
@@ -288,7 +286,7 @@
                     <button class="hamburger-button" id="hamburger-button" title="Menüyü Aç" aria-label="Yan menüyü aç">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
                     </button>
-                    <input type="text" id="search-input" class="search-bar" placeholder="Dosyalarda ara..." aria-label="Dosyalarda ara">
+                    <input type="text" id="search-input" class="search-bar" placeholder="Tüm dosyalarda ara..." aria-label="Tüm dosyalarda ara">
                     <button id="theme-toggle-main" class="theme-toggle-button" title="Temayı Değiştir" aria-label="Temayı değiştir"></button>
                 </header>
                 <div class="content-area">
@@ -351,6 +349,7 @@
             const homeLogoSidebar = document.getElementById('home-logo-sidebar');
 
             let currentPassword = '';
+            let searchTimeout;
 
             // --- TEMA YÖNETİMİ ---
             const sunIcon = '<svg><use href="#icon-sun" /></svg>';
@@ -387,6 +386,7 @@
             function goHome() {
                 hideAllViews();
                 welcomeView.style.display = 'flex';
+                searchInput.value = ''; // Arama çubuğunu temizle
                 closeSidebar();
             }
             
@@ -398,20 +398,11 @@
             versionInfo.addEventListener('click', toggleVersion);
             versionInfo.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleVersion(); } });
 
-            // --- ARAMA FİLTRESİ ---
-            searchInput.addEventListener('input', (e) => {
-                const searchTerm = e.target.value.toLowerCase();
-                fileList.querySelectorAll('.file-row').forEach(row => {
-                    const fileName = row.querySelector('.file-name').textContent.toLowerCase();
-                    row.style.display = fileName.includes(searchTerm) ? 'grid' : 'none';
-                });
-            });
-
             // --- DOSYA LİSTELEME ---
             function displayFiles(files) {
                 fileList.innerHTML = '';
                 if (!files || files.length === 0) {
-                     fileList.innerHTML = `<p style="text-align:center; color: var(--text-light); margin-top: 2rem;">Bu klasörde içerik bulunmuyor.</p>`;
+                     fileList.innerHTML = `<p style="text-align:center; color: var(--text-light); margin-top: 2rem;">Sonuç bulunamadı.</p>`;
                      return;
                 }
                 files.forEach((file) => {
@@ -437,7 +428,7 @@
                 hideAllViews();
                 fileView.style.display = 'block';
                 mainTitle.textContent = title;
-                buttonElement.classList.add('active');
+                if(buttonElement) buttonElement.classList.add('active');
                 closeSidebar();
                 fileList.innerHTML = `<p style="text-align:center; color: var(--text-light); margin-top: 2rem;">Yükleniyor...</p>`;
 
@@ -445,24 +436,44 @@
                     const response = await fetch('/api/getFiles', { 
                         method: 'POST', 
                         headers: { 'Content-Type': 'application/json' }, 
-                        body: JSON.stringify({ password: currentPassword, folder: folder }) 
+                        body: JSON.stringify({ password: currentPassword, folder }) 
                     });
                     if (response.ok) {
                         const files = await response.json();
                         displayFiles(files);
+                        return files; // Arama için dosyaları geri döndür
                     } else {
                         fileList.innerHTML = `<p style="text-align:center; color: #ef4444; margin-top: 2rem;">Dosyalar yüklenemedi.</p>`;
                     }
                 } catch (error) {
                     fileList.innerHTML = `<p style="text-align:center; color: #ef4444; margin-top: 2rem;">Bir ağ hatası oluştu.</p>`;
                 }
+                return []; // Hata durumunda boş dizi döndür
             }
 
-            showFormsButton.addEventListener('click', () => fetchAndDisplayFiles('forms', 'Formlar', showFormsButton));
-            showDosyalarButton.addEventListener('click', () => fetchAndDisplayFiles('dosyalar', 'Dosyalar', showDosyalarButton));
-            showTablolarButton.addEventListener('click', () => fetchAndDisplayFiles('tablolar', 'Tablolar', showTablolarButton));
+            // --- ARAMA İŞLEVSELLİĞİ ---
+            searchInput.addEventListener('input', (e) => {
+                clearTimeout(searchTimeout);
+                const searchTerm = e.target.value.trim().toLowerCase();
+
+                if (!searchTerm) {
+                    goHome();
+                    return;
+                }
+
+                searchTimeout = setTimeout(async () => {
+                    const allFiles = await fetchAndDisplayFiles('all', `Arama Sonuçları: "${searchTerm}"`, null);
+                    const filteredFiles = allFiles.filter(file => file.name.toLowerCase().includes(searchTerm));
+                    displayFiles(filteredFiles);
+                }, 300); // Kullanıcı yazmayı bıraktıktan 300ms sonra ara
+            });
+
+            showFormsButton.addEventListener('click', () => { searchInput.value = ''; fetchAndDisplayFiles('forms', 'Formlar', showFormsButton); });
+            showDosyalarButton.addEventListener('click', () => { searchInput.value = ''; fetchAndDisplayFiles('dosyalar', 'Dosyalar', showDosyalarButton); });
+            showTablolarButton.addEventListener('click', () => { searchInput.value = ''; fetchAndDisplayFiles('tablolar', 'Tablolar', showTablolarButton); });
             
             showSettingsButton.addEventListener('click', () => {
+                searchInput.value = '';
                 hideAllViews();
                 settingsView.style.display = 'flex';
                 showSettingsButton.classList.add('active');
@@ -488,16 +499,15 @@
                 loginButton.textContent = 'Doğrulanıyor...';
                 loginErrorMessage.style.display = 'none';
                 
-                // Sadece şifre doğrulaması için API'ye istek atıyoruz
                 try {
                     const response = await fetch('/api/getFiles', { 
                         method: 'POST', 
                         headers: { 'Content-Type': 'application/json' }, 
-                        body: JSON.stringify({ password: password, folder: 'forms' }) // Herhangi bir klasör isteyebiliriz, sadece şifre kontrolü için
+                        body: JSON.stringify({ password: password, folder: 'forms' })
                     });
 
                     if (response.ok) {
-                        currentPassword = password; // Şifreyi sonraki istekler için sakla
+                        currentPassword = password;
                         sessionStorage.setItem('isLoggedIn', 'true');
                         sessionStorage.setItem('userPassword', password);
                         showApp();
