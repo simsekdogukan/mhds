@@ -66,8 +66,8 @@
         .content-header { margin-bottom: 1.5rem; }
         .content-header h1 { margin: 0; font-size: 1.8rem; }
         
-        #welcome-view, #settings-view { display: flex; justify-content: center; align-items: center; height: 100%; color: var(--text-light); font-size: 1.2rem; text-align: center; }
-        #file-view, #settings-view { display: none; }
+        #welcome-view, #settings-view, #dosyalar-view, #tablolar-view { display: flex; justify-content: center; align-items: center; height: 100%; color: var(--text-light); font-size: 1.2rem; text-align: center; }
+        #file-view, #settings-view, #dosyalar-view, #tablolar-view { display: none; }
 
         .file-list-header, .file-row { display: grid; grid-template-columns: 1fr 150px 120px; align-items: center; padding: 0 1rem; }
         .file-list-header { color: var(--text-light); font-size: 0.85rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-color); }
@@ -315,6 +315,16 @@
                             </button>
                         </li>
                         <li class="nav-item">
+                            <button id="show-dosyalar-button" aria-label="Dosyaları göster">
+                                <svg><use href="#icon-folder" /></svg> Dosyalar
+                            </button>
+                        </li>
+                        <li class="nav-item">
+                            <button id="show-tablolar-button" aria-label="Tabloları göster">
+                                <svg><use href="#icon-folder" /></svg> Tablolar
+                            </button>
+                        </li>
+                        <li class="nav-item">
                             <button id="show-settings-button" aria-label="Ayarları göster">
                                 <svg><use href="#icon-settings" /></svg> Ayarlar
                             </button>
@@ -323,8 +333,8 @@
                 </div>
                 <footer class="sidebar-footer">
                     <div class="version-info" id="version-info" role="button" tabindex="0" aria-expanded="false">
-                        <span class="short-version">v.29</span>
-                        <span class="long-version">v.29 - Arayüz ve fonksiyon güncellemeleri</span>
+                        <span class="short-version">v33.06</span>
+                        <span class="long-version">v33.06 - Performans geliştirilmeleri yapıldı ve sıcak bir çay içildi.</span>
                     </div>
                 </footer>
             </nav>
@@ -355,6 +365,12 @@
                      <div id="settings-view">
                         <p>Ayarları sadece yönetici veritabanından değiştirir.</p>
                     </div>
+                    <div id="dosyalar-view">
+                        <p>Henüz içerik yok</p>
+                    </div>
+                    <div id="tablolar-view">
+                        <p>Henüz içerik yok</p>
+                    </div>
                 </div>
             </main>
         </div>
@@ -384,12 +400,16 @@
             const themeToggleLogin = document.getElementById('theme-toggle-login');
             const themeToggleMain = document.getElementById('theme-toggle-main');
             const showFilesButton = document.getElementById('show-files-button');
+            const showDosyalarButton = document.getElementById('show-dosyalar-button');
+            const showTablolarButton = document.getElementById('show-tablolar-button');
             const showSettingsButton = document.getElementById('show-settings-button');
             const hamburgerButton = document.getElementById('hamburger-button');
             const sidebarOverlay = document.getElementById('sidebar-overlay');
             const mainTitle = document.getElementById('main-title');
             const welcomeView = document.getElementById('welcome-view');
             const fileView = document.getElementById('file-view');
+            const dosyalarView = document.getElementById('dosyalar-view');
+            const tablolarView = document.getElementById('tablolar-view');
             const settingsView = document.getElementById('settings-view');
             const versionInfo = document.getElementById('version-info');
             const homeLogoSidebar = document.getElementById('home-logo-sidebar');
@@ -422,28 +442,43 @@
             sidebarOverlay.addEventListener('click', closeSidebar);
             
             // --- SAYFA NAVİGASYONU ---
-            function goHome() {
-                welcomeView.style.display = 'flex';
+            function hideAllViews() {
+                welcomeView.style.display = 'none';
                 fileView.style.display = 'none';
                 settingsView.style.display = 'none';
+                dosyalarView.style.display = 'none';
+                tablolarView.style.display = 'none';
                 document.querySelectorAll('.nav-item button').forEach(b => b.classList.remove('active'));
+            }
+
+            function goHome() {
+                hideAllViews();
+                welcomeView.style.display = 'flex';
                 closeSidebar();
             }
             showFilesButton.addEventListener('click', () => {
-                welcomeView.style.display = 'none';
+                hideAllViews();
                 fileView.style.display = 'block';
-                settingsView.style.display = 'none';
                 mainTitle.textContent = 'Formlar';
-                document.querySelectorAll('.nav-item button').forEach(b => b.classList.remove('active'));
                 showFilesButton.classList.add('active');
                 closeSidebar();
             });
              showSettingsButton.addEventListener('click', () => {
-                welcomeView.style.display = 'none';
-                fileView.style.display = 'none';
+                hideAllViews();
                 settingsView.style.display = 'flex';
-                document.querySelectorAll('.nav-item button').forEach(b => b.classList.remove('active'));
                 showSettingsButton.classList.add('active');
+                closeSidebar();
+            });
+            showDosyalarButton.addEventListener('click', () => {
+                hideAllViews();
+                dosyalarView.style.display = 'flex';
+                showDosyalarButton.classList.add('active');
+                closeSidebar();
+            });
+            showTablolarButton.addEventListener('click', () => {
+                hideAllViews();
+                tablolarView.style.display = 'flex';
+                showTablolarButton.classList.add('active');
                 closeSidebar();
             });
             homeLogoSidebar.addEventListener('click', goHome);
@@ -489,7 +524,7 @@
                         <div class="file-date">Bugün</div>
                         <div class="file-actions">
                             <a href="${file.url}" target="_blank" style="text-decoration:none;">
-                                <button class="action-button">Düzenle</button>
+                                <button class="action-button">Aç</button>
                             </a>
                         </div>
                     `;
