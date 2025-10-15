@@ -22,6 +22,12 @@ export default function handler(request, response) {
         dosyalar: Array.from({ length: 10 }, (_, i) => ({ name: `Dosya ${i + 1}`, url: "#" })),
         tablolar: Array.from({ length: 10 }, (_, i) => ({ name: `Tablo ${i + 1}`, url: "#" }))
     };
+    
+    // Eğer 'all' istenirse, tüm içerikleri birleştir
+    if (folder === 'all') {
+        const allFiles = [...content.forms, ...content.dosyalar, ...content.tablolar];
+        return response.status(200).json(allFiles);
+    }
 
     // İstenen klasörün içeriğini bul
     const files = content[folder];
