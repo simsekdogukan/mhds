@@ -1,4 +1,3 @@
-=== /api/getFiles.js ===
 export default function handler(request, response) {
     // Sadece POST isteklerini kabul et
     if (request.method !== 'POST') {
