@@ -9,119 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --blue-accent: #0061ff; --blue-accent-hover: #0052d9;
-            --background: #f7f9fa; --card-bg: #ffffff; --text-dark: #1e1919; --text-light: #637282; --border-color: #dbe0e4; --sidebar-width: 280px;
-        }
-        body.dark-theme {
-            --background: #121212; --card-bg: #1e1e1e; --text-dark: #e8e6e3; --text-light: #8e9aA7; --border-color: #333333;
-        }
-        *, *::before, *::after { box-sizing: border-box; }
-        body {
-            font-family: 'Inter', sans-serif; margin: 0; background-color: var(--background); color: var(--text-dark); height: 100vh; overflow: hidden; transition: background-color 0.3s ease, color 0.3s ease;
-            -webkit-tap-highlight-color: transparent;
-        }
-        
-        #login-screen {
-            position: fixed; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: var(--background); z-index: 210; opacity: 1; transition: opacity 0.5s ease-out, transform 0.5s ease-out;
-        }
-        #login-screen.hidden { opacity: 0; transform: scale(0.95); pointer-events: none; }
-        .login-logo { max-width: 140px; height: auto; margin-bottom: 2rem; }
-        .login-box p { color: var(--text-light); margin-bottom: 2rem; font-size: 1.1rem; }
-        .input-group { display: flex; flex-direction: column; gap: 1rem; width: 100%; max-width: 320px; }
-        .input-group input { width: 100%; padding: 14px; border: 1px solid var(--border-color); border-radius: 0.75rem; font-size: 1rem; text-align: center; background-color: var(--card-bg); color: var(--text-dark); }
-        .login-button { background-color: var(--blue-accent); color: white; border: none; padding: 14px; border-radius: 0.75rem; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background-color 0.2s, transform 0.2s; }
-        .login-button:hover { background-color: var(--blue-accent-hover); transform: translateY(-2px); }
-        #login-error-message { color: #ef4444; margin-top: 1rem; display: none; }
-        .login-footer { position: absolute; bottom: 0; width: 100%; padding: 1rem; text-align: center; color: var(--text-light); font-size: 0.85rem; }
-
-        #app-container {
-            width: 100%; height: 100%; display: none; opacity: 0; transition: opacity 0.5s ease-out;
-        }
-        #app-container.visible { opacity: 1; }
-        
-        .sidebar {
-            width: var(--sidebar-width); height: 100%; background-color: var(--background); border-right: 1px solid var(--border-color); padding: 1.5rem; display: flex; flex-direction: column; 
-            transition: transform 0.4s ease, background-color 0.3s ease; z-index: 201;
-        }
-        .sidebar-header { 
-            margin-bottom: 2rem; padding: 0 0.5rem; 
-            display: flex; align-items: center; gap: 12px;
-        }
-        .header-logo { max-height: 40px; cursor: pointer; }
-        .header-title { font-size: 1.6rem; font-weight: 600; color: var(--text-dark); }
-        .nav-list { list-style: none; padding: 0; margin: 0; flex-grow: 1; }
-        .nav-item button { 
-            display: flex; align-items: center; padding: 0.75rem 1rem; border-radius: 0.5rem; text-decoration: none; color: var(--text-dark); font-weight: 500; transition: background-color 0.2s, color 0.2s;
-            width: 100%; background: none; border: none; font-family: 'Inter', sans-serif; font-size: 1rem; cursor: pointer; text-align: left;
-        }
-        .nav-item button.active, .nav-item button:hover { background-color: var(--border-color); }
-        .nav-item svg { width: 20px; height: 20px; margin-right: 1rem; color: var(--text-light); transition: color 0.2s; pointer-events: none; }
-
-        .main-content { 
-            flex-grow: 1; height: 100%; display: flex; flex-direction: column; 
-            overflow: hidden; 
-            min-height: 0; /* GÜNCELLEME: Bu satır kaydırma sorununu ve menünün sabit kalmasını sağlar */
-        }
-        .main-header { padding: 1rem 1.5rem; flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); }
-        .hamburger-button { background: none; border: none; cursor: pointer; padding: 0.5rem; color: var(--text-dark); display: none; }
-        .search-bar { flex-grow: 1; margin: 0 1rem; background-color: var(--background); border: 1px solid var(--border-color); border-radius: 2rem; padding: 0.6rem 1rem; color: var(--text-light); }
-        
-        .content-area { flex-grow: 1; overflow-y: auto; padding: 1.5rem; }
-        .content-header { margin-bottom: 1.5rem; }
-        .content-header h1 { margin: 0; font-size: 1.8rem; }
-        
-        #welcome-view, #settings-view, #dosyalar-view, #tablolar-view { display: flex; justify-content: center; align-items: center; height: 100%; color: var(--text-light); font-size: 1.2rem; text-align: center; }
-        #file-view, #settings-view, #dosyalar-view, #tablolar-view { display: none; }
-
-        .file-list-header, .file-row { display: grid; grid-template-columns: 1fr 150px 120px; align-items: center; padding: 0 1rem; }
-        .file-list-header { color: var(--text-light); font-size: 0.85rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-color); }
-        .file-row { background-color: var(--card-bg); border-bottom: 1px solid var(--border-color); transition: background-color 0.2s; }
-        .file-row:hover { background-color: var(--background); }
-        .file-name-cell { display: flex; align-items: center; padding: 0.8rem 0; }
-        .file-icon { width: 32px; height: 32px; margin-right: 1rem; color: var(--text-light); }
-        .file-name { font-weight: 500; color: var(--text-dark); }
-        .file-date, .file-actions { font-size: 0.9rem; color: var(--text-light); }
-        .action-button { background: none; border: 1px solid var(--border-color); border-radius: 0.5rem; padding: 0.5rem 1rem; color: var(--text-dark); cursor: pointer; }
-        
-        .sidebar-footer { margin-top: auto; padding-top: 1rem; border-top: 1px solid var(--border-color); }
-        .version-info {
-            font-size: 0.75rem; color: var(--text-light); cursor: pointer; white-space: nowrap; text-align: center;
-        }
-        .version-info .long-version { display: none; }
-        .version-info.expanded .short-version { display: none; }
-        .version-info.expanded .long-version { display: inline; }
-
-        .theme-toggle-button { background: none; border: 1px solid var(--border-color); color: var(--text-light); width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease; }
-        #login-screen .theme-toggle-button { position: absolute; top: 1.5rem; right: 1.5rem; z-index: 100; }
-        
-        #sidebar-overlay { 
-            position: fixed; inset: 0; background-color: rgba(0,0,0,0.4); z-index: 200; opacity: 0; transition: opacity 0.4s ease; pointer-events: none;
-        }
-        
-        @media (min-width: 900px) {
-            #app-container { display: grid; grid-template-columns: var(--sidebar-width) auto; }
-            .main-content { flex-grow: 1; }
-            .hamburger-button, #sidebar-overlay { display: none; }
-        }
-        @media (max-width: 899px) {
-            #app-container { display: flex; flex-direction: column; }
-            .sidebar { position: fixed; transform: translateX(-100%); }
-            .main-content { width: 100%; }
-            .hamburger-button { display: inline-flex; }
-            .file-list-header, .file-row { grid-template-columns: 1fr 120px; }
-            .file-date { display: none; }
-            body.sidebar-open .sidebar { transform: translateX(0); box-shadow: 10px 0 30px rgba(0,0,0,0.1); }
-            body.sidebar-open #sidebar-overlay { opacity: 1; pointer-events: auto; }
-            .login-box { width: calc(100% - 2rem); margin: 0 1rem; }
-        }
-
-        /* prefers-reduced-motion: minimize motion */
-        @media (prefers-reduced-motion: reduce) {
-            * { transition: none !important; animation: none !important; }
-        }
-        /* --- Redesign: Aurora Glass UI Overrides --- */
-        :root {
-            --blue-accent: #7c3aed; /* primary */
+            --blue-accent: #7c3aed;
             --blue-accent-hover: #6d28d9;
             --background: #eef2f8;
             --card-bg: rgba(255, 255, 255, 0.6);
@@ -134,6 +22,7 @@
             --shadow-elevated: 0 10px 30px rgba(15, 23, 42, 0.12), 0 2px 8px rgba(15, 23, 42, 0.08);
             --ring: 0 0 0 3px rgba(124, 58, 237, 0.35);
         }
+
         body.dark-theme {
             --background: #0b1220;
             --card-bg: rgba(17, 24, 39, 0.55);
@@ -145,12 +34,27 @@
             --shadow-elevated: 0 14px 40px rgba(2, 6, 23, 0.35), 0 4px 10px rgba(2, 6, 23, 0.25);
             --ring: 0 0 0 3px rgba(124, 58, 237, 0.5);
         }
+
+        *, *::before, *::after { box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            background-color: var(--background);
+            color: var(--text-dark);
+            transition: background-color 0.3s ease, color 0.3s ease;
+            -webkit-tap-highlight-color: transparent;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
         .app-wrapper {
             position: relative;
             isolation: isolate;
+            height: 100%;
         }
-        .app-wrapper::before,
-        .app-wrapper::after {
+
+        .app-wrapper::before {
             content: "";
             position: fixed;
             inset: -20%;
@@ -163,129 +67,167 @@
             filter: blur(40px);
             pointer-events: none;
         }
-        body.dark-theme .app-wrapper::before,
-        body.dark-theme .app-wrapper::after {
+        body.dark-theme .app-wrapper::before {
             filter: blur(60px) saturate(120%);
         }
-        /* Containers as glass surfaces */
-        .sidebar,
-        .main-header,
-        .file-row,
+
+        #login-screen {
+            position: fixed; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: var(--background); z-index: 210; opacity: 1; transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+        }
+        #login-screen.hidden { opacity: 0; transform: scale(0.95); pointer-events: none; }
         .login-box {
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
-            box-shadow: var(--shadow-elevated);
+            padding: 2rem 2.25rem; border-radius: 1.25rem;
+            background: var(--glass-bg); border: 1px solid var(--glass-border); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); box-shadow: var(--shadow-elevated);
         }
+        .login-logo { max-width: 140px; height: auto; margin-bottom: 2rem; filter: drop-shadow(0 10px 24px rgba(124, 58, 237, 0.22)); }
+        .login-box p { color: var(--text-light); margin-bottom: 2rem; font-size: 1.1rem; }
+        .input-group { display: flex; flex-direction: column; gap: 1rem; width: 100%; max-width: 320px; }
+        .input-group input { 
+            width: 100%; padding: 14px; border: 1px solid var(--glass-border); border-radius: 0.75rem; font-size: 1rem; text-align: center;
+            background: var(--glass-bg); color: var(--text-dark); box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
+        }
+        .login-button { 
+            border: none; padding: 14px; border-radius: 0.75rem; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background-color 0.2s, transform 0.2s;
+            background: linear-gradient(90deg, #7c3aed, #06b6d4); color: white; box-shadow: 0 10px 24px rgba(124, 58, 237, 0.25);
+        }
+        .login-button:hover { background: linear-gradient(90deg, #6d28d9, #0ea5b7); transform: translateY(-2px); }
+        #login-error-message { color: #ef4444; margin-top: 1rem; display: none; }
+        .login-footer { position: absolute; bottom: 0; width: 100%; padding: 1rem; text-align: center; color: var(--text-light); font-size: 0.85rem; }
+
+        #app-container {
+            width: 100%; height: 100%;
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-template-rows: auto 1fr;
+            display: none; /* Initially hidden */
+            opacity: 0;
+            transition: opacity 0.5s ease-out;
+        }
+        #app-container.visible { opacity: 1; }
+
         .sidebar {
-            border-right: 1px solid var(--glass-border);
-            padding: 1.25rem 1.25rem 1rem;
+            position: fixed; top: 0; left: 0; width: var(--sidebar-width); height: 100%;
+            background: var(--glass-bg); border-right: 1px solid var(--glass-border);
+            backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+            padding: 1.25rem;
+            display: flex; flex-direction: column;
+            transform: translateX(-100%); transition: transform 0.4s ease;
+            z-index: 201;
         }
-        .sidebar-header {
-            padding: 0.25rem 0.5rem 0.75rem;
-        }
-        .header-title {
-            letter-spacing: 0.3px;
+        .sidebar-header { margin-bottom: 2rem; padding: 0.25rem 0.5rem 0.75rem; display: flex; align-items: center; gap: 12px; }
+        .header-logo { max-height: 40px; cursor: pointer; }
+        .header-title { 
+            font-size: 1.6rem; font-weight: 600; letter-spacing: 0.3px;
             background: linear-gradient(90deg, var(--text-dark), var(--text-light));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
+            -webkit-background-clip: text; background-clip: text; color: transparent;
         }
-        .nav-item button {
-            border: 1px solid transparent;
+        .nav-list { list-style: none; padding: 0; margin: 0; flex-grow: 1; }
+        .nav-item button { 
+            display: flex; align-items: center; padding: 0.75rem 1rem; border-radius: 0.5rem; text-decoration: none; color: var(--text-dark); font-weight: 500;
+            width: 100%; background: none; border: 1px solid transparent; font-family: 'Inter', sans-serif; font-size: 1rem; cursor: pointer; text-align: left;
             transition: background-color 0.2s, color 0.2s, transform 0.15s, border-color 0.2s;
         }
-        .nav-item button:hover {
-            transform: translateY(-1px);
-        }
-        .nav-item button.active,
-        .nav-item button:hover {
+        .nav-item button:hover { transform: translateY(-1px); }
+        .nav-item button.active, .nav-item button:hover {
             background: linear-gradient(180deg, rgba(124, 58, 237, 0.12), rgba(124, 58, 237, 0.06));
-            border-color: rgba(124, 58, 237, 0.35);
-            color: var(--text-dark);
+            border-color: rgba(124, 58, 237, 0.35); color: var(--text-dark);
         }
-        .theme-toggle-button {
-            background: linear-gradient(180deg, rgba(124, 58, 237, 0.12), rgba(6, 182, 212, 0.12));
-            border-color: rgba(124, 58, 237, 0.35);
-            box-shadow: 0 6px 16px rgba(124, 58, 237, 0.15);
-        }
-        .theme-toggle-button:hover {
-            filter: brightness(1.05);
-        }
-        .theme-toggle-button svg {
-            width: 20px;
-            height: 20px;
+        .nav-item svg { width: 20px; height: 20px; margin-right: 1rem; color: var(--text-light); transition: color 0.2s; }
+        .sidebar-footer { margin-top: auto; padding-top: 1rem; border-top: 1px solid var(--glass-border); }
+        .version-info { font-size: 0.75rem; color: var(--text-light); cursor: pointer; text-align: center; opacity: 0.9; }
+        .version-info .long-version { display: none; }
+        .version-info.expanded .short-version { display: none; }
+        .version-info.expanded .long-version { display: inline; }
+
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; /* CRITICAL FIX */
         }
         .main-header {
-            border-bottom: 1px solid var(--glass-border);
+            padding: 1rem 1.5rem; flex-shrink: 0; display: flex; justify-content: space-between; align-items: center;
+            background: var(--glass-bg); border-bottom: 1px solid var(--glass-border);
+            backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
         }
-        .search-bar {
-            background: rgba(255, 255, 255, 0.5);
-            border-color: var(--glass-border);
-            color: var(--text-dark);
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.15);
+        .hamburger-button { background: none; border: none; cursor: pointer; padding: 0.5rem; color: var(--text-dark); display: inline-flex; }
+        .search-bar { 
+            flex-grow: 1; margin: 0 1rem; border-radius: 2rem; padding: 0.6rem 1rem;
+            background: rgba(255, 255, 255, 0.5); border: 1px solid var(--glass-border); color: var(--text-dark); box-shadow: inset 0 1px 0 rgba(255,255,255,0.15);
         }
-        body.dark-theme .search-bar {
-            background: rgba(17, 24, 39, 0.5);
+        body.dark-theme .search-bar { background: rgba(17, 24, 39, 0.5); }
+        .search-bar::placeholder { color: var(--text-light); opacity: 0.8; }
+        
+        .content-area {
+            flex-grow: 1;
+            overflow-y: auto; /* CRITICAL FIX */
+            padding: 1.5rem;
         }
-        .search-bar::placeholder {
-            color: var(--text-light);
-            opacity: 0.8;
-        }
-        .login-box {
-            padding: 2rem 2.25rem;
-            border-radius: 1.25rem;
-        }
-        .login-logo {
-            filter: drop-shadow(0 10px 24px rgba(124, 58, 237, 0.22));
-        }
-        .input-group input {
-            border-color: var(--glass-border);
-            background: var(--glass-bg);
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
-        }
-        .login-button {
-            background: linear-gradient(90deg, #7c3aed, #06b6d4);
-            box-shadow: 0 10px 24px rgba(124, 58, 237, 0.25);
-        }
-        .login-button:hover {
-            background: linear-gradient(90deg, #6d28d9, #0ea5b7);
-        }
+        .content-header { margin-bottom: 1.5rem; }
+        .content-header h1 { margin: 0; font-size: 1.8rem; }
+        #welcome-view, #settings-view, #dosyalar-view, #tablolar-view { display: flex; justify-content: center; align-items: center; height: 100%; color: var(--text-light); font-size: 1.2rem; text-align: center; }
+        #file-view, #settings-view, #dosyalar-view, #tablolar-view { display: none; }
+
+        .file-list-header, .file-row { display: grid; grid-template-columns: 1fr 120px; align-items: center; padding: 0 1rem; }
+        .file-list-header { color: var(--text-light); font-size: 0.85rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-color); }
         .file-row {
-            border-radius: 0.9rem;
-            margin-top: 0.75rem;
+            margin-top: 0.75rem; border-radius: 0.9rem;
+            background: var(--glass-bg); border-bottom: 1px solid var(--border-color);
+            transition: background-color 0.2s, transform 0.15s ease;
             transform: translateZ(0);
         }
-        .file-row:hover {
-            transform: translateY(-2px);
-        }
-        .file-icon {
-            color: rgba(124, 58, 237, 0.8);
-        }
+        .file-row:hover { transform: translateY(-2px); background-color: var(--background); }
+        .file-name-cell { display: flex; align-items: center; padding: 0.8rem 0; }
+        .file-icon { width: 32px; height: 32px; margin-right: 1rem; color: rgba(124, 58, 237, 0.8); }
+        .file-name { font-weight: 500; color: var(--text-dark); }
+        .file-date { display: none; }
+        .file-actions { font-size: 0.9rem; color: var(--text-light); }
         .action-button {
-            border-color: rgba(124, 58, 237, 0.4);
-            background: linear-gradient(180deg, rgba(124, 58, 237, 0.14), rgba(124, 58, 237, 0.06));
-            transition: transform 0.12s ease, background-color 0.2s ease;
+            border: 1px solid rgba(124, 58, 237, 0.4); background: linear-gradient(180deg, rgba(124, 58, 237, 0.14), rgba(124, 58, 237, 0.06));
+            border-radius: 0.5rem; padding: 0.5rem 1rem; color: var(--text-dark); cursor: pointer; transition: transform 0.12s ease, background-color 0.2s ease;
         }
-        .action-button:hover {
-            transform: translateY(-1px);
-            background: linear-gradient(180deg, rgba(124, 58, 237, 0.22), rgba(124, 58, 237, 0.1));
+        .action-button:hover { transform: translateY(-1px); background: linear-gradient(180deg, rgba(124, 58, 237, 0.22), rgba(124, 58, 237, 0.1)); }
+        
+        .theme-toggle-button {
+            background: linear-gradient(180deg, rgba(124, 58, 237, 0.12), rgba(6, 182, 212, 0.12)); border: 1px solid rgba(124, 58, 237, 0.35);
+            box-shadow: 0 6px 16px rgba(124, 58, 237, 0.15); color: var(--text-light); width: 40px; height: 40px; border-radius: 50%;
+            cursor: pointer; display: flex; justify-content: center; align-items: center; transition: all 0.3s ease;
         }
-        .version-info {
-            opacity: 0.9;
+        .theme-toggle-button:hover { filter: brightness(1.05); }
+        #login-screen .theme-toggle-button { position: absolute; top: 1.5rem; right: 1.5rem; z-index: 100; }
+        
+        #sidebar-overlay { 
+            position: fixed; inset: 0; z-index: 200; opacity: 0; transition: opacity 0.4s ease; pointer-events: none;
+            background-color: rgba(0,0,0,0.4); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
         }
-        /* Focus visibility for accessibility */
-        button:focus-visible,
-        input:focus-visible {
-            outline: none;
-            box-shadow: var(--ring);
-            border-color: rgba(124, 58, 237, 0.45);
+
+        body.sidebar-open .sidebar { transform: translateX(0); box-shadow: 10px 0 30px rgba(0,0,0,0.1); }
+        body.sidebar-open #sidebar-overlay { opacity: 1; pointer-events: auto; }
+
+        @media (min-width: 900px) {
+            #app-container {
+                grid-template-columns: var(--sidebar-width) 1fr;
+                grid-template-rows: 1fr;
+            }
+            .sidebar {
+                position: static; /* sidebar is now a grid item */
+                transform: translateX(0);
+                box-shadow: none;
+                border-right: 1px solid var(--glass-border);
+            }
+            .main-content {
+                grid-column: 2 / 3; /* occupy the second grid column */
+            }
+            .hamburger-button, #sidebar-overlay { display: none; }
+            .file-list-header, .file-row { grid-template-columns: 1fr 150px 120px; }
+            .file-date { display: block; }
         }
-        /* Mobile sidebar overlay with blur */
-        #sidebar-overlay {
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
+
+        @media (prefers-reduced-motion: reduce) {
+            * { transition: none !important; animation: none !important; }
+        }
+
+        button:focus-visible, input:focus-visible {
+            outline: none; box-shadow: var(--ring); border-color: rgba(124, 58, 237, 0.45);
         }
     </style>
 </head>
@@ -307,34 +249,32 @@
 
         <div id="app-container">
             <nav class="sidebar" id="sidebar">
-                <div>
-                    <div class="sidebar-header">
-                        <img src="logo.png" alt="MHDS Logo" class="header-logo" id="home-logo-sidebar">
-                        <span class="header-title">MHDS</span>
-                    </div>
-                    <ul class="nav-list">
-                        <li class="nav-item">
-                            <button id="show-files-button" aria-label="Formları göster">
-                                <svg><use href="#icon-folder" /></svg> Formlar
-                            </button>
-                        </li>
-                        <li class="nav-item">
-                            <button id="show-dosyalar-button" aria-label="Dosyaları göster">
-                                <svg><use href="#icon-folder" /></svg> Dosyalar
-                            </button>
-                        </li>
-                        <li class="nav-item">
-                            <button id="show-tablolar-button" aria-label="Tabloları göster">
-                                <svg><use href="#icon-folder" /></svg> Tablolar
-                            </button>
-                        </li>
-                        <li class="nav-item">
-                            <button id="show-settings-button" aria-label="Ayarları göster">
-                                <svg><use href="#icon-settings" /></svg> Ayarlar
-                            </button>
-                        </li>
-                    </ul>
+                <div class="sidebar-header">
+                    <img src="logo.png" alt="MHDS Logo" class="header-logo" id="home-logo-sidebar">
+                    <span class="header-title">MHDS</span>
                 </div>
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <button id="show-files-button" aria-label="Formları göster">
+                            <svg><use href="#icon-folder" /></svg> Formlar
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button id="show-dosyalar-button" aria-label="Dosyaları göster">
+                            <svg><use href="#icon-folder" /></svg> Dosyalar
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button id="show-tablolar-button" aria-label="Tabloları göster">
+                            <svg><use href="#icon-folder" /></svg> Tablolar
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button id="show-settings-button" aria-label="Ayarları göster">
+                            <svg><use href="#icon-settings" /></svg> Ayarlar
+                        </button>
+                    </li>
+                </ul>
                 <footer class="sidebar-footer">
                     <div class="version-info" id="version-info" role="button" tabindex="0" aria-expanded="false">
                         <span class="short-version">v33.06</span>
@@ -436,8 +376,7 @@
                 localStorage.setItem('theme', newTheme);
                 applyTheme(newTheme);
             }
-            themeToggleLogin.addEventListener('click', toggleTheme);
-            themeToggleMain.addEventListener('click', toggleTheme);
+            [themeToggleLogin, themeToggleMain].forEach(btn => btn.addEventListener('click', toggleTheme));
             
             // --- MENÜ KONTROLÜ ---
             function openSidebar() { document.body.classList.add('sidebar-open'); }
@@ -447,11 +386,7 @@
             
             // --- SAYFA NAVİGASYONU ---
             function hideAllViews() {
-                welcomeView.style.display = 'none';
-                fileView.style.display = 'none';
-                settingsView.style.display = 'none';
-                dosyalarView.style.display = 'none';
-                tablolarView.style.display = 'none';
+                [welcomeView, fileView, settingsView, dosyalarView, tablolarView].forEach(v => v.style.display = 'none');
                 document.querySelectorAll('.nav-item button').forEach(b => b.classList.remove('active'));
             }
 
@@ -460,31 +395,19 @@
                 welcomeView.style.display = 'flex';
                 closeSidebar();
             }
-            showFilesButton.addEventListener('click', () => {
-                hideAllViews();
-                fileView.style.display = 'block';
-                mainTitle.textContent = 'Formlar';
-                showFilesButton.classList.add('active');
-                closeSidebar();
-            });
-             showSettingsButton.addEventListener('click', () => {
-                hideAllViews();
-                settingsView.style.display = 'flex';
-                showSettingsButton.classList.add('active');
-                closeSidebar();
-            });
-            showDosyalarButton.addEventListener('click', () => {
-                hideAllViews();
-                dosyalarView.style.display = 'flex';
-                showDosyalarButton.classList.add('active');
-                closeSidebar();
-            });
-            showTablolarButton.addEventListener('click', () => {
-                hideAllViews();
-                tablolarView.style.display = 'flex';
-                showTablolarButton.classList.add('active');
-                closeSidebar();
-            });
+
+            function showView(viewElement, buttonElement, title) {
+                 hideAllViews();
+                 viewElement.style.display = viewElement.id.includes('file') ? 'block' : 'flex';
+                 if (title) mainTitle.textContent = title;
+                 buttonElement.classList.add('active');
+                 closeSidebar();
+            }
+
+            showFilesButton.addEventListener('click', () => showView(fileView, showFilesButton, 'Formlar'));
+            showDosyalarButton.addEventListener('click', () => showView(dosyalarView, showDosyalarButton));
+            showTablolarButton.addEventListener('click', () => showView(tablolarView, showTablolarButton));
+            showSettingsButton.addEventListener('click', () => showView(settingsView, showSettingsButton));
             homeLogoSidebar.addEventListener('click', goHome);
             
             // --- VERSİYON BİLGİSİ ---
@@ -493,24 +416,14 @@
                 versionInfo.setAttribute('aria-expanded', String(expanded));
             }
             versionInfo.addEventListener('click', toggleVersion);
-            versionInfo.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    toggleVersion();
-                }
-            });
+            versionInfo.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleVersion(); } });
 
             // --- ARAMA FİLTRESİ ---
             searchInput.addEventListener('input', (e) => {
                 const searchTerm = e.target.value.toLowerCase();
-                const fileRows = fileList.querySelectorAll('.file-row');
-                fileRows.forEach(row => {
+                fileList.querySelectorAll('.file-row').forEach(row => {
                     const fileName = row.querySelector('.file-name').textContent.toLowerCase();
-                    if (fileName.includes(searchTerm)) {
-                        row.style.display = 'grid';
-                    } else {
-                        row.style.display = 'none';
-                    }
+                    row.style.display = fileName.includes(searchTerm) ? 'grid' : 'none';
                 });
             });
 
@@ -539,10 +452,10 @@
             // --- GİRİŞ VE OTURUM YÖNETİMİ ---
             function showApp(files) {
                 displayFiles(files);
-                goHome(); // Başlangıçta anasayfayı göster
+                goHome();
                 loginScreen.classList.add('hidden');
                 setTimeout(() => {
-                    appContainer.style.display = 'grid'; // Grid'i burada etkinleştir
+                    appContainer.style.display = 'grid';
                     setTimeout(() => appContainer.classList.add('visible'), 50);
                 }, 500);
             }
@@ -554,7 +467,7 @@
                 loginButton.textContent = 'Doğrulanıyor...';
                 loginErrorMessage.style.display = 'none';
                 try {
-                    const response = await fetch('/api/getFiles', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: password }) });
+                    const response = await fetch('/api/getFiles', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password }) });
                     if (response.ok) {
                         const files = await response.json();
                         sessionStorage.setItem('isLoggedIn', 'true');
@@ -576,18 +489,14 @@
             // --- SAYFA YÜKLENDİĞİNDE ÇALIŞAN KOD ---
             (() => {
                 applyTheme(localStorage.getItem('theme') || 'dark');
-                
                 if (sessionStorage.getItem('isLoggedIn') === 'true') {
                     const cachedFiles = JSON.parse(sessionStorage.getItem('fileCache'));
-                    if (cachedFiles) {
-                        showApp(cachedFiles);
-                    }
+                    if (cachedFiles) showApp(cachedFiles);
                 }
             })();
 
             loginButton.addEventListener('click', handleLogin);
-            passwordInput.addEventListener('keyup', (event) => { if (event.key === 'Enter') { handleLogin(); } });
-
+            passwordInput.addEventListener('keyup', (event) => { if (event.key === 'Enter') handleLogin(); });
         });
     </script>
 </body>
